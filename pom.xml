@@ -32,7 +32,7 @@
         <module>uSkyBlock-API</module>
         <module>uSkyBlock-Core</module>
         <module>uSkyBlock-Plugin</module>
-        <module>uSkyBlock-FAWE</module>
+        <!-- <module>uSkyBlock-FAWE</module> -->
     </modules>
 
     <scm>
@@ -138,6 +138,14 @@
                             <groupId>com.sk89q</groupId>
                             <artifactId>worldedit</artifactId>
                         </exclusion>
+                <exclusion>
+                    <groupId>com.sk89q</groupId>
+                    <artifactId>commandbook</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bstats.bStats-Metrics</groupId>
+                    <artifactId>bstats-bukkit</artifactId>
+                </exclusion>
                     </exclusions>
                 </dependency>
             </dependencies>
