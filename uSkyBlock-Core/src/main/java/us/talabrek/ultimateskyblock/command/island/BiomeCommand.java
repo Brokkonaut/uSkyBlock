@@ -36,6 +36,8 @@ public class BiomeCommand extends RequireIslandCommand {
             put("plains", Biome.PLAINS);
             put("extreme_hills", Biome.DARK_FOREST_HILLS);
             put("deep_ocean", Biome.DEEP_OCEAN);
+            put("lukewarm_ocean", Biome.LUKEWARM_OCEAN);
+            put("snowy_taiga", Biome.SNOWY_TAIGA);
             Biome b = getBiome("ICE_PLAINS");
             if (b != null) {
                 put("ice_plains", b);

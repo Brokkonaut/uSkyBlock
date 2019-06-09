@@ -78,13 +78,13 @@ public class SkyBlockMenu {
                     "the island leader."))
     );
     private List<BiomeMenuItem> biomeMenus = Arrays.asList(
-            new BiomeMenuItem(new ItemStack(Material.TROPICAL_FISH, 1),
+            new BiomeMenuItem(new ItemStack(Material.COD, 1),
                     "ocean", tr("Ocean"),
-                    tr("The ocean biome is the basic\nstarting biome for all islands.\npassive mobs like animals will\nnot spawn. Hostile mobs will\nspawn normally.")
+                    tr("The ocean biome is the basic\nstarting biome for all islands.\nPassive mobs like animals will\nnot spawn. Hostile mobs will\nspawn normally.")
             ),
             new BiomeMenuItem(new ItemStack(Material.SPRUCE_SAPLING, 1),
                     "forest", tr("Forest"),
-                    tr("The forest biome will allow\nyour island to spawn passive.\nmobs like animals (including\nwolves). Hostile mobs will\nspawn normally.")
+                    tr("The forest biome will allow\nyour island to spawn passive.\nMobs like animals (including\nwolves). Hostile mobs will\nspawn normally.")
             ),
             new BiomeMenuItem(new ItemStack(Material.SAND, 1),
                     "desert", tr("Desert"),
@@ -128,15 +128,19 @@ public class SkyBlockMenu {
             ),
             new BiomeMenuItem(new ItemStack(Material.PRISMARINE_SHARD, 1),
                     "deep_ocean", tr("Deep Ocean"),
-                    tr("The deep-ocean biome is an advanced\n" +
-                            "biome. Passive mobs like animals will\n" +
+                    tr("The deep-ocean biome.\n" +
+                            "Passive mobs like animals will\n" +
                             "not spawn. Hostile mobs \n"+
                             "(including Guardians) will\n" +
                             "spawn normally.")
             ),
             new BiomeMenuItem(new ItemStack(Material.PACKED_ICE, 1),
-                    "ice_plains", tr("Ice Plains"),
-                    tr("The ice-plains biome is an advanced biome.\nMobs will spawn naturally.\nincluding polar-bears")
+                    "snowy_taiga", tr("Snowy Taiga"),
+                    tr("The snowy taiga biome.\nMobs will spawn naturally.\nincluding polar-bears")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.TROPICAL_FISH, 1),
+                    "lukewarm_ocean", tr("Lukewarm Ocean"),
+                    tr("The lukewarm ocean biome.\nPassive mobs like animals will\nnot spawn, but tropical fish,\npufferfish and cod will spawn here.\nHostile mobs will spawn normally.")
             )
     );
 
