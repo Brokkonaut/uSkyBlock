@@ -30,14 +30,14 @@ public class BiomeCommand extends RequireIslandCommand {
             put("sky", Biome.THE_END);
             put("mushroom", Biome.MUSHROOM_FIELDS);
             put("swampland", Biome.SWAMP);
-            put("taiga", Biome.SNOWY_TAIGA);
+            put("snowy_taiga", Biome.SNOWY_TAIGA);
             put("desert", Biome.DESERT);
             put("forest", Biome.FOREST);
             put("plains", Biome.PLAINS);
             put("extreme_hills", Biome.DARK_FOREST_HILLS);
             put("deep_ocean", Biome.DEEP_OCEAN);
             put("lukewarm_ocean", Biome.LUKEWARM_OCEAN);
-            put("snowy_taiga", Biome.SNOWY_TAIGA);
+            put("snowy_tundra", Biome.SNOWY_TUNDRA);
             Biome b = getBiome("ICE_PLAINS");
             if (b != null) {
                 put("ice_plains", b);

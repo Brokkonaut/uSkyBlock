@@ -106,8 +106,8 @@ public class SkyBlockMenu {
                     tr("The swamp biome is dark\nand dull. Passive mobs\nwill spawn normally and\nslimes have a small chance\nto spawn at night depending\non the moon phase.")
             ),
             new BiomeMenuItem(new ItemStack(Material.SNOW, 1),
-                    "taiga", tr("Taiga"),
-                    tr("The taiga biome has snow\ninstead of rain. Passive\nmobs will spawn normally\n(including wolves) and\nhostile mobs will spawn.")
+                    "snowy_taiga", tr("Snowy Taiga"),
+                    tr("The snowy taiga biome has snow\ninstead of rain. Passive\nmobs will spawn normally\n(including wolves) and\nhostile mobs will spawn.")
             ),
             new BiomeMenuItem(new ItemStack(Material.RED_MUSHROOM, 1),
                     "mushroom", tr("Mushroom"),
@@ -142,8 +142,8 @@ public class SkyBlockMenu {
                             "spawn normally.")
             ),
             new BiomeMenuItem(new ItemStack(Material.PACKED_ICE, 1),
-                    "snowy_taiga", tr("Snowy Taiga"),
-                    tr("The snowy taiga biome.\nMobs will spawn naturally.\nincluding polar-bears")
+                    "snowy_tundra", tr("Snowy Tundra"),
+                    tr("The snowy tundra biome.\nMobs will spawn naturally.\nincluding polar-bears")
             ),
             new BiomeMenuItem(new ItemStack(Material.TROPICAL_FISH, 1),
                     "lukewarm_ocean", tr("Lukewarm Ocean"),
