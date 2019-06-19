@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import us.talabrek.ultimateskyblock.menu.SkyBlockMenu;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 
 import java.util.logging.Logger;
@@ -42,7 +42,7 @@ public class SignEvents implements Listener {
                 || e.getPlayer() == null
                 || (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.LEFT_CLICK_BLOCK)
                 || e.getClickedBlock() == null
-                || e.getClickedBlock().getType() != SkyBlockMenu.WALL_SIGN_MATERIAL
+                || e.getClickedBlock().getType().data != WallSign.class
                 || !(e.getClickedBlock().getState() instanceof Sign)
                 || !e.getPlayer().hasPermission("usb.island.signs.use")
                 || !plugin.isSkyAssociatedWorld(e.getPlayer().getWorld())
@@ -64,7 +64,7 @@ public class SignEvents implements Listener {
                 || !e.getLines()[0].equalsIgnoreCase("[usb]")
                 || e.getLines()[1].trim().isEmpty()
                 || !e.getPlayer().hasPermission("usb.island.signs.place")
-                || !(e.getBlock().getType() == SkyBlockMenu.WALL_SIGN_MATERIAL)
+                || !(e.getBlock().getType().data != WallSign.class)
                 || !(e.getBlock().getState() instanceof Sign)
                 ) {
             return;
@@ -123,13 +123,13 @@ public class SignEvents implements Listener {
     public void onSignOrChestBreak(BlockBreakEvent e) {
         if (e.isCancelled()
                 || e.getBlock() == null
-                || (e.getBlock().getType() != SkyBlockMenu.WALL_SIGN_MATERIAL && !(e.getBlock().getType() == Material.CHEST || e.getBlock().getType() == Material.TRAPPED_CHEST))
+                || (e.getBlock().getType().data != WallSign.class && !(e.getBlock().getType() == Material.CHEST || e.getBlock().getType() == Material.TRAPPED_CHEST))
                 || e.getBlock().getLocation() == null
                 || !plugin.isSkyAssociatedWorld(e.getBlock().getLocation().getWorld())
                 ) {
             return;
         }
-        if (e.getBlock().getType() == SkyBlockMenu.WALL_SIGN_MATERIAL) {
+        if (e.getBlock().getType().data == WallSign.class) {
             logic.removeSign(e.getBlock().getLocation());
         } else {
             logic.removeChest(e.getBlock().getLocation());
@@ -137,7 +137,7 @@ public class SignEvents implements Listener {
     }
 
     private boolean isSign(Material material) {
-        return material == SkyBlockMenu.WALL_SIGN_MATERIAL || material == SkyBlockMenu.SIGN_MATERIAL;
+        return material != null && (material.data == WallSign.class || material.data == org.bukkit.block.data.type.Sign.class);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
