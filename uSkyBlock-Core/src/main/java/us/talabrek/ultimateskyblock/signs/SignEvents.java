@@ -64,14 +64,14 @@ public class SignEvents implements Listener {
                 || !e.getLines()[0].equalsIgnoreCase("[usb]")
                 || e.getLines()[1].trim().isEmpty()
                 || !e.getPlayer().hasPermission("usb.island.signs.place")
-                || !(e.getBlock().getType().data != WallSign.class)
+                || (e.getBlock().getType().data != WallSign.class)
                 || !(e.getBlock().getState() instanceof Sign)
                 ) {
             return;
         }
         Sign sign = (Sign) e.getBlock().getState();
-        org.bukkit.material.Sign data = (org.bukkit.material.Sign) sign.getData();
-        Block wallBlock = sign.getBlock().getRelative(data.getAttachedFace());
+        org.bukkit.block.data.type.WallSign data = (org.bukkit.block.data.type.WallSign) sign.getBlockData();
+        Block wallBlock = sign.getBlock().getRelative(data.getFacing().getOppositeFace());
         if (isChest(wallBlock)) {
             logic.addSign(sign, e.getLines(), (Chest) wallBlock.getState());
         }
