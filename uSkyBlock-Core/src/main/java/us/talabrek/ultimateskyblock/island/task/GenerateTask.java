@@ -47,7 +47,7 @@ public class GenerateTask extends BukkitRunnable {
         if (hasRun) {
             return;
         }
-        next.getChunk().load();
+        next.getChunk();
         Perk perk = plugin.getPerkLogic().getIslandPerk(schematicName).getPerk();
         perk = perk.combine(playerPerk.getPerk());
         if (chestLocation != null) {

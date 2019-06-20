@@ -38,9 +38,6 @@ public class ChunkSnapShotTask extends IncrementalRunnable {
         while (!chunks.isEmpty()) {
             BlockVector2 chunkVector = chunks.remove(0);
             Chunk chunk = location.getWorld().getChunkAt(chunkVector.getBlockX(), chunkVector.getBlockZ());
-            if (!chunk.isLoaded()) {
-                chunk.load();
-            }
             snapshots.add(chunk.getChunkSnapshot(false, false, false));
             if (!tick()) {
                 break;
