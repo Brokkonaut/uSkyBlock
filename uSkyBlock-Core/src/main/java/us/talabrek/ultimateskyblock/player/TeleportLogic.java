@@ -44,7 +44,7 @@ public class TeleportLogic implements Listener {
         final Location targetLoc = LocationUtil.centerOnBlock(homeSweetHome.clone());
         if (player.hasPermission("usb.mod.bypassteleport") || (teleportDelay == 0) || force) {
             player.setVelocity(new org.bukkit.util.Vector());
-            LocationUtil.loadChunkAt(targetLoc);
+            LocationUtil.tempLoadChunkAt(targetLoc);
             player.teleport(targetLoc);
             player.setVelocity(new org.bukkit.util.Vector());
         } else {
@@ -54,7 +54,7 @@ public class TeleportLogic implements Listener {
                 public void run() {
                     pendingTPs.remove(player.getUniqueId());
                     player.setVelocity(new Vector());
-                    LocationUtil.loadChunkAt(targetLoc);
+                    LocationUtil.tempLoadChunkAt(targetLoc);
                     player.teleport(targetLoc);
                     player.setVelocity(new Vector());
                 }
@@ -70,7 +70,7 @@ public class TeleportLogic implements Listener {
             if (Settings.extras_sendToSpawn) {
                 plugin.execCommand(player, "op:spawn", false);
             } else {
-                LocationUtil.loadChunkAt(spawnLocation);
+                LocationUtil.tempLoadChunkAt(spawnLocation);
                 player.teleport(spawnLocation);
             }
         } else {
@@ -82,7 +82,7 @@ public class TeleportLogic implements Listener {
                     if (Settings.extras_sendToSpawn) {
                         plugin.execCommand(player, "op:spawn", false);
                     } else {
-                        LocationUtil.loadChunkAt(spawnLocation);
+                        LocationUtil.tempLoadChunkAt(spawnLocation);
                         player.teleport(spawnLocation);
                     }
                 }

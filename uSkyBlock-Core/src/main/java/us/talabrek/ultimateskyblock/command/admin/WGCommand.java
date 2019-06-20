@@ -41,10 +41,10 @@ public class WGCommand extends CompositeCommand {
                 return true;
             }
         });
-        add(new RequirePlayerCommand("unload", null, marktr("load the region chunks")) {
+        add(new RequirePlayerCommand("unload", null, marktr("unload the region chunks")) {
             @Override
             protected boolean doExecute(String alias, Player player, Map<String, Object> data, String... args) {
-                LocationUtil.loadChunkAt(player.getLocation());
+                WorldEditHandler.unloadRegion(player.getLocation());
                 player.sendMessage(tr("\u00a7eUnloading chunks at {0}", LocationUtil.asString(player.getLocation())));
                 return true;
             }

@@ -58,7 +58,7 @@ public class SetBiomeTask extends IncrementalRunnable {
         while (it.hasNext()) {
             BlockVector2 chunk = it.next();
             it.remove();
-            world.loadChunk(chunk.getBlockX(), chunk.getBlockZ());
+            world.getChunkAt(chunk.getBlockX(), chunk.getBlockZ());
             int cx = chunk.getBlockX() << 4;
             int cz = chunk.getBlockZ() << 4;
             int mx = cx + 15;

@@ -114,9 +114,9 @@ public enum LocationUtil {
         return ground.getType().isSolid() && BlockUtil.isBreathable(air1) && BlockUtil.isBreathable(air2);
     }
 
-    public static void loadChunkAt(Location loc) {
+    public static void tempLoadChunkAt(Location loc) {
         if (loc != null && !loc.getWorld().isChunkLoaded(loc.getBlockX() >> 4, loc.getBlockZ() >> 4)) {
-            loc.getWorld().loadChunk(loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+            loc.getWorld().getChunkAt(loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
         }
     }
 
@@ -127,7 +127,7 @@ public enum LocationUtil {
      * @return The location of the chest
      */
     public static Location findChestLocation(final Location loc) {
-        loadChunkAt(loc);
+        tempLoadChunkAt(loc);
         World world = loc.getWorld();
         int px = loc.getBlockX();
         int pz = loc.getBlockZ();
@@ -173,7 +173,7 @@ public enum LocationUtil {
     }
 
     public static Location findNearestSpawnLocation(Location loc) {
-        loadChunkAt(loc);
+        tempLoadChunkAt(loc);
         World world = loc.getWorld();
         int px = loc.getBlockX();
         int pz = loc.getBlockZ();
@@ -207,7 +207,7 @@ public enum LocationUtil {
         if (loc == null) {
             return null;
         }
-        loadChunkAt(loc);
+        tempLoadChunkAt(loc);
         World world = loc.getWorld();
         int px = loc.getBlockX();
         int pz = loc.getBlockZ();
@@ -258,7 +258,7 @@ public enum LocationUtil {
         if (loc == null) {
             return null;
         }
-        loadChunkAt(loc);
+        tempLoadChunkAt(loc);
         Location blockLoc = loc.clone();
         ChunkSnapshot chunkSnapshot = blockLoc.getChunk().getChunkSnapshot();
         int x = blockLoc.getBlockX();
