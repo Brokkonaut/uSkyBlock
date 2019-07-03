@@ -4,6 +4,7 @@ import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import dk.lockfuglsang.minecraft.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 import us.talabrek.ultimateskyblock.challenge.ChallengeLogic;
 import us.talabrek.ultimateskyblock.command.island.BiomeCommand;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
@@ -30,6 +32,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.pre;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 import static dk.lockfuglsang.minecraft.util.FormatUtil.stripFormatting;
@@ -217,12 +220,16 @@ public class SkyBlockMenu {
     public Inventory displayPartyGUI(final Player player) {
         List<String> lores = new ArrayList<>();
         String title = "\u00a79" + tr("Island Group Members");
-        Inventory menu = Bukkit.createInventory(new UltimateHolder(player, title), 18, title);
         IslandInfo islandInfo = plugin.getIslandInfo(player);
         final Set<String> memberList = islandInfo.getMembers();
+        final List<String> trusteesList = islandInfo.getTrustees();
+        int slots = 1 + memberList.size() + trusteesList.size();
+        slots = Math.min(((slots + 8) / 9) * 9, 54);
+        Inventory menu = Bukkit.createInventory(new UltimateHolder(player, title), slots, title);
         final ItemMeta meta2 = sign.getItemMeta();
         meta2.setDisplayName("\u00a7a" + tr("Island Group Members"));
-        lores.add(tr("Group Members: \u00a72{0}\u00a77/\u00a7e{1}", islandInfo.getPartySize(), islandInfo.getMaxPartySize()));
+        lores.add(tr("\\u00a7eGroup Members: \u00a72{0}\u00a77/\u00a7e{1}", islandInfo.getPartySize(), islandInfo.getMaxPartySize()));
+        lores.add(tr("\u00a7eTrustees: \u00a72{0}", islandInfo.getTrusteeUUIDs().size()));
         if (islandInfo.getPartySize() < islandInfo.getMaxPartySize()) {
             addLore(lores, tr("\u00a7aMore players can be invited to this island."));
         } else {
@@ -253,6 +260,21 @@ public class SkyBlockMenu {
             }
             if (islandInfo.isLeader(player.getName())) {
                 addLore(lores, tr("\u00a7e<Click to change this player''s permissions>"));
+            }
+            meta3.setLore(lores);
+            headItem.setItemMeta(meta3);
+            menu.addItem(headItem);
+            lores.clear();
+        }
+        for (String temp : trusteesList) {
+            ItemStack headItem = new ItemStack(Material.PLAYER_HEAD, 1);
+            SkullMeta meta3 = (SkullMeta) headItem.getItemMeta();
+            meta3.setDisplayName(tr("\u00a7e{0}''s\u00a79 Permissions", temp));
+            meta3.setOwner(temp);
+            addLore(lores, "\u00a7a\u00a7l", tr("Trusted"));
+            lores.add("\u00a7a" + tr("Can {0}", "\u00a7fBuild on the island"));
+            if (islandInfo.isLeader(player.getName())) {
+                addLore(lores, tr("\u00a7e<Click to untrust this player>"));
             }
             meta3.setLore(lores);
             headItem.setItemMeta(meta3);
@@ -638,6 +660,7 @@ public class SkyBlockMenu {
         final SkullMeta meta2 = (SkullMeta) menuItem.getItemMeta();
         meta2.setDisplayName("\u00a7a\u00a7l" + tr("Island Group"));
         lores.add(tr("\u00a7eMembers: \u00a72{0}/{1}", islandInfo.getPartySize(), islandInfo.getMaxPartySize()));
+        lores.add(tr("\u00a7eTrustees: \u00a72{0}", islandInfo.getTrusteeUUIDs().size()));
         addLore(lores, "\u00a7f", tr("View the members of your island\ngroup and their permissions. If\nyou are the island leader, you\ncan change the member permissions.\n\u00a7e\u00a7lClick here to view or change."));
         meta2.setLore(lores);
         menuItem.setItemMeta(meta2);
@@ -1173,12 +1196,26 @@ public class SkyBlockMenu {
         if (slotIndex < 0 || slotIndex > 35) {
             return;
         }
+        IslandInfo island = plugin.getIslandInfo(p);
         if (meta == null || currentItem.getType() == SIGN_MATERIAL) {
             p.closeInventory();
             p.performCommand("island");
-        } else if (skull != null && plugin.getIslandInfo(p).isLeader(p)) {
-            p.closeInventory();
-            p.openInventory(displayPartyPlayerGUI(p, skull.getOwner()));
+        } else if (skull != null && island.isLeader(p)) {
+            String skullOwner = skull.getOwner();
+            OfflinePlayer skullOwnerPlayer = Bukkit.getOfflinePlayer(skullOwner);
+            if (island.isTrusted(skullOwnerPlayer)) {
+                PlayerInfo playerInfo = plugin.getPlayerInfo(p);
+                p.closeInventory();
+                island.untrustPlayer(skullOwnerPlayer, p);
+                
+                if (skullOwnerPlayer.isOnline()) {
+                    skullOwnerPlayer.getPlayer().sendMessage(tr("\u00a7eYou are no longer trusted on \u00a74{0}''s \u00a7eisland.", playerInfo.getDisplayName()));
+                }
+                island.sendMessageToIslandGroup(true, marktr("\u00a7c{0} revoked trust in {1} on the island"), p.getName(), skullOwner);
+            } else {
+                p.closeInventory();
+                p.openInventory(displayPartyPlayerGUI(p, skullOwner));
+            }
         }
     }
 
