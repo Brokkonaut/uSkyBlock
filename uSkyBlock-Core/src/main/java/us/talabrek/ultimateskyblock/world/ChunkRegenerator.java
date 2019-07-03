@@ -9,10 +9,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import static org.bukkit.World.Environment;
@@ -21,14 +25,42 @@ import static org.bukkit.World.Environment;
  * Class responsible for regenerating chunks.
  */
 public class ChunkRegenerator {
+    private final uSkyBlock plugin;
     private final ChunkGenerator chunkGen;
     private final World world;
+    private BukkitTask task;
 
     ChunkRegenerator(@NotNull World world) {
         Validate.notNull(world, "World cannot be null");
 
+        this.plugin = uSkyBlock.getInstance();
         this.world = world;
-        this.chunkGen = uSkyBlock.getInstance().getDefaultWorldGenerator(world.getName(), "");
+        this.chunkGen = plugin.getDefaultWorldGenerator(world.getName(), "");
+    }
+
+    /**
+     * Regenerates the given list of {@link Chunk}s at a 5 chunks/tick speed.
+     * @param chunkList List of chunks to regenerate.
+     * @param onCompletion Runnable to schedule on completion, or null to call no runnable.
+     */
+    public void regenerateChunks(@NotNull List<Chunk> chunkList, @Nullable Runnable onCompletion) {
+        Validate.notNull(chunkList, "ChunkList cannot be empty");
+
+        final int CHUNKS_PER_TICK = 5;
+        BukkitScheduler scheduler = plugin.getServer().getScheduler();
+        task = scheduler.runTaskTimer(plugin, () -> {
+            for (int i = 0; i < CHUNKS_PER_TICK; i++) {
+                if (!chunkList.isEmpty()) {
+                    final Chunk chunk = chunkList.remove(0);
+                    regenerateChunk(chunk);
+                } else {
+                    if (onCompletion != null) {
+                        scheduler.runTaskLater(plugin, onCompletion, 1L);
+                    }
+                    task.cancel();
+                }
+            }
+        }, 0L, 1L);
     }
 
     /**
@@ -38,6 +70,8 @@ public class ChunkRegenerator {
     public void regenerateChunk(@NotNull Chunk chunk) {
         Validate.notNull(chunk, "Chunk cannot be null");
 
+        spawnTeleportPlayers(chunk);
+
         Random random = new Random();
         BiomeGrid biomeGrid = new DefaultBiomeGrid(world.getEnvironment());
         ChunkData chunkData = chunkGen.generateChunkData(world, random, chunk.getX(), chunk.getZ(), biomeGrid);
@@ -46,7 +80,7 @@ public class ChunkRegenerator {
             for (int z = 0; z < 16; z++) {
                 chunk.getBlock(x, 0, z).setBiome(biomeGrid.getBiome(x, z));
 
-                for (int y = chunk.getWorld().getMaxHeight() - 1; y >= 0; y--) {
+                for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
                     chunk.getBlock(x, y, z).setBlockData(chunkData.getBlockData(x, y, z));
                 }
             }
@@ -63,6 +97,18 @@ public class ChunkRegenerator {
         Arrays.stream(chunk.getEntities())
                 .filter(entity -> !(entity instanceof Player))
                 .forEach(Entity::remove);
+    }
+
+    /**
+     * Teleport all the {@link Player}s within the given {@link Chunk} to spawn.
+     * @param chunk Chunk to spawnteleport players in.
+     */
+    private void spawnTeleportPlayers(@NotNull Chunk chunk) {
+        for (Entity entity : chunk.getEntities()) {
+            if (entity instanceof Player) {
+                uSkyBlock.getInstance().getTeleportLogic().spawnTeleport((Player) entity, true);
+            }
+        }
     }
 
     /**
