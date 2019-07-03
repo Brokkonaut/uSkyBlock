@@ -724,7 +724,6 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         return nameList;
     }
 
-    @Deprecated
     @Override
     @NotNull
     public List<String> getTrustees() {
@@ -826,8 +825,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     public boolean isTrusted(@NotNull OfflinePlayer target) {
         Validate.notNull(target, "Target cannot be null");
 
-        List<String> trustees = config.getStringList("trust.list");
-        return trustees.contains(target.toString());
+        return getTrusteeUUIDs().contains(target.getUniqueId());
     }
 
     public void removeMember(@NotNull PlayerInfo member) {
@@ -953,6 +951,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         str += ChatColor.DARK_AQUA + "Party:\n";
         str += ChatColor.GRAY + "  - leader: " + ChatColor.DARK_AQUA + getLeader() + "\n";
         str += ChatColor.GRAY + "  - members: " + ChatColor.DARK_AQUA + getMembers() + "\n";
+        str += ChatColor.GRAY + "  - trustees: " + ChatColor.DARK_AQUA + getTrustees() + "\n";
         str += ChatColor.GRAY + "  - size: " + ChatColor.DARK_AQUA + getPartySize() + "\n";
         str += ChatColor.DARK_AQUA + "Limits:\n";
         str += ChatColor.GRAY + "  - maxParty: " + ChatColor.DARK_AQUA + getMaxPartySize() + "\n";
