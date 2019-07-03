@@ -228,7 +228,7 @@ public class SkyBlockMenu {
         Inventory menu = Bukkit.createInventory(new UltimateHolder(player, title), slots, title);
         final ItemMeta meta2 = sign.getItemMeta();
         meta2.setDisplayName("\u00a7a" + tr("Island Group Members"));
-        lores.add(tr("\\u00a7eGroup Members: \u00a72{0}\u00a77/\u00a7e{1}", islandInfo.getPartySize(), islandInfo.getMaxPartySize()));
+        lores.add(tr("\u00a7eGroup Members: \u00a72{0}\u00a77/\u00a7e{1}", islandInfo.getPartySize(), islandInfo.getMaxPartySize()));
         lores.add(tr("\u00a7eTrustees: \u00a72{0}", islandInfo.getTrusteeUUIDs().size()));
         if (islandInfo.getPartySize() < islandInfo.getMaxPartySize()) {
             addLore(lores, tr("\u00a7aMore players can be invited to this island."));
@@ -272,7 +272,7 @@ public class SkyBlockMenu {
             meta3.setDisplayName(tr("\u00a7e{0}''s\u00a79 Permissions", temp));
             meta3.setOwner(temp);
             addLore(lores, "\u00a7a\u00a7l", tr("Trusted"));
-            lores.add("\u00a7a" + tr("Can {0}", "\u00a7fBuild on the island"));
+            lores.add("\u00a7a" + tr("Can {0}", "\u00a7fbuild on the island"));
             if (islandInfo.isLeader(player.getName())) {
                 addLore(lores, tr("\u00a7e<Click to untrust this player>"));
             }
