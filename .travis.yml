@@ -1,6 +1,6 @@
 language: java
 jdk:
-- oraclejdk8
+- openjdk8
 sudo: false
 cache:
   directories:
@@ -18,7 +18,7 @@ before_install:
 - cd uSkyBlock-Core/src/main/po && perl en2pirate.pl && cd -
 - cd uSkyBlock-Core/src/main/po && perl en2kitteh.pl && cd -
 install:
-- mvn -nsu -Dtravis.buildNumber=${TRAVIS_BUILD_NUMBER} -Pi18n,${MC},we700,wg700 clean deploy
+- mvn -nsu -Dtravis.buildNumber=${TRAVIS_BUILD_NUMBER} -Pi18n,${MC} clean deploy
 before_deploy:
   - echo '|1|DBFhltHRAVmrfmMZPLbN7FwnS5E=|79CP65+tOIeVNeNNC2R680mpV9o= ecdsa-sha2-nistp256
     AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK/krqsEUrVoDrYIc7I7nsiSCF0M7Xxr379IqZ2pLUPlxF2Or/MkTTokXzRsyspJazL1W1UrBDmKXHfO6+tyMMw='
@@ -28,11 +28,16 @@ before_deploy:
   - eval "$(ssh-agent -s)"
   - chmod 600 deploy_rsa
   - ssh-add deploy_rsa
-  - chmod +x scripts/deploy.sh
+  - chmod +x scripts/deploy-staging.sh
+  - chmod +x scripts/deploy-release.sh
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: bash scripts/deploy.sh
-  on:
-    all_branches: true
-    condition: $TRAVIS_BRANCH =~ ^master|release$
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy-staging.sh
+    on:
+      branch: "master"
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy-release.sh
+    on:
+      tags: true

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>uSkyBlock</artifactId>
         <groupId>uSkyBlock</groupId>
-        <version>2.7.10-SNAPSHOT</version>
+        <version>2.8.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -97,6 +97,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.bstats:*</include>
+                                    <include>io.papermc:paperlib</include>
                                     <include>dk.lockfuglsang.minecraft:bukkit-utils</include>
                                     <include>dk.lockfuglsang.minecraft:po-utils</include>
                                 </includes>
@@ -109,6 +110,10 @@
                                 <relocation>
                                     <pattern>dk.lockfuglsang.minecraft</pattern>
                                     <shadedPattern>us.talabrek.ultimateskyblock.utils</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.papermc.lib</pattern>
+                                    <shadedPattern>us.talabrek.ultimateskyblock.paperlib</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -334,6 +339,14 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- PaperLib -->
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Multiverse -->
         <dependency>
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
@@ -360,16 +373,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- bStats -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>1.4</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>21.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- OPTIONAL -->
         <dependency>
@@ -380,8 +396,8 @@
         </dependency>
         <dependency>
             <groupId>be.maximvdw</groupId>
-            <artifactId>MVdWPlaceholderAPI</artifactId>		
-            <version>2.5.1-SNAPSHOT</version>
+            <artifactId>MVdWPlaceholderAPI</artifactId>
+            <version>3.0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <!-- MVdWPlaceholderAPI includes a lot of unpublished dependencies, like Spigot 1.9 -->
             <exclusions>
