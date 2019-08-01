@@ -54,6 +54,7 @@ public class ItemDropEvents implements Listener {
         }
         if (!visitorsCanDrop && !plugin.playerIsOnIsland(player) && !plugin.playerIsInSpawn(player)) {
             event.setKeepInventory(true);
+            event.getDrops().clear();
             return;
         }
         // Take over the drop, since Bukkit don't do this in a Metadatable format.
