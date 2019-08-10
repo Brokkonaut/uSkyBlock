@@ -12,14 +12,13 @@ import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MonsterEggs;
-import org.bukkit.material.SpawnEgg;
 import org.bukkit.metadata.FixedMetadataValue;
 import us.talabrek.ultimateskyblock.api.IslandInfo;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
@@ -56,7 +55,7 @@ public class SpawnEvents implements Listener {
     @EventHandler
     public void onSpawnEggEvent(PlayerInteractEvent event) {
         Player player = event != null ? event.getPlayer() : null;
-        if (player == null || event.isCancelled() || !plugin.isSkyWorld(player.getWorld())) {
+        if (player == null || event.useItemInHand() == Result.DENY || !plugin.isSkyWorld(player.getWorld())) {
             return; // Bail out, we don't care
         }
         if (player.hasPermission("usb.mod.bypassprotection") || player.isOp()) {
@@ -69,9 +68,8 @@ public class SpawnEvents implements Listener {
                 plugin.notifyPlayer(player, tr("\u00a7eYou can only use spawn-eggs on your own island."));
                 return;
             }
-            SpawnEgg spawnEgg = (SpawnEgg) item.getData();
-            checkLimits(event, spawnEgg.getSpawnedType(), player.getLocation());
-            if (event.isCancelled()) {
+            checkLimits(event, getSpawnedEntity(item), player.getLocation());
+            if (event.useItemInHand() == Result.DENY) {
                 plugin.notifyPlayer(player, tr("\u00a7cYou have reached your spawn-limit for your island."));
                 event.setUseItemInHand(Event.Result.DENY);
                 event.setUseInteractedBlock(Event.Result.DENY);
@@ -79,8 +77,27 @@ public class SpawnEvents implements Listener {
         }
     }
 
-    private boolean isSpawnEgg(ItemStack item) {
-        return item.getType().name().endsWith("_SPAWN_EGG") && item.getData() instanceof MonsterEggs;
+    private static boolean isSpawnEgg(ItemStack item) {
+        return item.getType().name().endsWith("_SPAWN_EGG");
+    }
+
+    private static EntityType getSpawnedEntity(ItemStack item) {
+        String typeName = item.getType().name();
+        if (!typeName.endsWith("_SPAWN_EGG")) {
+            return null;
+        }
+        typeName = typeName.substring(0, typeName.length() - "_SPAWN_EGG".length());
+        // special case for some odd entity names
+        if (typeName.equals("MOOSHROOM")) {
+            return EntityType.MUSHROOM_COW;
+        } else if (typeName.equals("ZOMBIE_PIGMAN")) {
+            return EntityType.PIG_ZOMBIE;
+        }
+        try {
+            return EntityType.valueOf(typeName);
+        } catch (IllegalArgumentException e) {
+            return null; // we don't know
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
