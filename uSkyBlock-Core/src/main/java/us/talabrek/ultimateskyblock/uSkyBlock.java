@@ -629,7 +629,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         String islandName = WorldGuardHandler.getIslandNameAt(player.getLocation());
         if (islandName != null) {
             us.talabrek.ultimateskyblock.api.IslandInfo islandInfo = islandLogic.getIslandInfo(islandName);
-            if (islandInfo != null && islandInfo.getTrustees().contains(player.getName())) {
+            if (islandInfo != null && islandInfo.isTrusted(player)) {
                 return true;
             }
         }
