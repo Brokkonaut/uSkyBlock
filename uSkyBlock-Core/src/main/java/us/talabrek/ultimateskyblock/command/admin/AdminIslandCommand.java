@@ -2,7 +2,6 @@ package us.talabrek.ultimateskyblock.command.admin;
 
 import dk.lockfuglsang.minecraft.command.AbstractCommand;
 import dk.lockfuglsang.minecraft.command.CompositeCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Biome;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -72,8 +71,7 @@ public class AdminIslandCommand extends CompositeCommand {
             public boolean execute(CommandSender sender, String alias, Map<String, Object> data, String... args) {
                 IslandInfo islandInfo = null;
                 if (args.length == 2) {
-                    //noinspection deprecation
-                    islandInfo = plugin.getIslandInfo(Bukkit.getPlayer(args[1]));
+                    islandInfo = plugin.getIslandInfo(plugin.getPlayerInfo(args[1]));
                 } else if (args.length == 1 && sender instanceof Player) {
                     String islandName = WorldGuardHandler.getIslandNameAt(((Player) sender).getLocation());
                     islandInfo = plugin.getIslandInfo(islandName);
