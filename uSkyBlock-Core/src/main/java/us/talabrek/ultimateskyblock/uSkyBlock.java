@@ -555,17 +555,19 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         }
 
         boolean deleteOldIsland = false;
-        if (pi.getHasIsland()) {
-            Location oldLoc = pi.getIslandLocation();
-            if (oldLoc != null
-                    && !(newLoc.getBlockX() == oldLoc.getBlockX() && newLoc.getBlockZ() == oldLoc.getBlockZ())) {
-                deleteOldIsland = true;
-            }
-        }
-
         if (newLoc.equals(pi.getIslandLocation())) {
             sender.sendMessage(tr("\u00a74Player is already assigned to this island!"));
-            deleteOldIsland = false;
+        } else if (pi.getHasIsland()) {
+            IslandInfo island = getIslandInfo(pi);
+            if (island.isLeader(sender)) {
+                Location oldLoc = pi.getIslandLocation();
+                if (oldLoc != null
+                        && !(newLoc.getBlockX() == oldLoc.getBlockX() && newLoc.getBlockZ() == oldLoc.getBlockZ())) {
+                    deleteOldIsland = true;
+                }
+            } else if (island.isMember(Bukkit.getOfflinePlayer(pi.getUniqueId()))){
+                island.removeMember(pi);
+            }
         }
 
         // Purge current islandinfo and partymembers if there's an active party at this location (issue #948)
