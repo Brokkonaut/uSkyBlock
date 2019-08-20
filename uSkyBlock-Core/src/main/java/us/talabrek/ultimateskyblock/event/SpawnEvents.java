@@ -47,6 +47,7 @@ public class SpawnEvents implements Listener {
     ));
 
     private final uSkyBlock plugin;
+    private boolean currentlySpawningGuardian;
 
     public SpawnEvents(uSkyBlock plugin) {
         this.plugin = plugin;
@@ -105,14 +106,19 @@ public class SpawnEvents implements Listener {
         if (event == null || !plugin.getWorldManager().isSkyAssociatedWorld(event.getLocation().getWorld())) {
             return; // Bail out, we don't care
         }
-        if (!event.isCancelled() && ADMIN_INITIATED.contains(event.getSpawnReason())) {
+        if (!event.isCancelled() && ADMIN_INITIATED.contains(event.getSpawnReason()) && !currentlySpawningGuardian) {
             return; // Allow it, the above method would have blocked it if it should be blocked.
         }
         checkLimits(event, event.getEntity().getType(), event.getLocation());
         if (event.getEntity() instanceof WaterMob) {
             Location loc = event.getLocation();
             if (isDeepOceanBiome(loc) && isPrismarineRoof(loc)) {
-                loc.getWorld().spawnEntity(loc, EntityType.GUARDIAN);
+                currentlySpawningGuardian = true;
+                try {
+                    loc.getWorld().spawnEntity(loc, EntityType.GUARDIAN);
+                } finally {
+                    currentlySpawningGuardian = false;
+                }
                 event.setCancelled(true);
             }
         }
