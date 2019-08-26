@@ -233,6 +233,13 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
                     getImporter().importUSB(Bukkit.getConsoleSender(), "name2uuid");
                 }
                 log(Level.INFO, getVersionInfo(false));
+                getServer().getScheduler().runTaskAsynchronously(uSkyBlock.this, new Runnable() {
+                    @Override
+                    public void run() {
+                        getIslandLogic().generateTopTen(getServer().getConsoleSender());
+                        Bukkit.getConsoleSender().sendMessage(tr("\u00a7eFinished generation of the Top Ten list"));
+                    }
+                });
             }
         }, getConfig().getLong("init.initDelay", 50L));
         try {
