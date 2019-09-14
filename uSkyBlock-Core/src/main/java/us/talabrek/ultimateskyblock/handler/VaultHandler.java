@@ -30,7 +30,7 @@ public enum VaultHandler {;
     }
 
     public static boolean setupPermissions() {
-        final RegisteredServiceProvider<Permission> rsp = (RegisteredServiceProvider<Permission>) uSkyBlock.getInstance().getServer().getServicesManager().getRegistration((Class) Permission.class);
+        final RegisteredServiceProvider<Permission> rsp = uSkyBlock.getInstance().getServer().getServicesManager().getRegistration(Permission.class);
         if (rsp.getProvider() != null) {
             perms = rsp.getProvider();
         }
@@ -41,7 +41,7 @@ public enum VaultHandler {;
         if (uSkyBlock.getInstance().getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
-        final RegisteredServiceProvider<Economy> rsp = (RegisteredServiceProvider<Economy>) uSkyBlock.getInstance().getServer().getServicesManager().getRegistration((Class) Economy.class);
+        final RegisteredServiceProvider<Economy> rsp = uSkyBlock.getInstance().getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
         }
