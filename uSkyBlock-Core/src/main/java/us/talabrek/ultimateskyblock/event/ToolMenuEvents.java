@@ -72,8 +72,7 @@ public class ToolMenuEvents implements Listener {
 
         // We are in a skyworld, a block has been hit, with the tool
         Material block = e.getClickedBlock().getType();
-        short data = e.getClickedBlock().getData();
-        String itemId = ItemStackUtil.asString(new ItemStack(block, 1, data));
+        String itemId = ItemStackUtil.asString(new ItemStack(block, 1));
         if (commandMap.containsKey(itemId)) {
             doCmd(e, player, itemId);
         }
@@ -100,6 +99,6 @@ public class ToolMenuEvents implements Listener {
     }
 
     private boolean isTool(ItemStack item) {
-        return item != null && tool != null && item.getType() == tool.getType() && item.getDurability() == tool.getDurability();
+        return item != null && tool != null && item.getType() == tool.getType();
     }
 }

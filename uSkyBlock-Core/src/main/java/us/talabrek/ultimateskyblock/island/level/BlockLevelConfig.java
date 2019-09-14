@@ -1,14 +1,15 @@
 package us.talabrek.ultimateskyblock.island.level;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import us.talabrek.ultimateskyblock.api.model.BlockScore;
 
 import java.util.Objects;
 import java.util.Set;
 
 public class BlockLevelConfig {
-    private final BlockMatch baseBlock;
-    private final Set<BlockMatch> additionalBlocks;
+    private final Material baseBlock;
+    private final Set<Material> additionalBlocks;
 
     /**
      * The base-score you will get per block of this type.
@@ -31,7 +32,7 @@ public class BlockLevelConfig {
      */
     private final int negativeReturns;
 
-    public BlockLevelConfig(BlockMatch baseBlock, Set<BlockMatch> additionalBlocks, double scorePerBlock, int limit, int diminishingReturns, int negativeReturns) {
+    public BlockLevelConfig(Material baseBlock, Set<Material> additionalBlocks, double scorePerBlock, int limit, int diminishingReturns, int negativeReturns) {
         this.baseBlock = baseBlock;
         this.additionalBlocks = additionalBlocks;
         this.scorePerBlock = scorePerBlock;
@@ -40,8 +41,8 @@ public class BlockLevelConfig {
         this.negativeReturns = negativeReturns;
     }
 
-    public boolean matches(Material material, byte dataValue) {
-        return baseBlock.matches(material, dataValue) || additionalBlocks.stream().anyMatch(b -> b.matches(material, dataValue));
+    public boolean matches(Material material) {
+        return baseBlock == material || additionalBlocks.contains(material);
     }
 
     public BlockScore calculateScore(int count) {
@@ -64,7 +65,7 @@ public class BlockLevelConfig {
             adjustedCount = dReturns(adjustedCount, diminishingReturns);
         }
         double blockScore = adjustedCount * scorePerBlock;
-        return new BlockScoreImpl(baseBlock.asItemStack(), count, blockScore/pointsPerLevel, state);
+        return new BlockScoreImpl(new ItemStack(baseBlock, 1), count, blockScore/pointsPerLevel, state);
     }
 
     private double dReturns(final double val, final double scale) {
@@ -77,15 +78,15 @@ public class BlockLevelConfig {
     }
 
     public void accept(BlockMatchVisitor visitor) {
-        baseBlock.accept(visitor);
-        additionalBlocks.forEach(ch -> ch.accept(visitor));
+        visitor.visit(baseBlock);
+        additionalBlocks.forEach(ch -> visitor.visit(ch));
     }
 
-    public BlockMatch getKey() {
+    public Material getKey() {
         return baseBlock;
     }
 
-    public Set<BlockMatch> getAdditionalBlocks() {
+    public Set<Material> getAdditionalBlocks() {
         return additionalBlocks;
     }
 

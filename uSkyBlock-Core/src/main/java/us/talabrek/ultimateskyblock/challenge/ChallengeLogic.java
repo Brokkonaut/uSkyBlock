@@ -328,7 +328,7 @@ public class ChallengeLogic implements Listener {
     public int getCountOf(Inventory inventory, ItemStack required) {
         int count = 0;
         for (ItemStack invItem : inventory.all(required.getType()).values()) {
-            if (invItem.getDurability() == required.getDurability() && NBTUtil.getNBTTag(invItem).equals(NBTUtil.getNBTTag(required))) {
+            if (NBTUtil.getNBTTag(invItem).equals(NBTUtil.getNBTTag(required))) {
                 count += invItem.getAmount();
             }
         }
@@ -524,10 +524,8 @@ public class ChallengeLogic implements Listener {
                         }
                         if (locked != null) {
                             currentChallengeItem.setType(locked.getType());
-                            currentChallengeItem.setDurability(locked.getDurability());
                         } else if (lockedItem != null) {
                             currentChallengeItem.setType(lockedItem.getType());
-                            currentChallengeItem.setDurability(lockedItem.getDurability());
                         }
                     } else {
                         lores = currentChallengeItem.getItemMeta().getLore();

@@ -8,13 +8,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 import us.talabrek.ultimateskyblock.challenge.ChallengeLogic;
 import us.talabrek.ultimateskyblock.command.island.BiomeCommand;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
@@ -132,7 +130,7 @@ public class SkyBlockMenu {
                     "extreme_hills", tr("Extreme Hills"),
                     tr("The extreme hills biome.\nPassive mobs will spawn \nnormally and hostile\nmobs will spawn.")
             ),
-            new BiomeMenuItem(new ItemStack(Material.ROSE_BUSH, 1, (short) 5),
+            new BiomeMenuItem(new ItemStack(Material.PEONY, 1),
                     "flower_forest", tr("Flower Forest"),
                     tr("The flower forest biome.\nPassive mobs will spawn \nnormally and hostile\nmobs will spawn.")
             ),
@@ -1147,7 +1145,7 @@ public class SkyBlockMenu {
         }
         for (BiomeMenuItem biomeMenu : biomeMenus) {
             ItemStack menuIcon = biomeMenu.getIcon();
-            if (currentItem.getType() == menuIcon.getType() && currentItem.getDurability() == menuIcon.getDurability()) {
+            if (currentItem.getType() == menuIcon.getType()) {
                 String radius = PlayerUtil.getMetadata(p, "biome.radius", "all");
                 p.closeInventory();
                 p.performCommand("island biome " + biomeMenu.getId() + " " + radius);

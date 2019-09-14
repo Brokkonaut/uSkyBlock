@@ -20,30 +20,22 @@ public class BlockLevelConfigMap {
         configCollection.stream().forEach(m -> m.accept(new ExplodeMapVisitor(m)));
     }
 
-    public synchronized BlockLevelConfig get(BlockMatch blockMatch) {
-        return get(asBlockKey(blockMatch));
-    }
-
-    private BlockKey asBlockKey(BlockMatch blockMatch) {
-        return new BlockKey(blockMatch.getType(), blockMatch.getDataValues().isEmpty() ? (byte) 0 : blockMatch.getDataValues().iterator().next());
-    }
-
-    public synchronized BlockLevelConfig get(BlockKey key) {
+    public synchronized BlockLevelConfig get(Material material) {
         // search map
-        Set<BlockLevelConfig> searchSet = searchMap.getOrDefault(key.getType(), new HashSet<>());
-        BlockLevelConfig existing = search(searchSet, key);
+        Set<BlockLevelConfig> searchSet = searchMap.getOrDefault(material, new HashSet<>());
+        BlockLevelConfig existing = search(searchSet, material);
         if (existing != null) {
             return existing;
         }
-        BlockLevelConfig newConfig = defaultBuilder.copy().base(new BlockMatch(key.getType(), key.getDataValue())).build();
+        BlockLevelConfig newConfig = defaultBuilder.copy().base(material).build();
         searchSet.add(newConfig);
-        searchMap.put(key.getType(), searchSet);
+        searchMap.put(material, searchSet);
         return newConfig;
     }
 
-    private BlockLevelConfig search(Set<BlockLevelConfig> searchSet, BlockKey key) {
+    private BlockLevelConfig search(Set<BlockLevelConfig> searchSet, Material material) {
         List<BlockLevelConfig> match = searchSet.stream()
-                .filter(p -> p.matches(key.getType(), key.getDataValue()))
+                .filter(p -> p.matches(material))
                 .distinct()
                 .sorted((a,b) -> -a.getKey().compareTo(b.getKey())) // best match = longest string = desc ordering
                 .collect(Collectors.toList());
@@ -53,24 +45,8 @@ public class BlockLevelConfigMap {
         return null;
     }
 
-    public synchronized BlockLevelConfig get(Material type) {
-        return get(createKey(type));
-    }
-
-    public synchronized BlockLevelConfig get(Material type, byte dataValue) {
-        return get(createKey(type, dataValue));
-    }
-
-    private BlockKey createKey(Material material, byte dataValue) {
-        return new BlockKey(material, dataValue);
-    }
-
-    private BlockKey createKey(Material material) {
-        return createKey(material, (byte)0);
-    }
-
     public BlockLevelConfig getDefault() {
-        return defaultBuilder.copy().base(new BlockMatch(Material.AIR)).build();
+        return defaultBuilder.copy().base(Material.AIR).build();
     }
 
     public List<BlockLevelConfig> values() {
@@ -89,10 +65,10 @@ public class BlockLevelConfigMap {
         }
 
         @Override
-        public void visit(BlockMatch node) {
-            Set<BlockLevelConfig> searchSet = searchMap.getOrDefault(node.getType(), new HashSet<>());
+        public void visit(Material node) {
+            Set<BlockLevelConfig> searchSet = searchMap.getOrDefault(node, new HashSet<>());
             searchSet.add(config);
-            searchMap.put(node.getType(), searchSet);
+            searchMap.put(node, searchSet);
         }
     }
 }

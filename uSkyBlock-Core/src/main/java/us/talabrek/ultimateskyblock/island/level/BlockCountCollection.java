@@ -14,23 +14,19 @@ import java.util.stream.Collectors;
  */
 public class BlockCountCollection {
     private BlockLevelConfigMap configMap;
-    private Map<BlockMatch, LongAdder> countMap;
+    private Map<Material, LongAdder> countMap;
 
     public BlockCountCollection(BlockLevelConfigMap configMap) {
         this.configMap = configMap;
         countMap = new ConcurrentHashMap<>();
     }
 
-    public int add(Material type, byte dataValue, int blockCount) {
-        BlockLevelConfig blockLevelConfig = configMap.get(type, dataValue);
-        BlockMatch key = blockLevelConfig.getKey();
+    public int add(Material type) {
+        BlockLevelConfig blockLevelConfig = configMap.get(type);
+        Material key = blockLevelConfig.getKey();
         LongAdder count = countMap.computeIfAbsent(key, k -> new LongAdder());
-        count.add(blockCount);
+        count.add(1);
         return count.intValue();
-    }
-
-    public int add(Material type, byte dataValue) {
-        return add(type, dataValue, 1);
     }
 
     public List<BlockScore> calculateScore(double pointsPerLevel) {

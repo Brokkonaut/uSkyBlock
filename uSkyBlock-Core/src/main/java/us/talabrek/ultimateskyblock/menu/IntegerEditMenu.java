@@ -127,7 +127,7 @@ public class IntegerEditMenu extends AbstractConfigMenu implements EditMenu {
         int value = config.getInt(path, 0);
         Inventory menu = Bukkit.createInventory(new UltimateHolder(null, getTitle()), 6 * 9, getTitle());
         menu.setMaxStackSize(MenuItemFactory.MAX_INT_VALUE);
-        ItemStack frame = createItem(Material.BLACK_STAINED_GLASS_PANE, 0, null, null);
+        ItemStack frame = createItem(Material.BLACK_STAINED_GLASS_PANE, null, null);
         for (int i = 0; i < 27; i++) {
             menu.setItem(i, frame);
         }
@@ -147,7 +147,7 @@ public class IntegerEditMenu extends AbstractConfigMenu implements EditMenu {
             col--;
         } while (nvalue != 0 && col > 0);
         if (value < 0) {
-            menu.setItem(getIndex(1, col), createItem(Material.RED_CARPET, 0, factory.INT + value, null));
+            menu.setItem(getIndex(1, col), createItem(Material.RED_CARPET, factory.INT + value, null));
         }
         ItemStack valueItem = factory.createIntegerItem(value, path, config, false);
         List<String> lore = valueItem.getItemMeta().getLore();

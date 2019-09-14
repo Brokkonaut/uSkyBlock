@@ -3,6 +3,8 @@ package us.talabrek.ultimateskyblock.event;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
@@ -144,14 +146,14 @@ public class PlayerEvents implements Listener {
         if (!protectLava || !plugin.getWorldManager().isSkyWorld(event.getPlayer().getWorld())) {
             return; // Skip
         }
-        if (isLavaSource(event.getBlockReplacedState().getType(), event.getBlockReplacedState().getRawData())) {
+        if (isLavaSource(event.getBlockReplacedState().getBlockData())) {
             plugin.notifyPlayer(event.getPlayer(), tr("\u00a74It''s a bad idea to replace your lava!"));
             event.setCancelled(true);
         }
     }
 
-    private boolean isLavaSource(Material type, byte data) {
-        return (type == Material.LAVA) && data == 0;
+    private boolean isLavaSource(BlockData data) {
+        return (data.getMaterial() == Material.LAVA) && data instanceof Levelled && ((Levelled) data).getLevel() == 0;
     }
 
     @EventHandler
@@ -159,7 +161,7 @@ public class PlayerEvents implements Listener {
         if (!plugin.getWorldManager().isSkyWorld(event.getBlock().getWorld())) {
             return;
         }
-        if (isLavaSource(event.getBlock().getType(), event.getBlock().getData())) {
+        if (isLavaSource(event.getBlock().getBlockData())) {
             if (event.getTo() != Material.LAVA) {
                 event.setCancelled(true);
                 // TODO: R4zorax - 21-07-2018: missing datavalue (might convert stuff - exploit)
@@ -287,7 +289,7 @@ public class PlayerEvents implements Listener {
         if (!plugin.getWorldManager().isSkyWorld(event.getPlayer().getWorld())) {
             return;
         }
-        if (event.getBlock().getType() != Material.OAK_LEAVES || (event.getBlock().getData() & 0x3) != 0) {
+        if (event.getBlock().getType() != Material.OAK_LEAVES) {
             return;
         }
         // Ok, a player broke an OAK LEAF in the Skyworld
