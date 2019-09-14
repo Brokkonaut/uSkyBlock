@@ -14,8 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import us.talabrek.ultimateskyblock.Settings;
 import us.talabrek.ultimateskyblock.api.event.island.IslandBanPlayerEvent;
+import us.talabrek.ultimateskyblock.api.event.island.IslandLockEvent;
 import us.talabrek.ultimateskyblock.api.event.island.IslandTrustPlayerEvent;
 import us.talabrek.ultimateskyblock.api.event.island.IslandUnbanPlayerEvent;
+import us.talabrek.ultimateskyblock.api.event.island.IslandUnlockEvent;
 import us.talabrek.ultimateskyblock.api.event.island.IslandUntrustPlayerEvent;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.player.Perk;
@@ -58,17 +60,17 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     private static File directory = new File(".");
 
     private final uSkyBlock plugin;
-    private final File file;
-    private final FileConfiguration config;
+    private File file;
+    private FileConfiguration config;
     private final String name;
     private boolean dirty = false;
     private boolean toBeDeleted = false;
 
-    public IslandInfo(@NotNull String islandName) {
+    public IslandInfo(@NotNull String islandName, @NotNull uSkyBlock plugin) {
         Validate.notNull(islandName, "IslandName cannot be null");
         Validate.notEmpty(islandName, "IslandName cannot be empty");
 
-        plugin = uSkyBlock.getInstance();
+        this.plugin = plugin;
         config = new YamlConfiguration();
         file = new File(directory, islandName + ".yml");
         name = islandName;
@@ -106,7 +108,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         if (currentVersion < 1) {
             // add ban-info to the individual player-configs.
             for (String banned : config.getStringList("banned.list")) {
-                banPlayerInfo(uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(banned));
+                banPlayerInfo(plugin.getPlayerDB().getUUIDFromName(banned));
             }
             config.set("version", 1);
         }
@@ -140,7 +142,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         Validate.notNull(leader, "Leader cannot be null");
         Validate.notEmpty(leader, "Leader cannot be empty");
 
-        UUID uuid = uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(leader);
+        UUID uuid = plugin.getPlayerDB().getUUIDFromName(leader);
         String uuidString = UUIDUtil.asString(uuid);
         config.set("party.leader", leader);
         config.set("party.leader-uuid", uuidString);
@@ -154,10 +156,10 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         section.set("canBanOthers", true);
         config.set("party.currentSize", getMembers().size());
 
-        Player onlinePlayer = uSkyBlock.getInstance().getPlayerDB().getPlayer(uuid);
+        Player onlinePlayer = plugin.getPlayerDB().getPlayer(uuid);
         // The only time the onlinePlayer will be null is if it is being converted from another skyblock plugin.
         if (onlinePlayer != null && onlinePlayer.isOnline()) {
-            updatePermissionPerks(onlinePlayer, uSkyBlock.getInstance().getPerkLogic().getPerk(onlinePlayer));
+            updatePermissionPerks(onlinePlayer, plugin.getPerkLogic().getPerk(onlinePlayer));
         }
         save();
     }
@@ -167,7 +169,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
 
         playerInfo.setJoinParty(getIslandLocation());
         setupPartyMember(playerInfo);
-        uSkyBlock.getInstance().getEventLogic().fireMemberJoinedEvent(this, playerInfo);
+        plugin.getEventLogic().fireMemberJoinedEvent(this, playerInfo);
     }
 
     public void setupPartyMember(@NotNull final PlayerInfo member) {
@@ -189,7 +191,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         Player onlinePlayer = member.getPlayer();
         // The only time the onlinePlayer will be null is if it is being converted from another skyblock plugin.
         if (onlinePlayer != null && onlinePlayer.isOnline()) {
-            updatePermissionPerks(onlinePlayer, uSkyBlock.getInstance().getPerkLogic().getPerk(onlinePlayer));
+            updatePermissionPerks(onlinePlayer, plugin.getPerkLogic().getPerk(onlinePlayer));
         }
         WorldGuardHandler.updateRegion(this);
         save();
@@ -283,31 +285,31 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     @Override
     public int getMaxPartySize() {
         return getMaxPartyIntValue("maxPartySizePermission",
-                uSkyBlock.getInstance().getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getMaxPartySize());
+                plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getMaxPartySize());
     }
 
     @Override
     public int getMaxAnimals() {
         return getMaxPartyIntValue("maxAnimals",
-                uSkyBlock.getInstance().getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getAnimals());
+                plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getAnimals());
     }
 
     @Override
     public int getMaxMonsters() {
         return getMaxPartyIntValue("maxMonsters",
-                uSkyBlock.getInstance().getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getMonsters());
+                plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getMonsters());
     }
 
     @Override
     public int getMaxVillagers() {
         return getMaxPartyIntValue("maxVillagers",
-                uSkyBlock.getInstance().getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getVillagers());
+                plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getVillagers());
     }
 
     @Override
     public int getMaxGolems() {
         return getMaxPartyIntValue("maxGolems",
-                uSkyBlock.getInstance().getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getGolems());
+                plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getGolems());
     }
 
     @Override
@@ -365,7 +367,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     public UUID getLeaderUniqueId() {
         String uuidStr = config.getString("party.leader-uuid", null);
         if (uuidStr == null) {
-            UUID uuid = uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(getLeader());
+            UUID uuid = plugin.getPlayerDB().getUUIDFromName(getLeader());
             if (uuid != null) {
                 uuidStr = uuid.toString();
                 config.set("party.leader-uuid", uuidStr);
@@ -380,11 +382,16 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     }
 
     public boolean hasPerm(String playerName, String perm) {
-        return hasPerm(uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(playerName), perm);
+        return hasPerm(plugin.getPlayerDB().getUUIDFromName(playerName), perm);
     }
 
     private boolean hasPerm(UUID uuid, String perm) {
         return uuid.equals(getLeaderUniqueId()) || config.getBoolean("party.members." + UUIDUtil.asString(uuid) + "." + perm);
+    }
+
+    @Override
+    public String getBiome() {
+        return config.getString("general.biome", "OCEAN").toUpperCase();
     }
 
     public void setBiome(@NotNull String biome) {
@@ -414,7 +421,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         Validate.notNull(perm, "Perm cannot be null");
         Validate.notEmpty(perm, "Perm cannot be empty");
 
-        String uuidString = UUIDUtil.asString(uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(playername));
+        String uuidString = UUIDUtil.asString(plugin.getPlayerDB().getUUIDFromName(playername));
         ConfigurationSection memberSection = config.getConfigurationSection("party.members." + uuidString);
         try {
             if (memberSection == null) {
@@ -443,7 +450,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
             for (String uuid : memberSection.getKeys(false)) {
                 UUID id = UUIDUtil.fromString(uuid);
                 if (id != null) {
-                    String nm = uSkyBlock.getInstance().getPlayerDB().getName(id);
+                    String nm = plugin.getPlayerDB().getName(id);
                     if (nm != null) {
                         members.add(nm);
                     } else {
@@ -487,11 +494,6 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         return getMemberUUIDs().contains(target.getUniqueId());
     }
 
-    @Override
-    public String getBiome() {
-        return config.getString("general.biome", "OCEAN").toUpperCase();
-    }
-
     public void log(@NotNull String message, @Nullable Object[] args) {
         Validate.notNull(message, "Message cannot be null");
         Validate.notEmpty(message, "Message cannot be empty");
@@ -506,7 +508,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
             }
         }
         log.add(0, sb.toString());
-        int logSize = uSkyBlock.getInstance().getConfig().getInt("options.island.log-size", 10);
+        int logSize = plugin.getConfig().getInt("options.island.log-size", 10);
         if (log.size() > logSize) {
             log = log.subList(0, logSize);
         }
@@ -531,7 +533,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     }
 
     public boolean isLeader(String playerName) {
-        return getLeaderUniqueId().equals(uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(playerName));
+        return getLeaderUniqueId().equals(plugin.getPlayerDB().getUUIDFromName(playerName));
     }
 
     public boolean hasWarp() {
@@ -552,8 +554,19 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         save();
     }
 
-    public void lock(@NotNull Player player) {
+    /**
+     * Locks the island. Might get cancelled via the fired {@link IslandLockEvent}.
+     * @param player {@link Player} initializing the lock.
+     * @return True if the island was locked, false otherwise, e.g. when the event is cancelled.
+     */
+    public boolean lock(@NotNull Player player) {
         Validate.notNull(player, "Player cannot be null");
+
+        IslandLockEvent event = new IslandLockEvent(this, player);
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
 
         WorldGuardHandler.islandLock(player, name);
         config.set("general.locked", true);
@@ -564,15 +577,28 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
             sendMessageToIslandGroup(true, marktr("\u00a7b{0}\u00a7d deactivated the island warp."), player.getName());
         }
         save();
+        return true;
     }
 
-    public void unlock(@NotNull Player player) {
+    /**
+     * Unlocks the island. Might get cancelled via the fired {@link IslandUnlockEvent}.
+     * @param player {@link Player} initializing the unlock.
+     * @return True if the island was unlocked, false otherwise, e.g. when the event is cancelled.
+     */
+    public boolean unlock(@NotNull Player player) {
         Validate.notNull(player, "Player cannot be null");
+
+        IslandUnlockEvent event = new IslandUnlockEvent(this, player);
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
 
         WorldGuardHandler.islandUnlock(player, name);
         config.set("general.locked", false);
         sendMessageToIslandGroup(true, marktr("\u00a7b{0}\u00a7d unlocked the island."), player.getName());
         save();
+        return true;
     }
 
     public void sendMessageToIslandGroup(boolean broadcast, @NotNull String message, @Nullable Object... args) {
@@ -581,7 +607,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
 
         if (broadcast) {
             for (UUID uuid : getMemberUUIDs()) {
-                Player player = uSkyBlock.getInstance().getPlayerDB().getPlayer(uuid);
+                Player player = plugin.getPlayerDB().getPlayer(uuid);
                 if (player != null && player.isOnline()) {
                     player.sendMessage(tr("\u00a7cSKY \u00a7f> \u00a77 {0}", tr(message, args)));
                 }
@@ -606,7 +632,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     }
 
     public boolean isBanned(String name) {
-        return isBanned(uSkyBlock.getInstance().getPlayerDB().getUUIDFromName(name));
+        return isBanned(plugin.getPlayerDB().getUUIDFromName(name));
     }
 
     public boolean isBanned(UUID uuid) {
@@ -701,7 +727,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     private void unbanPlayerInfo(@NotNull UUID uuid) {
         Validate.notNull(uuid, "Uuid cannot be null");
 
-        PlayerInfo playerInfo = uSkyBlock.getInstance().getPlayerLogic().getPlayerInfo(uuid);
+        PlayerInfo playerInfo = plugin.getPlayerLogic().getPlayerInfo(uuid);
         if (playerInfo != null) {
             playerInfo.unbanFromIsland(name);
         }
@@ -715,7 +741,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         for (String uuid : uuidList) {
             UUID id = UUIDUtil.fromString(uuid);
             if (id != null) {
-                String name = uSkyBlock.getInstance().getPlayerDB().getName(id);
+                String name = plugin.getPlayerDB().getName(id);
                 nameList.add(name);
             } else {
                 log.info("Island " + name + " has invalid ban-value " + uuid);
@@ -732,7 +758,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         for (String uuid : uuidList) {
             UUID id = UUIDUtil.fromString(uuid);
             if (id != null) {
-                nameList.add(uSkyBlock.getInstance().getPlayerDB().getName(id));
+                nameList.add(plugin.getPlayerDB().getName(id));
             } else {
                 log.info("Island " + name + " has invalid trustee-value " + uuid);
             }
@@ -771,7 +797,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         }
 
         IslandTrustPlayerEvent event = new IslandTrustPlayerEvent(this, target, initializer);
-        uSkyBlock.getInstance().getServer().getPluginManager().callEvent(event);
+        plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
         }
@@ -781,7 +807,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
             trustees.add(target.getUniqueId().toString());
             config.set("trust.list", trustees);
         }
-        PlayerInfo playerInfo = uSkyBlock.getInstance().getPlayerInfo(target.getUniqueId());
+        PlayerInfo playerInfo = plugin.getPlayerInfo(target.getUniqueId());
         if (playerInfo != null) {
             playerInfo.removeTrust(this.name);
         }
@@ -805,7 +831,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         }
 
         IslandUntrustPlayerEvent event = new IslandUntrustPlayerEvent(this, target, initializer);
-        uSkyBlock.getInstance().getServer().getPluginManager().callEvent(event);
+        plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
         }
@@ -813,7 +839,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         List<String> trustees = config.getStringList("trust.list");
         trustees.remove(target.getUniqueId().toString());
         config.set("trust.list", trustees);
-        PlayerInfo playerInfo = uSkyBlock.getInstance().getPlayerInfo(target.getUniqueId());
+        PlayerInfo playerInfo = plugin.getPlayerInfo(target.getUniqueId());
         if (playerInfo != null) {
             playerInfo.removeTrust(this.name);
         }
@@ -839,7 +865,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
 
         sendMessageToIslandGroup(true, marktr("\u00a7b{0}\u00a7d has been removed from the island group."), member.getPlayerName());
         WorldGuardHandler.updateRegion(this);
-        uSkyBlock.getInstance().getEventLogic().fireMemberLeftEvent(this, member);
+        plugin.getEventLogic().fireMemberLeftEvent(this, member);
         save();
     }
 
@@ -977,7 +1003,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
                 if (uuid != null) {
                     UUID id = UUIDUtil.fromString(uuid);
                     if (id != null) {
-                        Player onlinePlayer = uSkyBlock.getInstance().getPlayerDB().getPlayer(id);
+                        Player onlinePlayer = plugin.getPlayerDB().getPlayer(id);
                         if (onlinePlayer != null) {
                             return true;
                         }
@@ -997,7 +1023,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
                 if (uuid != null) {
                     UUID id = UUIDUtil.fromString(uuid);
                     if (id != null) {
-                        Player onlinePlayer = uSkyBlock.getInstance().getPlayerDB().getPlayer(id);
+                        Player onlinePlayer = plugin.getPlayerDB().getPlayer(id);
                         if (onlinePlayer != null) {
                             players.add(onlinePlayer);
                         }
@@ -1083,5 +1109,21 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     public void setHopperCount(int i) {
         config.set("blocks.hopperCount", i);
         save();
+    }
+
+    /**
+     * If you need to inject a custom {@link File} for e.g. unit tests, do it here.
+     * @param file Custom File
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    /**
+     * If you need to inject a custom {@link FileConfiguration} for e.g. unit tests, do it here.
+     * @param config Custom FileConfiguration
+     */
+    public void setConfig(FileConfiguration config) {
+        this.config = config;
     }
 }

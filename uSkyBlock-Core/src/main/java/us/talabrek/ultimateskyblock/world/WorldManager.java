@@ -89,6 +89,10 @@ public class WorldManager {
     private void setupWorld(@NotNull World world, int islandHeight) {
         Validate.notNull(world, "World cannot be null");
 
+        if (!plugin.getConfig().getBoolean("options.advanced.manageSpawn")) {
+            return;
+        }
+
         if (LocationUtil.isEmptyLocation(world.getSpawnLocation())) {
             world.setSpawnLocation(0, islandHeight, 0);
         }
