@@ -235,8 +235,8 @@ public class Challenge {
         for (String line : lines.subList(1, lines.size())) {
             lores.add(line);
         }
-        if (withCurrency) {
-            lores.add(tr("\u00a76Currency Reward: \u00a7a{0}", reward.getCurrencyReward()));
+        if (withCurrency && VaultHandler.hasEcon()) {
+            lores.add(tr("\u00a76Currency Reward: \u00a7a{0}", reward.getCurrencyReward() + " " + (reward.getCurrencyReward() == 1 ? VaultHandler.getEcon().currencyNameSingular() : VaultHandler.getEcon().currencyNamePlural())));
         }
         lores.add(tr("\u00a76Exp Reward: \u00a7a{0}", reward.getXpReward()));
         lores.add(tr("\u00a7dTotal times completed: \u00a7f{0}", completion.getTimesCompleted()));
