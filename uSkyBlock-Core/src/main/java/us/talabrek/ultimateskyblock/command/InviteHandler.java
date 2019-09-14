@@ -66,7 +66,11 @@ public class InviteHandler implements Listener {
         otherPlayer.sendMessage(new String[]{
                 tr("{0}\u00a7e has invited you to join their island!", player.getDisplayName()),
                 tr("\u00a7f/island [accept/reject]\u00a7e to accept or reject the invite."),
-                tr("\u00a74WARNING: You will lose your current island if you accept!")
+                "",
+                "",
+                tr("\u00a74WARNING: You will lose your current island if you accept!"),
+                "",
+                ""
         });
         long timeout = TimeUtil.secondsAsMillis(plugin.getConfig().getInt("options.party.invite-timeout", 30));
         BukkitTask timeoutTask = plugin.async(new Runnable() {
