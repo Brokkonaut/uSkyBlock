@@ -31,7 +31,11 @@ public enum ActionBarHandler {;
 
     private static void sendFallback(Player player, String message) {
         if (player != null) {
-            player.sendMessage(message);
+            try {
+                player.sendActionBar(message);
+            } catch (Throwable e) {
+                player.sendMessage(message);
+            }
         }
     }
 }
