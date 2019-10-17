@@ -1,5 +1,6 @@
 package us.talabrek.ultimateskyblock.event;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -312,6 +313,10 @@ public class PlayerEvents implements Listener {
 
         IslandInfo islandInfo = plugin.getIslandInfo(event.getBlock().getLocation());
         if (islandInfo == null) {
+            if (plugin.getBlockLimitLogic().getLimit(event.getBlock().getType()) < Integer.MAX_VALUE && player.getGameMode() != GameMode.CREATIVE) {
+                event.setCancelled(true);
+                player.sendMessage(tr("\u00a74You cannot place this block outside of your island."));
+            }
             return;
         }
         Material type = event.getBlock().getType();
