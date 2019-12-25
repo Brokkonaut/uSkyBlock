@@ -148,8 +148,8 @@ public class SkyBlockMenu {
                     tr("The snowy tundra biome.\nMobs will spawn naturally.\nincluding polar-bears")
             ),
             new BiomeMenuItem(new ItemStack(Material.TROPICAL_FISH, 1),
-                    "lukewarm_ocean", tr("Lukewarm Ocean"),
-                    tr("The lukewarm ocean biome.\nPassive mobs like animals will\nnot spawn, but tropical fish,\npufferfish and cod will spawn here.\nHostile mobs will spawn normally.")
+                    "warm_ocean", tr("Warm Ocean"),
+                    tr("The warm ocean biome.\nPassive mobs like animals will\nnot spawn, but tropical fish,\npufferfish and cod will spawn here.\nHostile mobs will spawn normally.")
             )
     );
 
