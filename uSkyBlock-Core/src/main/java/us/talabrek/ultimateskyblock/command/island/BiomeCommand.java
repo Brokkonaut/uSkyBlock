@@ -98,10 +98,12 @@ public class BiomeCommand extends RequireIslandCommand {
             if (args.length == 2 && args[1].matches("[0-9]+")) {
                 int radius = Integer.parseInt(args[1], 10);
                 Location loc = location.clone().add(-radius, 0, -radius);
+                loc.setY(Math.max(loc.getY() - radius, 0));
                 if (region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
                     minP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                 }
                 loc = location.clone().add(radius, 0, radius);
+                loc.setY(Math.min(loc.getY() + radius, loc.getWorld().getMaxHeight()));
                 if (region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
                     maxP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                 }

@@ -63,6 +63,8 @@ public class SetBiomeTask extends IncrementalRunnable {
             int cz = chunk.getBlockZ() << 4;
             int mx = cx + 15;
             int mz = cz + 15;
+            int miny = minP.getBlockY();
+            int maxy = maxP.getBlockY();
             if (cx < minP.getBlockX()) {
                 cx = minP.getBlockX();
             }
@@ -77,7 +79,9 @@ public class SetBiomeTask extends IncrementalRunnable {
             }
             for (int x = cx; x <= mx; x++) {
                 for (int z = cz; z <= mz; z++) {
-                    world.setBiome(x, z, biome);
+                    for (int y = miny; y <= maxy; y++) {
+                        world.setBiome(x, y, z, biome);
+                    }
                 }
             }
             world.refreshChunk(chunk.getBlockX(), chunk.getBlockZ());
