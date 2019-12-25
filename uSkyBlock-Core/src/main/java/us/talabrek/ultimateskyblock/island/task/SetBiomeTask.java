@@ -63,8 +63,8 @@ public class SetBiomeTask extends IncrementalRunnable {
             int cz = chunk.getBlockZ() << 4;
             int mx = cx + 15;
             int mz = cz + 15;
-            int miny = minP.getBlockY();
-            int maxy = maxP.getBlockY();
+            int miny = 0; // minP.getBlockY();
+            int maxy = 255; // maxP.getBlockY();
             if (cx < minP.getBlockX()) {
                 cx = minP.getBlockX();
             }
