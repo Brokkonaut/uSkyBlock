@@ -24,6 +24,7 @@ import us.talabrek.ultimateskyblock.command.admin.OrphanCommand;
 import us.talabrek.ultimateskyblock.command.admin.PerkCommand;
 import us.talabrek.ultimateskyblock.command.admin.ProtectAllCommand;
 import us.talabrek.ultimateskyblock.command.admin.PurgeCommand;
+import us.talabrek.ultimateskyblock.command.admin.RecalculateAllCommand;
 import us.talabrek.ultimateskyblock.command.admin.RegionCommand;
 import us.talabrek.ultimateskyblock.command.admin.ReloadCommand;
 import us.talabrek.ultimateskyblock.command.admin.SetMaintenanceCommand;
@@ -65,6 +66,7 @@ public class AdminCommand extends BaseCommandExecutor {
         add(new OrphanCommand(plugin));
         add(new AdminIslandCommand(plugin, confirmHandler));
         add(new PurgeCommand(plugin));
+        add(new RecalculateAllCommand(plugin));
         add(new GotoIslandCommand(plugin));
         add(new AbstractPlayerInfoCommand("info", "usb.admin.info", marktr("show player-information")) {
             @Override
