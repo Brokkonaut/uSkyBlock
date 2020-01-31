@@ -2177,7 +2177,7 @@ msgid ""
 "allowing them to turn it\n"
 "on or off at anytime, but\n"
 "not set the location."
-msgstr "den Insel-Warp aktivieren und\n
+msgstr "den Insel-Warp aktivieren und\n"
 "deaktivieren, aber die Warp-\n"
 "Position nicht ändern."
 
