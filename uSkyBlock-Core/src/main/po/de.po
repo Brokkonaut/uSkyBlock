@@ -2536,9 +2536,8 @@ msgstr "§e<Klicke, um die Rechte des Spielers zu ändern>"
 msgid "Trusted"
 msgstr "Hat Baurechte"
 
-#, java-format
-msgid "Can {0} §fbuild on the island"
-msgstr "Kann {0} §fauf der Insel bauen."
+msgid "Can §fbuild on the island"
+msgstr "Kann §fauf der Insel bauen"
 
 msgid "§e<Click to untrust this player>"
 msgstr "§e<Klicke, um die Baurechte des Spielers zu entziehen>"

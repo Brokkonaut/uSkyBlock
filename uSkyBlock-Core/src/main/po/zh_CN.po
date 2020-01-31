@@ -2375,8 +2375,7 @@ msgstr "§e<点击将更改玩家的权限>"
 msgid "Trusted"
 msgstr ""
 
-#, java-format
-msgid "Can {0} §fbuild on the island"
+msgid "Can §fbuild on the island"
 msgstr ""
 
 msgid "§e<Click to untrust this player>"
