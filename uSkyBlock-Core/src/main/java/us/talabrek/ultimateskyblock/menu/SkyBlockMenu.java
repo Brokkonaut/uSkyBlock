@@ -318,7 +318,7 @@ public class SkyBlockMenu {
         sign.setItemMeta(meta4);
         menu.addItem(new ItemStack[]{sign});
         lores.clear();
-        String currentBiome = plugin.getIslandInfo(player).getBiome();
+//        String currentBiome = plugin.getIslandInfo(player).getBiome();
         for (BiomeMenuItem biomeMenu : biomeMenus) {
             if (!BiomeCommand.biomeExists(biomeMenu.getId())) {
                 continue; // Skip it
@@ -328,11 +328,11 @@ public class SkyBlockMenu {
             if (player.hasPermission("usb.biome." + biomeMenu.getId())) {
                 meta4.setDisplayName("\u00a7a" + tr("Biome: {0}", biomeMenu.getTitle()));
                 addLore(lores, "\u00a7f", biomeMenu.getDescription());
-                if (biomeMenu.getId().equalsIgnoreCase(currentBiome)) {
-                    addLore(lores, tr("\u00a72\u00a7lThis is your current biome."));
-                } else {
-                    addLore(lores, tr("\u00a7e\u00a7lClick to change to this biome."));
-                }
+//                if (biomeMenu.getId().equalsIgnoreCase(currentBiome)) {
+//                    addLore(lores, tr("\u00a72\u00a7lThis is your current biome."));
+//                } else {
+//                    addLore(lores, tr("\u00a7e\u00a7lClick to change to this biome."));
+//                }
             } else {
                 meta4.setDisplayName("\u00a78" + tr("Biome: {0}", biomeMenu.getTitle()));
                 lores.add("\u00a7c" + tr("You cannot use this biome."));
@@ -669,7 +669,7 @@ public class SkyBlockMenu {
         menuItem = new ItemStack(Material.JUNGLE_SAPLING, 1);
         meta4 = menuItem.getItemMeta();
         meta4.setDisplayName("\u00a7a\u00a7l" + tr("Change Island Biome"));
-        lores.add(tr("\u00a7eCurrent Biome: \u00a7b{0}", islandInfo.getBiome()));
+        // lores.add(tr("\u00a7eCurrent Biome: \u00a7b{0}", islandInfo.getBiome()));
         addLore(lores, "\u00a7f", tr("The island biome affects things\nlike grass color and spawning\nof both animals and monsters."));
         if (islandInfo.hasPerm(player, "canChangeBiome")) {
             addLore(lores, tr("\u00a7e\u00a7lClick here to change biomes."));

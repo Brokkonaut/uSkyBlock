@@ -122,7 +122,7 @@ public class BiomeCommand extends RequireIslandCommand {
                 return true;
             }
             new SetBiomeTask(plugin, player.getWorld(), minP, maxP, biomeEnum, () -> {
-                if (args.length == 1) {
+                if (args.length == 1 || args[1].equalsIgnoreCase("all")) {
                     island.setBiome(biome);
                     player.sendMessage(tr("\u00a7aYou have changed your island''s biome to {0}", biome.toUpperCase()));
                     island.sendMessageToIslandGroup(true, marktr("{0} changed the island biome to {1}"), player.getName(), biome.toUpperCase());
