@@ -2427,6 +2427,10 @@ msgstr "§e<Nhấp để thay đổi quyền hạn người chơi>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2447,12 +2451,6 @@ msgstr "Phân vùng"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Vùng: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lĐang ở trung vùng"
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lNhấp để chuyển đến vùng này."
 
 msgid "You cannot use this biome."
 msgstr "Bạn không thể chuyền đến vùng này"
@@ -2619,10 +2617,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Chuyển vùng"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr "§eVùng hiện tại: §b{0}"
 
 msgid ""
 "The island biome affects things\n"

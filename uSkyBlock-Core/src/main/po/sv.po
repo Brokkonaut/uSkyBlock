@@ -2463,6 +2463,10 @@ msgstr "§e<Klicka för att ändra denna spelares rättigheter>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2485,12 +2489,6 @@ msgstr "Skyblock Biome"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Biome: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lDetta är ditt nuvarande biome."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lKlicka här för att byta till detta biome."
 
 msgid "You cannot use this biome."
 msgstr "§c§lDu får inte använda detta biome."
@@ -2662,10 +2660,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Byt Biome"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr ""
 
 msgid ""
 "The island biome affects things\n"

@@ -2458,6 +2458,10 @@ msgstr "§e<Klikni pro zmenu prav tohoto hrace>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2480,12 +2484,6 @@ msgstr "Podnebi ostrova"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Podnebi: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lToto je tve aktualni podnebi."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lKlikni pro zmenu podnebi."
 
 msgid "You cannot use this biome."
 msgstr "Nemuzes pouzit toto podnebi."
@@ -2658,10 +2656,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Zmena podnebi na ostrove"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr "§eAktualni podnebi: §b{0}"
 
 msgid ""
 "The island biome affects things\n"

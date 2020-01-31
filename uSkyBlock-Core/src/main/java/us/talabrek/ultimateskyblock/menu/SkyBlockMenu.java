@@ -271,7 +271,7 @@ public class SkyBlockMenu {
             meta3.setDisplayName(tr("\u00a7e{0}''s\u00a79 Permissions", temp));
             meta3.setOwner(temp);
             addLore(lores, "\u00a7a\u00a7l", tr("Trusted"));
-            lores.add("\u00a7a" + tr("Can {0}", "\u00a7fbuild on the island"));
+            lores.add("\u00a7a" + tr("Can {0} \u00a7fbuild on the island"));
             if (islandInfo.isLeader(player.getName())) {
                 addLore(lores, tr("\u00a7e<Click to untrust this player>"));
             }

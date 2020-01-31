@@ -2467,6 +2467,10 @@ msgstr "§e<нажмите для изменения прав игрока>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2489,12 +2493,6 @@ msgstr "Биом острова"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Биом: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lЭто ваш текущий биом."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lНажмите, чтобы изменить биом."
 
 msgid "You cannot use this biome."
 msgstr "Вы не можете использовать этот биом."
@@ -2666,10 +2664,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Изменить биом острова"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr ""
 
 msgid ""
 "The island biome affects things\n"

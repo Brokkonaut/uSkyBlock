@@ -2480,6 +2480,10 @@ msgstr "§e<Click to change this kitteh''s permissions>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2502,12 +2506,6 @@ msgstr "Island Baium"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Baium: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lThis  iz yoor current baium."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lClick to change to this baium."
 
 msgid "You cannot use this biome."
 msgstr "You cannot use this baium."
@@ -2694,10 +2692,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Change Island Baium"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr "§eCurrent Baium: §b{0}"
 
 msgid ""
 "The island biome affects things\n"
@@ -3004,6 +2998,15 @@ msgstr "West"
 
 msgid "North-West"
 msgstr "North-West"
+
+#~ msgid "§2§lThis is your current biome."
+#~ msgstr "§2§lThis  iz yoor current baium."
+
+#~ msgid "§e§lClick to change to this biome."
+#~ msgstr "§e§lClick to change to this baium."
+
+#~ msgid "§eCurrent Biome: §b{0}"
+#~ msgstr "§eCurrent Baium: §b{0}"
 
 #~ msgid ""
 #~ "The ocean biome is the basic\n"

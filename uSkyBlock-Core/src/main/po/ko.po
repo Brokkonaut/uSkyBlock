@@ -2466,6 +2466,10 @@ msgstr "§e<이 플레이어의 권한을 바꾸려면 클릭하세요>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2488,12 +2492,6 @@ msgstr "섬 생태계"
 #, java-format
 msgid "Biome: {0}"
 msgstr "생태계: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§l이것이 현재 당신의 생태계입니다."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§l이 생태계를 바꾸려면 클릭하세요."
 
 msgid "You cannot use this biome."
 msgstr "당신은 이 생태계를 쓸 수 없습니다."
@@ -2664,10 +2662,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "섬 생태계 변환"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr "§6현재 생태계: §a{0}"
 
 msgid ""
 "The island biome affects things\n"

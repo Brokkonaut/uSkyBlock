@@ -2375,6 +2375,10 @@ msgstr "§e<点击将更改玩家的权限>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2397,12 +2401,6 @@ msgstr "岛屿生物群系"
 #, java-format
 msgid "Biome: {0}"
 msgstr ""
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§l这是你当前的生物群系."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§l点击将会更改为这个生物群系."
 
 msgid "You cannot use this biome."
 msgstr ""
@@ -2550,10 +2548,6 @@ msgid ""
 msgstr ""
 
 msgid "Change Island Biome"
-msgstr ""
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
 msgstr ""
 
 msgid ""

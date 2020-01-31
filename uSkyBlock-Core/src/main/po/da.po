@@ -2469,6 +2469,10 @@ msgstr "§e<Klik for at ændre tilladelse>"
 msgid "Trusted"
 msgstr ""
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr ""
+
 msgid "§e<Click to untrust this player>"
 msgstr ""
 
@@ -2491,12 +2495,6 @@ msgstr "Øens Biome"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Biome: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lDette er din nuværende biome."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lKlik for at ændre biomen."
 
 msgid "You cannot use this biome."
 msgstr "Du kan ikke bruge denne biome."
@@ -2669,10 +2667,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Skift Øens Biome"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr "§eBiome: §b{0}"
 
 msgid ""
 "The island biome affects things\n"

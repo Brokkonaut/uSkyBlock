@@ -231,7 +231,8 @@ msgid "§eCurrency reward: §f{0,number,###.##} {1} §a ({2,number,##.##})%"
 msgstr "§eWährungsbelohnung: §f{0,number,###.##} {1} §a ({2,number,##.##})%"
 
 msgid "§eYour inventory is §4full§e. Items dropped on the ground."
-msgstr "§eDein Inventar ist §4voll§e. Einige Gegenstände sind auf den Boden gefallen!"
+msgstr ""
+"§eDein Inventar ist §4voll§e. Einige Gegenstände sind auf den Boden gefallen!"
 
 msgid "§e§lClick to complete this challenge."
 msgstr "§e§lKlicke hier um die Aufgabe zu beenden!"
@@ -286,7 +287,9 @@ msgid "§cSorry! {0}"
 msgstr "§cEntschuldigung! {0}"
 
 msgid "Either send a message directly to your group, or toggle it on/off."
-msgstr "Sende eine Nachricht an deine Gruppe oder schalte den Gruppenchat an oder aus."
+msgstr ""
+"Sende eine Nachricht an deine Gruppe oder schalte den Gruppenchat an oder "
+"aus."
 
 msgid "party"
 msgstr "Gruppe"
@@ -1086,15 +1089,14 @@ msgstr "§4Diese Aufgabe kannst du nicht wiederholen!"
 
 msgid "§4You will lose all required items when you complete this challenge!"
 msgstr ""
-"§4Du wirst alle benötigten Gegenstände abgeben, wenn du die Aufgabe "
-"beendest."
+"§4Du wirst alle benötigten Gegenstände abgeben, wenn du die Aufgabe beendest."
 
 #, java-format
 msgid ""
 "§4All required items must be placed on your island, within {0} blocks of you."
 msgstr ""
-"§4Alle benötigten Gegenstände müssen in höchstens {0} Blöcken Abstand von dir auf deiner "
-"Insel platziert sein."
+"§4Alle benötigten Gegenstände müssen in höchstens {0} Blöcken Abstand von "
+"dir auf deiner Insel platziert sein."
 
 #, java-format
 msgid "§eTo complete this challenge, use §f/c c {0}"
@@ -1602,8 +1604,8 @@ msgid ""
 "island kick <player>). See a list of players currently part of your island "
 "using /island party."
 msgstr ""
-"§eDu musst zuerst alle Spieler  von der Insel entfernen (/island kick <player>). "
-"Nutze (/island party) um zu sehen welche Spieler zu deine Insel "
+"§eDu musst zuerst alle Spieler  von der Insel entfernen (/island kick "
+"<player>). Nutze (/island party) um zu sehen welche Spieler zu deine Insel "
 "gehören."
 
 #, java-format
@@ -1643,7 +1645,8 @@ msgstr "Aktiviere/Deaktiviere das Teleportieren zu deiner Insel."
 
 msgid "§4Your island is locked. You must unlock it before enabling your warp."
 msgstr ""
-"§4Deine Insel ist gesperrt. Du musst sie entsperren, um das Teleportieren freizuschalten."
+"§4Deine Insel ist gesperrt. Du musst sie entsperren, um das Teleportieren "
+"freizuschalten."
 
 #, java-format
 msgid "§b{0}§d activated the island warp."
@@ -1673,7 +1676,8 @@ msgstr "§eDie folgenden Inselbesitzer geben dir Baurechte:"
 
 msgid "§eTo trust/untrust from your island, use /island trust <player>"
 msgstr ""
-"§eUm einen Spieler Baurechte zu geben/entziehen gib : „/island trust <player>“ ein."
+"§eUm einen Spieler Baurechte zu geben/entziehen gib : „/island trust "
+"<player>“ ein."
 
 msgid "§4Members are already trusted!"
 msgstr "§4Insel-Mitglieder haben immer Baurechte!"
@@ -1702,11 +1706,13 @@ msgid "warp to another player''s island"
 msgstr "Teleportiert dich auf die Insel eines anderen Spielers"
 
 msgid "§aYour incoming warp is active, players may warp to your island."
-msgstr "§aDein Warp ist aktiv, Spieler können sich zu Deiner Insel teleportieren."
+msgstr ""
+"§aDein Warp ist aktiv, Spieler können sich zu Deiner Insel teleportieren."
 
 msgid "§4Your incoming warp is inactive, players may not warp to your island."
 msgstr ""
-"§aDein Warp ist inaktiv, Spieler können sich nicht zu Deiner Insel teleportieren."
+"§aDein Warp ist inaktiv, Spieler können sich nicht zu Deiner Insel "
+"teleportieren."
 
 msgid "§fSet incoming warp to your current location using §e/island setwarp"
 msgstr ""
@@ -1718,7 +1724,8 @@ msgstr "§fSchalte deinen Warp ein/aus mit  §e/island togglewarp§f."
 
 msgid "§4You do not have permission to create a warp on your island!"
 msgstr ""
-"§4Du verfügst nicht über die Rechte, einen Warp auf deiner Insel zu erstellen!"
+"§4Du verfügst nicht über die Rechte, einen Warp auf deiner Insel zu "
+"erstellen!"
 
 msgid "§fWarp to another island using §e/island warp <player>"
 msgstr ""
@@ -1751,7 +1758,8 @@ msgid "§cWARNING: §9{0}§e is warping to your island!"
 msgstr "§cACHTUNG: §9{0}§e teleportiert sich zu deiner Insel!"
 
 msgid "§4That player has forbidden you from warping to their island."
-msgstr "§4Dieser Spieler hat dir verboten, sich auf seine Insel zu teleportieren."
+msgstr ""
+"§4Dieser Spieler hat dir verboten, sich auf seine Insel zu teleportieren."
 
 msgid "general island command"
 msgstr "Allgemeine Insel-Befehle"
@@ -1842,7 +1850,9 @@ msgstr ""
 msgid ""
 "§4You''ve hit the {0} limit!§e You can''t have more of that type on your "
 "island!§9 Max: {1,number}"
-msgstr "§4Du hast das {0}-Limit erreicht!§e Du kannst hiervon nicht mehr auf deiner Insel haben!§9 Max: {1,number}"
+msgstr ""
+"§4Du hast das {0}-Limit erreicht!§e Du kannst hiervon nicht mehr auf deiner "
+"Insel haben!§9 Max: {1,number}"
 
 msgid "§eYou can only use spawn-eggs on your own island."
 msgstr "§eDu kannst Spawneier nur auf deiner eigenen Insel nutzen"
@@ -1896,8 +1906,8 @@ msgstr "§d** Du hast §b{0}''s §dInsel verlassen."
 
 msgid "§eYour island is now locked. Only your party members may enter."
 msgstr ""
-"§eDeine Insel ist nun gesperrt. Nur noch Mitglieder deiner Gruppe können "
-"sie betreten."
+"§eDeine Insel ist nun gesperrt. Nur noch Mitglieder deiner Gruppe können sie "
+"betreten."
 
 msgid "§4You must be the party leader to lock your island!"
 msgstr "§4Du musst der Gruppenleiter sein, um die Insel zu entsperren!"
@@ -2162,7 +2172,8 @@ msgid ""
 "which allows non-group\n"
 "members to teleport to\n"
 "the island."
-msgstr "den Insel-Warp setzen,\n"
+msgstr ""
+"den Insel-Warp setzen,\n"
 "wodurch andere Spieler die\n"
 "Insel betreten können."
 
@@ -2177,7 +2188,8 @@ msgid ""
 "allowing them to turn it\n"
 "on or off at anytime, but\n"
 "not set the location."
-msgstr "den Insel-Warp aktivieren und\n"
+msgstr ""
+"den Insel-Warp aktivieren und\n"
 "deaktivieren, aber die Warp-\n"
 "Position nicht ändern."
 
@@ -2209,8 +2221,7 @@ msgid ""
 "but they are unable to kick\n"
 "the island leader."
 msgstr ""
-"Kicken\n"
-"Kann andere Mitglieder kicken,\n"
+"andere Mitglieder kicken,\n"
 "jedoch nicht den Inselbesitzer."
 
 msgid "Ocean"
@@ -2445,7 +2456,8 @@ msgstr "§9Spieler-Rechte"
 msgid ""
 "§eClick here to return to\n"
 "§eyour island group''s info."
-msgstr "Klicke hier, um zu der\n"
+msgstr ""
+"Klicke hier, um zu der\n"
 "Gruppenverwaltung zurückzukehren."
 
 #, java-format
@@ -2477,12 +2489,12 @@ msgid "Island Group Members"
 msgstr "Insel-Mitglieder"
 
 #, java-format
-msgid "§eGruppenmitglieder: §2{0}§7/§e{1}"
-msgstr ""
+msgid "§eGroup Members: §2{0}§7/§e{1}"
+msgstr "§eGruppenmitglieder: §2{0}§7/§e{1}"
 
 #, java-format
-msgid "§eSpieler mit Baurechten: §2{0}"
-msgstr ""
+msgid "§eTrustees: §2{0}"
+msgstr "§eSpieler mit Baurechten: §2{0}"
 
 msgid "§aMore players can be invited to this island."
 msgstr "§aWeitere Spieler können eingeladen werden."
@@ -2524,6 +2536,10 @@ msgstr "§e<Klicke, um die Rechte des Spielers zu ändern>"
 msgid "Trusted"
 msgstr "Hat Baurechte"
 
+#, java-format
+msgid "Can {0} §fbuild on the island"
+msgstr "Kann {0} §fauf der Insel bauen."
+
 msgid "§e<Click to untrust this player>"
 msgstr "§e<Klicke, um die Baurechte des Spielers zu entziehen>"
 
@@ -2546,12 +2562,6 @@ msgstr "Insel-Biome"
 #, java-format
 msgid "Biome: {0}"
 msgstr "Biom: {0}"
-
-msgid "§2§lThis is your current biome."
-msgstr "§2§lDies ist dein aktuelles Biom."
-
-msgid "§e§lClick to change to this biome."
-msgstr "§e§lKlicke hier, um zu diesem Biom zu wechseln"
 
 msgid "You cannot use this biome."
 msgstr "Du kannst dieses Biom nicht nutzen"
@@ -2651,8 +2661,8 @@ msgstr ""
 "eigene Insel zu starten? Wenn dich\n"
 "ein Spieler eingeladen hat, kannst du\n"
 "hier klicken oder §e/island accept§f\n"
-"eingeben, um der Insel beizutreten."
-"§e§lKlicke hier, um eine Einladung anzunehmen!\n"
+"eingeben, um der Insel beizutreten.§e§lKlicke hier, um eine Einladung "
+"anzunehmen!\n"
 "§e§l(Du musst zuerst eingeladen werden)"
 
 msgid "Island Menu"
@@ -2737,10 +2747,6 @@ msgstr ""
 
 msgid "Change Island Biome"
 msgstr "Ändere das Insel-Biom"
-
-#, java-format
-msgid "§eCurrent Biome: §b{0}"
-msgstr "§eDerzeitiges Biom: §b{0}"
 
 msgid ""
 "The island biome affects things\n"
