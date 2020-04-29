@@ -350,6 +350,7 @@ public class ChallengeLogic implements Listener {
         } else {
             reward = challenge.getRepeatReward();
         }
+        plugin.getServer().getPluginManager().callEvent(new ChallengeRewardEvent(playerInfo, challenge, reward, isFirstCompletion));
         float rewBonus = 1;
         if (defaults.enableEconomyPlugin && VaultHandler.hasEcon()) {
             Perk perk = plugin.getPerkLogic().getPerk(player);
