@@ -96,6 +96,7 @@ import us.talabrek.ultimateskyblock.uuid.BukkitPlayerDB;
 import us.talabrek.ultimateskyblock.uuid.FilePlayerDB;
 import us.talabrek.ultimateskyblock.uuid.MemoryPlayerDB;
 import us.talabrek.ultimateskyblock.uuid.PlayerDB;
+import us.talabrek.ultimateskyblock.uuid.PlayerUUIDCachePlayerDB;
 import us.talabrek.ultimateskyblock.world.WorldManager;
 
 import java.io.File;
@@ -806,6 +807,8 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
             playerDB = new FilePlayerDB(this);
         } else if (playerDbStorage.equalsIgnoreCase("memory")) {
             playerDB = new MemoryPlayerDB(getConfig());
+        } else if (playerDbStorage.equalsIgnoreCase("playeruuidcache") && getServer().getPluginManager().getPlugin("PlayerUUIDCache") != null) {
+            playerDB = new PlayerUUIDCachePlayerDB(getServer().getPluginManager().getPlugin("PlayerUUIDCache"));
         } else {
             playerDB = new BukkitPlayerDB();
         }

@@ -118,6 +118,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository> <!-- PlayerUUIDCache -->
+            <id>brokkonaut-repo</id>
+            <url>https://www.iani.de/nexus/content/groups/public</url>
+        </repository>
         <repository> <!-- uSkyBlock dependencies that don't have a (stable) repository -->
             <id>uskyblock-dependencies</id>
             <url>https://www.uskyblock.ovh/maven/dependencies/</url>
