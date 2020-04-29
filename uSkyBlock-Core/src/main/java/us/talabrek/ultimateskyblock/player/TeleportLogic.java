@@ -148,7 +148,7 @@ public class TeleportLogic implements Listener {
             player.sendMessage(tr("\u00a74Unable to warp you to that player''s island!"));
             return;
         }
-        player.sendMessage(tr("\u00a7aTeleporting you to {0}''s island.", playerInfo.getDisplayName()));
+        player.sendMessage(tr("\u00a7aTeleporting you to {0}''s island.", playerInfo.getPlayerName()));
         safeTeleport(player, warpLocation, force);
     }
 

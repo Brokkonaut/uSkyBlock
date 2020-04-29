@@ -1208,7 +1208,7 @@ public class SkyBlockMenu {
                 island.untrustPlayer(skullOwnerPlayer, p);
                 
                 if (skullOwnerPlayer.isOnline()) {
-                    skullOwnerPlayer.getPlayer().sendMessage(tr("\u00a7eYou are no longer trusted on \u00a74{0}''s \u00a7eisland.", playerInfo.getDisplayName()));
+                    skullOwnerPlayer.getPlayer().sendMessage(tr("\u00a7eYou are no longer trusted on \u00a74{0}''s \u00a7eisland.", playerInfo.getPlayerName()));
                 }
                 island.sendMessageToIslandGroup(true, marktr("\u00a7c{0} revoked trust in {1} on the island"), p.getName(), skullOwner);
             } else {
