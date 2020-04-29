@@ -110,7 +110,8 @@ public class TeleportLogic implements Listener {
             if (Settings.extras_sendToSpawn) {
                 plugin.execCommand(player, "op:spawn", false);
             } else {
-                PaperLib.teleportAsync(player, spawnLocation);
+                player.teleport(spawnLocation);
+                // PaperLib.teleportAsync(player, spawnLocation);
             }
         } else {
             player.sendMessage(tr("\u00a7aYou will be teleported in {0} seconds.", teleportDelay));
@@ -119,7 +120,8 @@ public class TeleportLogic implements Listener {
                 if (Settings.extras_sendToSpawn) {
                     plugin.execCommand(player, "op:spawn", false);
                 } else {
-                    PaperLib.teleportAsync(player, spawnLocation);
+                    player.teleport(spawnLocation);
+                    // PaperLib.teleportAsync(player, spawnLocation);
                 }
             }, TimeUtil.secondsAsMillis(teleportDelay));
             pendingTeleports.put(player.getUniqueId(), new PendingTeleport(player.getLocation(), tpTask));
