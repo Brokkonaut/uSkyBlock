@@ -1,6 +1,7 @@
 *.class
 .settings
 .classpath
+.project
 bin
 /dependency-reduced-pom.xml
 # Package Files #
