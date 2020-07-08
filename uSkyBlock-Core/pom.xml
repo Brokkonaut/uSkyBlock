@@ -232,9 +232,9 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>org.bukkit</groupId>
-                    <artifactId>bukkit</artifactId>
-                    <version>1.15-R0.1-SNAPSHOT</version>
+                    <groupId>com.destroystokyo.paper</groupId>
+                    <artifactId>paper-api</artifactId>
+                    <version>1.16.1-R0.1-SNAPSHOT</version>
                     <optional>true</optional>
                     <scope>compile</scope>
                 </dependency>
@@ -336,7 +336,7 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.15.1-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

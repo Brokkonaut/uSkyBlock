@@ -97,8 +97,6 @@ public class SpawnEvents implements Listener {
         // special case for some odd entity names
         if (typeName.equals("MOOSHROOM")) {
             return EntityType.MUSHROOM_COW;
-        } else if (typeName.equals("ZOMBIE_PIGMAN")) {
-            return EntityType.PIG_ZOMBIE;
         }
         try {
             return EntityType.valueOf(typeName);

@@ -20,7 +20,7 @@ public class SkyBlockNetherChunkGenerator extends ChunkGenerator {
         ChunkData chunkData = createChunkData(world);
         for (int x = 0; x <= 15; x++) {
             for (int z = 0; z <= 15; z++) {
-                biome.setBiome(x, z, Biome.NETHER);
+                biome.setBiome(x, z, Biome.NETHER_WASTES);
             }
         }
         int y = 0;
