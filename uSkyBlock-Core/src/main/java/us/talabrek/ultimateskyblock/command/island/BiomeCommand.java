@@ -1,25 +1,24 @@
 package us.talabrek.ultimateskyblock.command.island;
 
+import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
+import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
+import static us.talabrek.ultimateskyblock.util.BiomeUtil.getBiome;
+
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import us.talabrek.ultimateskyblock.Settings;
+import us.talabrek.ultimateskyblock.uSkyBlock;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.island.task.SetBiomeTask;
 import us.talabrek.ultimateskyblock.menu.SkyBlockMenu;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
-import us.talabrek.ultimateskyblock.uSkyBlock;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
-import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
-import static us.talabrek.ultimateskyblock.util.BiomeUtil.getBiome;
 
 public class BiomeCommand extends RequireIslandCommand {
     public static final Map<String, Biome> BIOMES = new HashMap<String, Biome>() {
@@ -38,6 +37,11 @@ public class BiomeCommand extends RequireIslandCommand {
             put("deep_ocean", Biome.DEEP_OCEAN);
             put("warm_ocean", Biome.WARM_OCEAN);
             put("snowy_tundra", Biome.SNOWY_TUNDRA);
+            // Update 1.16
+            put("river", Biome.RIVER);
+            put("soul_sand_valley", Biome.SOUL_SAND_VALLEY);
+            put("crimson_forest", Biome.CRIMSON_FOREST);
+            put("warped_forest", Biome.WARPED_FOREST);
             Biome b = getBiome("ICE_PLAINS");
             if (b != null) {
                 put("ice_plains", b);

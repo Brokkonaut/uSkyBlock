@@ -150,6 +150,23 @@ public class SkyBlockMenu {
             new BiomeMenuItem(new ItemStack(Material.TROPICAL_FISH, 1),
                     "warm_ocean", tr("Warm Ocean"),
                     tr("The warm ocean biome.\nPassive mobs like animals will\nnot spawn, but tropical fish,\npufferfish and cod will spawn here.\nHostile mobs will spawn normally.")
+            ),
+            //1.16 Update
+            new BiomeMenuItem(new ItemStack(Material.SALMON, 1),
+                    "river", tr("River"),
+                    tr("The river biome.\nPassive mobs like animals will\nnot spawn, but salmons will spawn here.\nHostile mobs will spawn normally.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.SOUL_SOIL, 1),
+                    "soul_sand_valley", tr("Soul Sand Valley"),
+                    tr("The soul sand valley biome.\nonly ghast, skeletons, endermans\nand strider can spawn here.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.CRIMSON_NYLIUM, 1),
+                    "crimson_forest", tr("Crimson Forest"),
+                    tr("The crimson forest biome.\nonly Zombified piglins, hoglins,\npiglins and strider can spawn here.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.WARPED_NYLIUM, 1),
+                    "warped_forest", tr("Warped Forest"),
+                    tr("The warped forest biome.\nonly endermans and strider can spawn here.")
             )
     );
 
@@ -310,7 +327,7 @@ public class SkyBlockMenu {
     public Inventory displayBiomeGUI(final Player player) {
         List<String> lores = new ArrayList<>();
         String title = "\u00a79" + tr("Island Biome");
-        Inventory menu = Bukkit.createInventory(new UltimateHolder(player, title, MenuType.DEFAULT), 27, title);
+        Inventory menu = Bukkit.createInventory(new UltimateHolder(player, title, MenuType.DEFAULT), 36, title);
         ItemMeta meta4 = sign.getItemMeta();
         meta4.setDisplayName("\u00a7h" + tr("Island Biome"));
         addLore(lores, tr("\u00a7eClick here to return to\n\u00a7ethe main island screen."));
@@ -371,7 +388,7 @@ public class SkyBlockMenu {
         lores.add(tr(tr("Current radius: {0}", radiusDisplay)));
         itemMeta.setLore(lores);
         menuItem.setItemMeta(itemMeta);
-        menu.setItem(21, menuItem);
+        menu.setItem(30, menuItem);
 
         lores.clear();
         menuItem = new ItemStack(Material.GRASS_BLOCK);
@@ -389,7 +406,7 @@ public class SkyBlockMenu {
         itemMeta.setDisplayName(tr("Current radius: {0}", radiusDisplay));
         itemMeta.setLore(lores);
         menuItem.setItemMeta(itemMeta);
-        menu.setItem(22, menuItem);
+        menu.setItem(31, menuItem);
 
         lores.clear();
         menuItem = new ItemStack(Material.GREEN_CARPET);
@@ -399,7 +416,7 @@ public class SkyBlockMenu {
         lores.add(tr(tr("Current radius: {0}", radiusDisplay)));
         itemMeta.setLore(lores);
         menuItem.setItemMeta(itemMeta);
-        menu.setItem(23, menuItem);
+        menu.setItem(32, menuItem);
     }
 
     private void addExtraMenus(Player player, Inventory menu) {
@@ -1125,7 +1142,7 @@ public class SkyBlockMenu {
             p.performCommand("island");
             return;
         }
-        if (slotIndex >= 21 && slotIndex <= 23) {
+        if (slotIndex >= 30 && slotIndex <= 32) {
             List<String> radii = Arrays.asList("10", "chunk", "20", "30", "40", "50", "60", "70", "80", "90", "100", "all");
             String radius = PlayerUtil.getMetadata(p, "biome.radius", "all");
             int ix = radii.indexOf(radius);
