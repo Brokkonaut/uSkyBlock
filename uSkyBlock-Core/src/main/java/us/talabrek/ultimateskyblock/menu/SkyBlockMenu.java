@@ -158,15 +158,15 @@ public class SkyBlockMenu {
             ),
             new BiomeMenuItem(new ItemStack(Material.SOUL_SOIL, 1),
                     "soul_sand_valley", tr("Soul Sand Valley"),
-                    tr("The soul sand valley biome.\nonly ghast, skeletons, endermans\nand strider can spawn here.")
+                    tr("The soul sand valley biome.\nonly ghast, skeletons, endermen\nand strider can spawn here.")
             ),
             new BiomeMenuItem(new ItemStack(Material.CRIMSON_NYLIUM, 1),
                     "crimson_forest", tr("Crimson Forest"),
-                    tr("The crimson forest biome.\nonly Zombified piglins, hoglins,\npiglins and strider can spawn here.")
+                    tr("The crimson forest biome.\nonly zombified piglins, hoglins,\npiglins and strider can spawn here.")
             ),
             new BiomeMenuItem(new ItemStack(Material.WARPED_NYLIUM, 1),
                     "warped_forest", tr("Warped Forest"),
-                    tr("The warped forest biome.\nonly endermans and strider can spawn here.")
+                    tr("The warped forest biome.\nonly endermen and strider can spawn here.")
             )
     );
 
