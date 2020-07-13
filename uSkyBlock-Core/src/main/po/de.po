@@ -2442,6 +2442,53 @@ msgstr ""
 "Fische, Kugelfische und Kabeljau\n"
 "spawnen. Auch Monster können spawnen."
 
+msgid "River"
+msgstr "Fluss"
+
+msgid ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+"Im Fluss können\n"
+"Lachse spawnen.\n"
+"Auch Monster können spawnen."
+
+msgid "Soul Sand Valley"
+msgstr "Seelensandtal"
+
+msgid ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+msgstr ""
+"Im Seelensandtal können\n"
+"nur Ghasts, Skelette, Endermen\n"
+"und Schreiter spawnen."
+
+msgid "Crimson Forest"
+msgstr "Karmesinwald"
+
+msgid ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+msgstr ""
+"Im Karmesinwald können\n"
+"nur zombifizierte Piglin,\n"
+"Piglins, Hoglins und Schreiter spawnen."
+
+msgid "Warped Forest"
+msgstr "Wirrwald"
+
+msgid ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
+msgstr ""
+"Im Wirrwald können nur\n"
+"Endermen und Schreiter spawnen."
+
 msgid "Permissions"
 msgstr "Rechte"
 
