@@ -22,13 +22,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 
-import java.util.logging.Logger;
-
 /**
  * Handles USB Signs
  */
 public class SignEvents implements Listener {
-    private static final Logger log = Logger.getLogger(SignEvents.class.getName());
     private final uSkyBlock plugin;
     private final SignLogic logic;
 
@@ -40,11 +37,9 @@ public class SignEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerHitSign(PlayerInteractEvent e) {
         if (e.isCancelled()
-                || e.getPlayer() == null
                 || (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.LEFT_CLICK_BLOCK)
                 || e.getClickedBlock() == null
                 || e.getClickedBlock().getType().data != WallSign.class
-                || !(e.getClickedBlock().getState() instanceof Sign)
                 || !e.getPlayer().hasPermission("usb.island.signs.use")
                 || !plugin.getWorldManager().isSkyAssociatedWorld(e.getPlayer().getWorld())
                 || !(plugin.playerIsOnOwnIsland(e.getPlayer()))
@@ -58,10 +53,9 @@ public class SignEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSignChanged(SignChangeEvent e) {
-        if (e.isCancelled() || e.getPlayer() == null
-                || !plugin.getWorldManager().isSkyAssociatedWorld(e.getPlayer().getWorld())
+        if (!plugin.getWorldManager().isSkyAssociatedWorld(e.getPlayer().getWorld())
                 || !e.getLines()[0].equalsIgnoreCase("[usb]")
                 || e.getLines()[1].trim().isEmpty()
                 || !e.getPlayer().hasPermission("usb.island.signs.place")
@@ -86,8 +80,7 @@ public class SignEvents implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryMovedEvent(InventoryMoveItemEvent e) {
-        if (e.getDestination() == null
-                || e.getDestination().getLocation() == null
+        if (e.getDestination().getLocation() == null
                 || !plugin.getWorldManager().isSkyAssociatedWorld(e.getDestination().getLocation().getWorld())) {
             return;
         }
@@ -107,9 +100,7 @@ public class SignEvents implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onChestClosed(InventoryCloseEvent e) {
-        if (e.getPlayer() == null
-                || e.getPlayer().getLocation() == null
-                || !plugin.getWorldManager().isSkyAssociatedWorld(e.getPlayer().getLocation().getWorld())
+        if (!plugin.getWorldManager().isSkyAssociatedWorld(e.getPlayer().getLocation().getWorld())
                 || e.getInventory().getType() != InventoryType.CHEST
                 ) {
             return;
@@ -120,7 +111,7 @@ public class SignEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSignOrChestBreak(BlockBreakEvent e) {
         if (e.isCancelled()
                 || e.getBlock() == null
@@ -144,23 +135,20 @@ public class SignEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockHit(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        if (e.getPlayer() == null
-                || e.getClickedBlock() == null
+        if (e.getClickedBlock() == null
                 || e.getAction() != Action.RIGHT_CLICK_BLOCK
                 || e.getPlayer().getGameMode() != GameMode.SURVIVAL
-                || !isSign(e.getClickedBlock().getType())
+                || !(e.getClickedBlock().getState() instanceof Sign)
                 || !player.hasPermission("usb.island.signs.use")
                 || !plugin.getWorldManager().isSkyAssociatedWorld(player.getWorld())) {
             return;
         }
 
-        if (e.getClickedBlock().getState() instanceof Sign) {
-            Sign sign = (Sign) e.getClickedBlock().getState();
-            String firstLine = FormatUtil.stripFormatting(sign.getLine(0)).trim();
-            if (firstLine.startsWith("/")) {
-                e.setCancelled(true);
-                player.performCommand(firstLine.substring(1));
-            }
+        Sign sign = (Sign) e.getClickedBlock().getState();
+        String firstLine = FormatUtil.stripFormatting(sign.getLine(0)).trim();
+        if (firstLine.startsWith("/")) {
+            e.setCancelled(true);
+            player.performCommand(firstLine.substring(1));
         }
     }
 }

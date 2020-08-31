@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.talabrek.ultimateskyblock.api.event.MemberJoinedEvent;
 import us.talabrek.ultimateskyblock.block.BlockCollection;
-import us.talabrek.ultimateskyblock.handler.VaultHandler;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.player.Perk;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,7 +61,7 @@ public class ChallengeLogic implements Listener {
     public final ChallengeDefaults defaults;
     public final ChallengeCompletionLogic completionLogic;
     private final ItemStack lockedItem;
-    private final Map<Challenge.Type, ItemStack> lockedItemMap = new HashMap<>();
+    private final Map<Challenge.Type, ItemStack> lockedItemMap = new EnumMap<>(Challenge.Type.class);
 
     public ChallengeLogic(FileConfiguration config, uSkyBlock plugin) {
         this.config = config;
@@ -126,7 +126,7 @@ public class ChallengeLogic implements Listener {
     }
 
     public List<Challenge> getChallengesForRank(String rank) {
-        return ranks.containsKey(rank) ? ranks.get(rank).getChallenges() : Collections.<Challenge>emptyList();
+        return ranks.containsKey(rank) ? ranks.get(rank).getChallenges() : Collections.emptyList();
     }
 
     public void completeChallenge(final Player player, String challengeName) {
@@ -214,9 +214,15 @@ public class ChallengeLogic implements Listener {
         return false;
     }
 
+    /**
+     * Try to complete a {@link Challenge} for the given {@link Player} where a minimal island level is a requirement.
+     * @param player Player to complete the challenge for.
+     * @param challenge Challenge to complete.
+     * @return True if the challenge was completed succesfully, false otherwise.
+     */
     private boolean tryCompleteIslandLevel(Player player, Challenge challenge) {
         if (plugin.getIslandInfo(player).getLevel() >= challenge.getRequiredLevel()) {
-            giveReward(player, challenge.getName());
+            giveReward(player, challenge);
             return true;
         }
         return false;
@@ -245,12 +251,19 @@ public class ChallengeLogic implements Listener {
         return true;
     }
 
+    /**
+     * Try to complete a {@link Challenge} on the island of the given {@link Player} where items or entities are
+     * required to be present on the island.
+     * @param player Player to complete the challenge for.
+     * @param challengeName Challenge to complete.
+     * @return True if the challenge was completed succesfully, false otherwise.
+     */
     private boolean tryCompleteOnIsland(Player player, String challengeName) {
         Challenge challenge = getChallenge(challengeName);
         List<ItemStack> requiredItems = challenge.getRequiredItems(0);
         int radius = challenge.getRadius();
         if (islandContains(player, requiredItems, radius) && hasEntitiesNear(player, challenge.getRequiredEntities(), radius)) {
-            giveReward(player, challengeName);
+            giveReward(player, challenge);
             return true;
         }
         return false;
@@ -258,7 +271,7 @@ public class ChallengeLogic implements Listener {
 
     private boolean hasEntitiesNear(Player player, List<EntityMatch> requiredEntities, int radius) {
         Map<EntityMatch, Integer> countMap = new LinkedHashMap<>();
-        Map<EntityType, Set<EntityMatch>> matchMap = new HashMap<>();
+        Map<EntityType, Set<EntityMatch>> matchMap = new EnumMap<>(EntityType.class);
         for (EntityMatch match : requiredEntities) {
             countMap.put(match, match.getCount());
             Set<EntityMatch> set = matchMap.get(match.getType());
@@ -306,7 +319,7 @@ public class ChallengeLogic implements Listener {
             boolean hasAll = true;
             List<ItemStack> requiredItems = challenge.getRequiredItems(completion.getTimesCompletedInCooldown());
             for (ItemStack required : requiredItems) {
-                String name = VaultHandler.getItemName(required);
+                String name = ItemStackUtil.getItemName(required);
                 if (!player.getInventory().containsAtLeast(required, required.getAmount())) {
                     sb.append(tr(" \u00a74{0} \u00a7b{1}", (required.getAmount() - getCountOf(player.getInventory(), required)), name));
                     hasAll = false;
@@ -335,10 +348,6 @@ public class ChallengeLogic implements Listener {
         return count;
     }
 
-    public boolean giveReward(final Player player, final String challengeName) {
-        return giveReward(player, getChallenge(challengeName));
-    }
-
     private boolean giveReward(Player player, Challenge challenge) {
         String challengeName = challenge.getName();
         player.sendMessage(tr("\u00a7aYou have completed the {0} challenge!", challenge.getDisplayName()));
@@ -350,14 +359,7 @@ public class ChallengeLogic implements Listener {
         } else {
             reward = challenge.getRepeatReward();
         }
-        plugin.getServer().getPluginManager().callEvent(new ChallengeRewardEvent(playerInfo, challenge, reward, isFirstCompletion));
-        float rewBonus = 1;
-        if (defaults.enableEconomyPlugin && VaultHandler.hasEcon()) {
-            Perk perk = plugin.getPerkLogic().getPerk(player);
-            rewBonus += perk.getRewBonus();
-            VaultHandler.depositPlayer(player, reward.getCurrencyReward() * rewBonus);
-        }
-        player.giveExp(reward.getXpReward());
+        plugin.getServer().getPluginManager().callEvent(new ChallengeRewardEvent(playerInfo, challenge, reward, isFirstCompletion));        player.giveExp(reward.getXpReward());
         boolean wasBroadcast = false;
         if (defaults.broadcastCompletion && isFirstCompletion) {
             Bukkit.getServer().broadcastMessage(FormatUtil.normalize(config.getString("broadcastText")) + tr("\u00a79{0}\u00a7f has completed the \u00a79{1}\u00a7f challenge!", player.getName(), challenge.getDisplayName()));
@@ -365,8 +367,19 @@ public class ChallengeLogic implements Listener {
         }
         player.sendMessage(tr("\u00a7eItem reward(s): \u00a7f{0}", reward.getRewardText()));
         player.sendMessage(tr("\u00a7eExp reward: \u00a7f{0,number,#.#}", reward.getXpReward()));
-        if (defaults.enableEconomyPlugin && VaultHandler.hasEcon()) {
-            player.sendMessage(tr("\u00a7eCurrency reward: \u00a7f{0,number,###.##} {1} \u00a7a ({2,number,##.##})%", reward.getCurrencyReward() * rewBonus, VaultHandler.getEcon().currencyNamePlural(), (rewBonus - 1.0) * 100.0));
+        if (defaults.enableEconomyPlugin) {
+            float rewBonus = 1;
+            Perk perk = plugin.getPerkLogic().getPerk(player);
+            rewBonus += perk.getRewBonus();
+            float currencyReward = reward.getCurrencyReward() * rewBonus;
+            double percentage = (rewBonus - 1.0) * 100.0;
+
+            plugin.getHookManager().getEconomyHook().ifPresent((hook) -> {
+                hook.depositPlayer(player, currencyReward);
+
+                player.sendMessage(tr("\u00a7eCurrency reward: \u00a7f{0,number,###.##} {1} \u00a7a ({2,number,##.##})%",
+                    currencyReward, hook.getCurrenyName(), percentage));
+            });
         }
         if (reward.getPermissionReward() != null) {
             List<String> perms = Arrays.asList(reward.getPermissionReward().trim().split(" "));

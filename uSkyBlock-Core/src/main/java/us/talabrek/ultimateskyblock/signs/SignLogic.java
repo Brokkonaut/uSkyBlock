@@ -204,10 +204,7 @@ public class SignLogic {
     private void updateSignFromChestSync(Location chestLoc, Location signLoc, Challenge challenge, List<ItemStack> requiredItems, boolean challengeLocked) {
         Block chestBlock = chestLoc.getBlock();
         Block signBlock = signLoc != null ? signLoc.getBlock() : null;
-        if (chestBlock != null && signBlock != null
-                && isChest(chestBlock)
-                && signBlock.getType().data == WallSign.class && signBlock.getState() instanceof Sign
-                ) {
+        if (signBlock != null && isChest(chestBlock) && signBlock.getState().getBlockData() instanceof WallSign) {
             Sign sign = (Sign) signBlock.getState();
             Chest chest = (Chest) chestBlock.getState();
             int missing = -1;

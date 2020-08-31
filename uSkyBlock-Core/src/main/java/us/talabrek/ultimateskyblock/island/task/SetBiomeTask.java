@@ -84,7 +84,10 @@ public class SetBiomeTask extends IncrementalRunnable {
                     }
                 }
             }
+
+            //noinspection deprecation
             world.refreshChunk(chunk.getBlockX(), chunk.getBlockZ());
+
             if (!tick()) {
                 return isDone();
             }

@@ -10,7 +10,6 @@ import dk.lockfuglsang.minecraft.util.TimeUtil;
 import dk.lockfuglsang.minecraft.util.VersionUtil;
 import dk.lockfuglsang.minecraft.yml.YmlConfiguration;
 import io.papermc.lib.PaperLib;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
@@ -60,9 +59,9 @@ import us.talabrek.ultimateskyblock.event.WorldGuardEvents;
 import us.talabrek.ultimateskyblock.handler.AsyncWorldEditHandler;
 import us.talabrek.ultimateskyblock.handler.ConfirmHandler;
 import us.talabrek.ultimateskyblock.handler.CooldownHandler;
-import us.talabrek.ultimateskyblock.handler.VaultHandler;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.handler.placeholder.PlaceholderHandler;
+import us.talabrek.ultimateskyblock.hook.HookManager;
 import us.talabrek.ultimateskyblock.imports.USBImporterExecutor;
 import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
 import us.talabrek.ultimateskyblock.island.IslandGenerator;
@@ -102,6 +101,7 @@ import us.talabrek.ultimateskyblock.world.WorldManager;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -110,7 +110,6 @@ import java.util.regex.Pattern;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.pre;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
-import static us.talabrek.ultimateskyblock.util.LocationUtil.isSafeLocation;
 import static us.talabrek.ultimateskyblock.util.LogUtil.log;
 
 public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManager.RequirementChecker {
@@ -119,7 +118,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
             new String[]{"Vault", "1.7.0", "optional"},
             new String[]{"WorldEdit", "7.0", "optionalIf", "FastAsyncWorldEdit"},
             new String[]{"WorldGuard", "7.0"},
-            new String[]{"FastAsyncWorldEdit", "1.13", "optional"},
+            new String[]{"FastAsyncWorldEdit", "1.16.1", "optional"},
             new String[]{"Multiverse-Core", "2.5", "optional"},
             new String[]{"Multiverse-Portals", "2.5", "optional"},
             new String[]{"Multiverse-NetherPortals", "2.5", "optional"},
@@ -139,6 +138,8 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
     private LimitLogic limitLogic;
 
     /* MANAGERS */
+    private HookManager hookManager;
+    private MetricsManager metricsManager;
     private WorldManager worldManager;
 
     private IslandGenerator islandGenerator;
@@ -164,7 +165,6 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
 
     private volatile boolean maintenanceMode = false;
     private BlockLimitLogic blockLimitLogic;
-    private Metrics metrics;
 
     public uSkyBlock() {
     }
@@ -216,12 +216,9 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
                 if (!isRequirementsMet(Bukkit.getConsoleSender(), null)) {
                     return;
                 }
-                if (VaultHandler.setupEconomy()) {
-                    log(Level.INFO, "Hooked into Vault Economy");
-                }
-                if (VaultHandler.setupPermissions()) {
-                    log(Level.INFO, "Hooked into Vault Permissions");
-                }
+                uSkyBlock.this.getHookManager().setupMultiverse();
+                uSkyBlock.this.getHookManager().setupEconomyHook();
+                uSkyBlock.this.getHookManager().setupPermissionsHook();
                 AsyncWorldEditHandler.onEnable(uSkyBlock.this);
                 WorldGuardHandler.setupGlobal(getWorldManager().getWorld());
                 if (getWorldManager().getNetherWorld() != null) {
@@ -232,6 +229,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
                     Bukkit.getConsoleSender().sendMessage(tr("Converting data to UUID, this make take a while!"));
                     getImporter().importUSB(Bukkit.getConsoleSender(), "name2uuid");
                 }
+                getServer().dispatchCommand(getServer().getConsoleSender(), "usb flush"); // See uskyblock#4
                 log(Level.INFO, getVersionInfo(false));
                 getServer().getScheduler().runTaskAsynchronously(uSkyBlock.this, new Runnable() {
                     @Override
@@ -242,14 +240,8 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
                 });
             }
         }, getConfig().getLong("init.initDelay", 50L));
-        try {
-            metrics = new Metrics(this);
-            metrics.addCustomChart(new Metrics.SimplePie("language", () -> getConfig().getString("language", "en")));
-            metrics.addCustomChart(new Metrics.SimplePie("radius_and_distance", () -> String.format("(%d,%d)", Settings.island_radius, Settings.island_distance)));
-        } catch (Exception e) {
-            log(Level.WARNING, "Failed to submit metrics data", e);
-        }
 
+        metricsManager = new MetricsManager(this);
         PaperLib.suggestPaper(this);
     }
 
@@ -458,8 +450,8 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         if (getConfig().getBoolean("options.restart.clearEnderChest", true)) {
             player.getEnderChest().clear();
         }
-        if (getConfig().getBoolean("options.restart.clearCurrency", false) && VaultHandler.hasEcon()) {
-            VaultHandler.getEcon().withdrawPlayer(player, VaultHandler.getEcon().getBalance(player));
+        if (getConfig().getBoolean("options.restart.clearCurrency", false)) {
+            getHookManager().getEconomyHook().ifPresent((hook) -> hook.withdrawPlayer(player, hook.getBalance(player)));
         }
         getLogger().exiting(CN, "clearPlayerInventory");
     }
@@ -512,26 +504,6 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         } else {
             resetIsland.run();
         }
-        return true;
-    }
-
-    public boolean homeSet(final Player player) {
-        if (!player.getWorld().getName().equalsIgnoreCase(getWorldManager().getWorld().getName())) {
-            player.sendMessage(tr("\u00a74You must be closer to your island to set your skyblock home!"));
-            return true;
-        }
-        if (playerIsOnOwnIsland(player)) {
-            PlayerInfo playerInfo = playerLogic.getPlayerInfo(player);
-            if (playerInfo != null && isSafeLocation(player.getLocation())) {
-                playerInfo.setHomeLocation(player.getLocation());
-                playerInfo.save();
-                player.sendMessage(tr("\u00a7aYour skyblock home has been set to your current location."));
-            } else {
-                player.sendMessage(tr("\u00a74Your current location is not a safe home-location."));
-            }
-            return true;
-        }
-        player.sendMessage(tr("\u00a74You must be closer to your island to set your skyblock home!"));
         return true;
     }
 
@@ -640,27 +612,6 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         new SetBiomeTask(this, loc, biome, null).runTask(this);
     }
 
-    public void changePlayerBiome(Player player, final String bName, final Callback<Boolean> callback) {
-        callback.setState(false);
-        if (bName.equalsIgnoreCase("ocean") || player.hasPermission("usb.biome." + bName)) {
-            PlayerInfo playerInfo = getPlayerInfo(player);
-            final IslandInfo islandInfo = islandLogic.getIslandInfo(playerInfo);
-            if (islandInfo.hasPerm(player, "canChangeBiome")) {
-                player.sendMessage(tr("\u00a77The pixies are busy changing the biome of your island to \u00a79{0}\u00a77, be patient.", bName));
-                new SetBiomeTask(this, playerInfo.getIslandLocation(), getBiome(bName), new Runnable() {
-                    @Override
-                    public void run() {
-                        islandInfo.setBiome(bName);
-                        callback.setState(true);
-                        callback.run();
-                    }
-                }).runTask(this);
-                return;
-            }
-        }
-        callback.run();
-    }
-
     public void createIsland(final Player player, String cSchem) {
         PlayerInfo pi = getPlayerInfo(player);
         if (pi.isIslandGenerating()) {
@@ -701,17 +652,15 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         islandLogic.clearIsland(next, createTask);
     }
 
-    public Location getChestSpawnLoc(final Location loc) {
-        Location chestLocation = LocationUtil.findChestLocation(loc);
-        return LocationUtil.findNearestSpawnLocation(chestLocation != null ? chestLocation : loc);
-    }
-
     public IslandInfo setNewPlayerIsland(final PlayerInfo playerInfo, final Location loc) {
         playerInfo.startNewIsland(loc);
 
-        Location chestSpawnLocation = getChestSpawnLoc(loc);
-        if (chestSpawnLocation != null) {
-            playerInfo.setHomeLocation(chestSpawnLocation);
+        Location chestLocation = LocationUtil.findChestLocation(loc);
+        Optional<Location> chestSpawnLocation = LocationUtil.findNearestSpawnLocation(
+            chestLocation != null ? chestLocation : loc);
+
+        if (chestSpawnLocation.isPresent()) {
+            playerInfo.setHomeLocation(chestSpawnLocation.get());
         } else {
             log(Level.SEVERE, "Could not find a safe chest within 15 blocks of the island spawn. Bad schematic!");
         }
@@ -783,6 +732,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
     private void reloadConfigs() {
         createFolders();
         HandlerList.unregisterAll(this);
+        hookManager = new HookManager(this);
         if (challengeLogic != null) {
             challengeLogic.shutdown();
         }
@@ -793,8 +743,6 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
             islandLogic.shutdown();
         }
         PlaceholderHandler.unregister(this);
-        VaultHandler.setupEconomy();
-        VaultHandler.setupPermissions();
         if (Settings.loadPluginConfig(getConfig())) {
             saveConfig();
         }
@@ -1124,6 +1072,10 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
 
     public IslandGenerator getIslandGenerator() {
         return islandGenerator;
+    }
+
+    public HookManager getHookManager() {
+        return hookManager;
     }
 
     public WorldManager getWorldManager() {

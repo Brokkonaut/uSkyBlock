@@ -1,6 +1,7 @@
 package us.talabrek.ultimateskyblock.util;
 
 import dk.lockfuglsang.minecraft.po.I18nUtil;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -9,12 +10,13 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 import us.talabrek.ultimateskyblock.Settings;
 import us.talabrek.ultimateskyblock.api.async.Callback;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +46,7 @@ public enum LocationUtil {
             return null;
         }
         String s = "";
-        if (loc.getWorld() != null && loc.getWorld().getName() != null) {
+        if (loc.getWorld() != null) {
             s += loc.getWorld().getName() + ":";
         }
         s += String.format(Locale.ENGLISH, "%.2f,%.2f,%.2f", loc.getX(), loc.getY(), loc.getZ());
@@ -155,24 +157,9 @@ public enum LocationUtil {
         return null;
     }
 
-    /**
-     * Finds the nearest block to loc that is a chest.
-     *
-     * @param loc The location to scan for a chest.
-     * @return The location of the chest
-     */
-    public static void findChestLocationAsync(final JavaPlugin plugin, final Location loc, final Callback<Location> callback) {
-        ChunkUtil.Chunks snapshots;
-        if (loc.getBlockX() % 16 == 0 && loc.getBlockZ() % 16 == 0) {
-            // chunk aligned
-            snapshots = ChunkUtil.getSnapshots4x4(loc);
-        } else {
-            snapshots = ChunkUtil.getSnapshots(loc, 1);
-        }
-        new ScanChest(loc, callback, snapshots).runTaskAsynchronously(plugin);
-    }
+    public static Optional<Location> findNearestSpawnLocation(@NotNull Location loc) {
+        Validate.notNull(loc.getWorld(), "World in the given Location cannot be null.");
 
-    public static Location findNearestSpawnLocation(Location loc) {
         tempLoadChunkAt(loc);
         World world = loc.getWorld();
         int px = loc.getBlockX();
@@ -182,7 +169,7 @@ public enum LocationUtil {
         if (chestBlock.getType() == Material.CHEST) {
             BlockFace primaryDirection = null;
             // Start by checking in front of the chest.
-            BlockData data = chestBlock.getState().getBlockData();
+            BlockData data = chestBlock.getBlockData();
             if (data instanceof org.bukkit.block.data.type.Chest) {
                 primaryDirection = ((org.bukkit.block.data.type.Chest) data).getFacing();
             }
@@ -200,7 +187,7 @@ public enum LocationUtil {
                 px += 1; // start one block in the east dir
             }
         }
-        return findNearestSafeLocation(new Location(loc.getWorld(), px, py, pz), loc);
+        return Optional.ofNullable(findNearestSafeLocation(new Location(loc.getWorld(), px, py, pz), loc));
     }
 
     public static Location findNearestSafeLocation(Location loc, Location lookAt) {

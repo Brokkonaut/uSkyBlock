@@ -1,5 +1,6 @@
 package us.talabrek.ultimateskyblock.event;
 
+import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,7 +31,6 @@ import us.talabrek.ultimateskyblock.Settings;
 import us.talabrek.ultimateskyblock.api.async.Callback;
 import us.talabrek.ultimateskyblock.api.event.IslandInfoEvent;
 import us.talabrek.ultimateskyblock.api.model.IslandScore;
-import us.talabrek.ultimateskyblock.handler.VaultHandler;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
@@ -49,6 +49,7 @@ import java.util.WeakHashMap;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
+@SuppressWarnings("unused")
 public class PlayerEvents implements Listener {
     private static final Set<EntityDamageEvent.DamageCause> FIRE_TRAP = new HashSet<>(
             Arrays.asList(EntityDamageEvent.DamageCause.LAVA, EntityDamageEvent.DamageCause.FIRE, EntityDamageEvent.DamageCause.FIRE_TICK));
@@ -145,7 +146,7 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void onLavaReplace(BlockPlaceEvent event) {
         if (!protectLava || !plugin.getWorldManager().isSkyWorld(event.getPlayer().getWorld())) {
-            return; // Skip
+            return;
         }
         if (isLavaSource(event.getBlockReplacedState().getBlockData())) {
             plugin.notifyPlayer(event.getPlayer(), tr("\u00a74It''s a bad idea to replace your lava!"));
@@ -153,8 +154,12 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    private boolean isLavaSource(BlockData data) {
-        return (data.getMaterial() == Material.LAVA) && data instanceof Levelled && ((Levelled) data).getLevel() == 0;
+    private boolean isLavaSource(BlockData blockData) {
+        if (blockData.getMaterial() == Material.LAVA) {
+            Levelled level = (Levelled) blockData;
+            return level.getLevel() == 0;
+        }
+        return false;
     }
 
     @EventHandler
@@ -285,6 +290,12 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    /**
+     * This EventHandler handles {@link BlockBreakEvent} to detect if a player broke OAK_LEAVES in the skyworld,
+     * and will drop an OAK_SAPLING if so. This will prevent cases where the default generated oak tree on a new
+     * island drops no saplings.
+     * @param event BlockBreakEvent to handle.
+     */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeafBreak(BlockBreakEvent event) {
         if (!plugin.getWorldManager().isSkyWorld(event.getPlayer().getWorld())) {
@@ -293,19 +304,17 @@ public class PlayerEvents implements Listener {
         if (event.getBlock().getType() != Material.OAK_LEAVES) {
             return;
         }
-        // Ok, a player broke an OAK LEAF in the Skyworld
+
         String islandName = WorldGuardHandler.getIslandNameAt(event.getPlayer().getLocation());
         IslandInfo islandInfo = plugin.getIslandInfo(islandName);
         if (islandInfo != null && islandInfo.getLeafBreaks() == 0) {
-            // Add an oak-sapling
             event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.OAK_SAPLING, 1));
             islandInfo.setLeafBreaks(islandInfo.getLeafBreaks() + 1);
         }
     }
     
     @EventHandler(ignoreCancelled = true)
-    public void onBlockPlaceEvent(BlockPlaceEvent event)
-    {
+    public void onBlockPlaceEvent(BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         if (!blockLimitsEnabled || !plugin.getWorldManager().isSkyAssociatedWorld(player.getWorld())) {
             return; // Skip
@@ -326,7 +335,7 @@ public class PlayerEvents implements Listener {
             final String key = "usb.block-limits";
             if (!PatienceTester.isRunning(player, key)) {
                 PatienceTester.startRunning(player, key);
-                player.sendMessage(tr("\u00a74{0} is limited. \u00a7eScanning your island to see if you are allowed to place more, please be patient", VaultHandler.getItemName(new ItemStack(type))));
+                player.sendMessage(tr("\u00a74{0} is limited. \u00a7eScanning your island to see if you are allowed to place more, please be patient", ItemStackUtil.getItemName(new ItemStack(type))));
                 plugin.fireAsyncEvent(new IslandInfoEvent(player, islandInfo.getIslandLocation(), new Callback<IslandScore>() {
                     @Override
                     public void run() {
@@ -339,7 +348,7 @@ public class PlayerEvents implements Listener {
         }
         if (canPlace == BlockLimitLogic.CanPlace.NO) {
             event.setCancelled(true);
-            player.sendMessage(tr("\u00a74You''ve hit the {0} limit!\u00a7e You can''t have more of that type on your island!\u00a79 Max: {1,number}", VaultHandler.getItemName(new ItemStack(type)), plugin.getBlockLimitLogic().getLimit(type)));
+            player.sendMessage(tr("\u00a74You''ve hit the {0} limit!\u00a7e You can''t have more of that type on your island!\u00a79 Max: {1,number}", ItemStackUtil.getItemName(new ItemStack(type)), plugin.getBlockLimitLogic().getLimit(type)));
             return;
         }
         plugin.getBlockLimitLogic().incBlockCount(islandInfo.getIslandLocation(), type);
