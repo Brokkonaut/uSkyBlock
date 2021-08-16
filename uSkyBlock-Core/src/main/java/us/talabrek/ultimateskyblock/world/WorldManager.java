@@ -12,6 +12,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Zombie;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.generator.ChunkGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,6 +75,7 @@ public class WorldManager {
                 Arrays.stream(chunk.getEntities())
                         .filter(entity -> entity instanceof Monster)
                         .filter(entity -> entity.getCustomName() == null)
+                        .filter(entity -> !(entity instanceof ZombieVillager)  || !((ZombieVillager)entity).isConverting()) // do not remove zombie villagers that have started converting to a villager
                         .forEach(Entity::remove);
             }
         }
