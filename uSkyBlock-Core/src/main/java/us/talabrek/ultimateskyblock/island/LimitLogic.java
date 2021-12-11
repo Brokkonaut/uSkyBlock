@@ -6,9 +6,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Golem;
+import org.bukkit.entity.Guardian;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Slime;
@@ -27,13 +29,14 @@ import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
 public class LimitLogic {
-    public enum CreatureType { UNKNOWN, ANIMAL, MONSTER, VILLAGER, GOLEM }
+    public enum CreatureType { UNKNOWN, ANIMAL, MONSTER, VILLAGER, GOLEM, WATERANIMAL }
     static {
         marktr("UNKNOWN");
         marktr("ANIMAL");
         marktr("MONSTER");
         marktr("VILLAGER");
         marktr("GOLEM");
+        marktr("WATERANIMAL");
     }
 
     private final uSkyBlock plugin;
@@ -77,8 +80,11 @@ public class LimitLogic {
     }
 
     public CreatureType getCreatureType(LivingEntity creature) {
-        if (creature instanceof Monster
-                || creature instanceof WaterMob
+        if (creature instanceof WaterMob
+                || creature instanceof Guardian
+                || creature instanceof Axolotl) {
+            return CreatureType.WATERANIMAL;
+        } else if (creature instanceof Monster
                 || creature instanceof Slime
                 || creature instanceof Ghast) {
             return CreatureType.MONSTER;
@@ -93,8 +99,12 @@ public class LimitLogic {
     }
 
     public CreatureType getCreatureType(EntityType entityType) {
-        if (Monster.class.isAssignableFrom(entityType.getEntityClass())
-                || WaterMob.class.isAssignableFrom(entityType.getEntityClass())
+        if (WaterMob.class.isAssignableFrom(entityType.getEntityClass())
+                || Axolotl.class.isAssignableFrom(entityType.getEntityClass())
+                || Guardian.class.isAssignableFrom(entityType.getEntityClass())
+                ) {
+            return CreatureType.WATERANIMAL;
+        } else if (Monster.class.isAssignableFrom(entityType.getEntityClass())
                 || Slime.class.isAssignableFrom(entityType.getEntityClass())
                 || Ghast.class.isAssignableFrom(entityType.getEntityClass())
                 ) {

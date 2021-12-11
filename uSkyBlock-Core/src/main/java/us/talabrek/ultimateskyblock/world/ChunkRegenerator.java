@@ -79,7 +79,7 @@ public class ChunkRegenerator {
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
+                for (int y = chunk.getWorld().getMinHeight(); y < chunk.getWorld().getMaxHeight(); y++) {
                     chunk.getBlock(x, y, z).setBlockData(chunkData.getBlockData(x, y, z));
                     chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
                 }

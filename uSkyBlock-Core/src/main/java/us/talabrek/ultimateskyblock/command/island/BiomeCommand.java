@@ -33,10 +33,10 @@ public class BiomeCommand extends RequireIslandCommand {
             put("desert", Biome.DESERT);
             put("forest", Biome.FOREST);
             put("plains", Biome.PLAINS);
-            put("extreme_hills", Biome.DARK_FOREST_HILLS);
+            put("extreme_hills", Biome.DARK_FOREST);
             put("deep_ocean", Biome.DEEP_OCEAN);
             put("warm_ocean", Biome.WARM_OCEAN);
-            put("snowy_tundra", Biome.SNOWY_TUNDRA);
+            put("snowy_tundra", Biome.SNOWY_TAIGA);
             // Update 1.16
             put("river", Biome.RIVER);
             put("soul_sand_valley", Biome.SOUL_SAND_VALLEY);
@@ -102,7 +102,7 @@ public class BiomeCommand extends RequireIslandCommand {
             if (args.length == 2 && args[1].matches("[0-9]+")) {
                 int radius = Integer.parseInt(args[1], 10);
                 Location loc = location.clone().add(-radius, 0, -radius);
-                loc.setY(Math.max(loc.getY() - radius, 0));
+                loc.setY(Math.max(loc.getY() - radius, loc.getWorld().getMinHeight()));
                 if (region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
                     minP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                 }
@@ -114,7 +114,7 @@ public class BiomeCommand extends RequireIslandCommand {
                 player.sendMessage(tr("\u00a77The pixies are busy changing the biome near you to \u00a79{0}\u00a77, be patient.", biome));
             } else if (args.length == 2 && args[1].equalsIgnoreCase("chunk")) {
                 Chunk chunk = location.clone().getChunk();
-                minP = BlockVector3.at(chunk.getX() << 4, 0, chunk.getZ() << 4);
+                minP = BlockVector3.at(chunk.getX() << 4, location.getWorld().getMinHeight(), chunk.getZ() << 4);
                 maxP = BlockVector3.at((chunk.getX() << 4) + 15, location.getWorld().getMaxHeight(), (chunk.getZ() << 4) + 15);
                 player.sendMessage(tr("\u00a77The pixies are busy changing the biome in your current chunk to \u00a79{0}\u00a77, be patient.", biome));
             } else if (args.length < 2 || args[1].equalsIgnoreCase("all")) {
