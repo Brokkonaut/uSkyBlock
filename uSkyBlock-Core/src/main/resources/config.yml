@@ -76,6 +76,7 @@ options:
       monsters: 50
       villagers: 16
       golems: 5
+      wateranimals: 30
     block-limits:
       enabled: true
       hopper: 50

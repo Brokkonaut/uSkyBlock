@@ -484,10 +484,6 @@ msgstr ""
 msgid "successfully regenerated chunk at {0},{1}"
 msgstr ""
 
-#, java-format
-msgid "§4FAILED!§e could not regenerate chunk at {0},{1}"
-msgstr ""
-
 msgid "unload current chunk"
 msgstr ""
 
@@ -750,6 +746,9 @@ msgstr "NBT stuff 고급 정보"
 msgid "shows the NBTTag for the currently held item"
 msgstr "현재 들고있는 아이템에 대한 NBTTag 확인"
 
+msgid "§cNo item in hand!"
+msgstr "§c손에 아이템이 없습니다!"
+
 #, java-format
 msgid "§eInfo for §9{0}"
 msgstr "§9{0} §e정보"
@@ -761,9 +760,6 @@ msgstr "§7 - 이름: §9{0}"
 #, java-format
 msgid "§7 - nbttag: §9{0}"
 msgstr "§7 - nbttag: §9{0}"
-
-msgid "§cNo item in hand!"
-msgstr "§c손에 아이템이 없습니다!"
 
 msgid "§eCan only be executed as a player"
 msgstr "§e오직 플레이어에게만 유효합니다."
@@ -1595,6 +1591,15 @@ msgstr "§eNOTE: 당신의 모든 섬과 소유물들이 리셋 될 것입니다
 msgid "set the island-home"
 msgstr "island-home을 지정하세요"
 
+msgid "§4You must be closer to your island to set your skyblock home!"
+msgstr "§4당신의 skyblock 집에 지정하려면 당신의 섬에 더 가까워야 합니다!"
+
+msgid "§4Your current location is not a safe home-location."
+msgstr "§4당신의 현재 지점은 안전한 집 위치가 아닙니다"
+
+msgid "§aYour skyblock home has been set to your current location."
+msgstr "§a당신의 skyblock집이 당신의 현재 지점에 지정되었습니다."
+
 msgid "set your island''s warp location"
 msgstr "당신의 섬의 워프 지점을 지정하세요"
 
@@ -2012,6 +2017,9 @@ msgstr "섬원"
 msgid "GOLEM"
 msgstr "골렘"
 
+msgid "WATERANIMAL"
+msgstr ""
+
 #, java-format
 msgid "§c{0}"
 msgstr "§c{0}"
@@ -2376,6 +2384,42 @@ msgid ""
 "not spawn, but tropical fish,\n"
 "pufferfish and cod will spawn here.\n"
 "Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "River"
+msgstr ""
+
+msgid ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Soul Sand Valley"
+msgstr ""
+
+msgid ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+msgstr ""
+
+msgid "Crimson Forest"
+msgstr ""
+
+msgid ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+msgstr ""
+
+msgid "Warped Forest"
+msgstr ""
+
+msgid ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
 msgstr ""
 
 msgid "Permissions"
@@ -2920,15 +2964,6 @@ msgstr "§buSkyBlock§e depends on §9{0}§e >= §av{1}"
 
 msgid "§4Player is already assigned to this island!"
 msgstr "§4플레이어는 이미 이 섬에 배정되었습니다!"
-
-msgid "§4You must be closer to your island to set your skyblock home!"
-msgstr "§4당신의 skyblock 집에 지정하려면 당신의 섬에 더 가까워야 합니다!"
-
-msgid "§aYour skyblock home has been set to your current location."
-msgstr "§a당신의 skyblock집이 당신의 현재 지점에 지정되었습니다."
-
-msgid "§4Your current location is not a safe home-location."
-msgstr "§4당신의 현재 지점은 안전한 집 위치가 아닙니다"
 
 msgid "§cYour island is in the process of generating, you cannot create now."
 msgstr "§c당신의 섬은 생성과정 중에 있습니다, 당신은 지금 만들 수 없습니다."

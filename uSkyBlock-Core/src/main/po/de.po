@@ -495,10 +495,6 @@ msgstr ""
 msgid "successfully regenerated chunk at {0},{1}"
 msgstr ""
 
-#, java-format
-msgid "§4FAILED!§e could not regenerate chunk at {0},{1}"
-msgstr ""
-
 msgid "unload current chunk"
 msgstr ""
 
@@ -762,6 +758,9 @@ msgstr "Genauere Infos über NBT Tags"
 msgid "shows the NBTTag for the currently held item"
 msgstr "zeigt den NBT Tag für das Item in der Hand"
 
+msgid "§cNo item in hand!"
+msgstr "§cKein Item in der Hand!"
+
 #, java-format
 msgid "§eInfo for §9{0}"
 msgstr "§eInfo für §9{0}"
@@ -773,9 +772,6 @@ msgstr "§7 - Name: §9{0}"
 #, java-format
 msgid "§7 - nbttag: §9{0}"
 msgstr "§7 - NBT Tag: §9{0}"
-
-msgid "§cNo item in hand!"
-msgstr "§cKein Item in der Hand!"
 
 msgid "§eCan only be executed as a player"
 msgstr "§eKann nur als Spieler ausgeführt werden"
@@ -1624,6 +1620,17 @@ msgstr ""
 msgid "set the island-home"
 msgstr "Setze dein Home"
 
+msgid "§4You must be closer to your island to set your skyblock home!"
+msgstr ""
+"§4Du musst dich näher an deiner Insel befinden, um dein SkyBlock-Home zu "
+"setzen!"
+
+msgid "§4Your current location is not a safe home-location."
+msgstr "§4Deine jetztige Home-Position ist nicht sicher"
+
+msgid "§aYour skyblock home has been set to your current location."
+msgstr "§aDein SkyBlock-Home wurde an deine aktuelle Position gesetzt."
+
 msgid "set your island''s warp location"
 msgstr "Setze deinen Insel-Warppunkt."
 
@@ -2054,6 +2061,9 @@ msgstr "Dorfbewohner"
 
 msgid "GOLEM"
 msgstr "Golems"
+
+msgid "WATERANIMAL"
+msgstr "Meereslebewesen"
 
 #, java-format
 msgid "§c{0}"
@@ -3060,17 +3070,6 @@ msgstr "§buSkyBlock§e braucht §9{0}§e >= §av{1}"
 
 msgid "§4Player is already assigned to this island!"
 msgstr "§4Dieser Spieler gehört bereits zu deiner Insel!"
-
-msgid "§4You must be closer to your island to set your skyblock home!"
-msgstr ""
-"§4Du musst dich näher an deiner Insel befinden, um dein SkyBlock-Home zu "
-"setzen!"
-
-msgid "§aYour skyblock home has been set to your current location."
-msgstr "§aDein SkyBlock-Home wurde an deine aktuelle Position gesetzt."
-
-msgid "§4Your current location is not a safe home-location."
-msgstr "§4Deine jetztige Home-Position ist nicht sicher"
 
 msgid "§cYour island is in the process of generating, you cannot create now."
 msgstr "§cDeine Insel wird gerade generiert. Du kannst keine neue erstellen"

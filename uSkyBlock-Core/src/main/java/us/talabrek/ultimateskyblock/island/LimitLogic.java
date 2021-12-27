@@ -135,6 +135,7 @@ public class LimitLogic {
             case MONSTER: return islandInfo.getMaxMonsters();
             case VILLAGER: return islandInfo.getMaxVillagers();
             case GOLEM: return islandInfo.getMaxGolems();
+            case WATERANIMAL: return islandInfo.getMaxWaterAnimals();
         }
         return Integer.MAX_VALUE;
     }

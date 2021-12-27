@@ -4,27 +4,34 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.WorldInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import us.talabrek.ultimateskyblock.Settings;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class SkyBlockNetherChunkGenerator extends ChunkGenerator {
-    private static final List<BlockPopulator> emptyBlockPopulatorList = new ArrayList<BlockPopulator>();
+    private static final List<Biome> NETHER_WASTES = Collections.singletonList(Biome.NETHER_WASTES);
+    private static final BiomeProvider NETHER_WASTES_PROVIDER = new BiomeProvider() {
+        @Override
+        public @NotNull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
+            return NETHER_WASTES;
+        }
+
+        @Override
+        public @NotNull Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
+            return Biome.NETHER_WASTES;
+        }
+    };
 
     @Override
-    public ChunkData generateChunkData(World world, Random random, int cx, int cz, BiomeGrid biome) {
-        ChunkData chunkData = createChunkData(world);
-        for (int x = 0; x <= 15; x++) {
-            for (int z = 0; z <= 15; z++) {
-                for (int y = 0; y < world.getMaxHeight(); y++) {
-                    biome.setBiome(x, y, z, Biome.NETHER_WASTES);
-                }
-            }
-        }
+    public void generateSurface(@NotNull WorldInfo worldInfo, @NotNull Random random, int cx, int cz, @NotNull ChunkData chunkData) {
         int y = 0;
         // Solid floor
         for (int x = 0; x < 16; x++) {
@@ -84,16 +91,20 @@ public class SkyBlockNetherChunkGenerator extends ChunkGenerator {
                 chunkData.setBlock(x, y, z, Material.BEDROCK);
             }
         }
-        return chunkData;
+    }
+
+    @Override
+    public @Nullable BiomeProvider getDefaultBiomeProvider(@NotNull WorldInfo worldInfo) {
+        return NETHER_WASTES_PROVIDER;
     }
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        return emptyBlockPopulatorList;
+        return Collections.emptyList();
     }
 
     @Override
     public Location getFixedSpawnLocation(World world, Random random) {
-        return  new Location(world, 0,  Settings.nether_height, 0);
+        return new Location(world, 0.5d, Settings.island_height, 0.5d);
     }
 }

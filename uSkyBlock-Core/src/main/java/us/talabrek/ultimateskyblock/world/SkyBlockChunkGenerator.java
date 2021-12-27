@@ -11,13 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import us.talabrek.ultimateskyblock.Settings;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class SkyBlockChunkGenerator extends ChunkGenerator {
-    private static final List<BlockPopulator> emptyBlockPopulatorList = new ArrayList<>();
     private static final List<Biome> OCEAN = Collections.singletonList(Biome.OCEAN);
     private static final BiomeProvider OCEAN_PROVIDER = new BiomeProvider() {
         @Override
@@ -36,7 +34,6 @@ public class SkyBlockChunkGenerator extends ChunkGenerator {
         // left empty
     }
     
-    
     @Override
     public @Nullable BiomeProvider getDefaultBiomeProvider(@NotNull WorldInfo worldInfo) {
         return OCEAN_PROVIDER;
@@ -44,7 +41,7 @@ public class SkyBlockChunkGenerator extends ChunkGenerator {
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
-        return emptyBlockPopulatorList;
+        return Collections.emptyList();
     }
 
     @Override

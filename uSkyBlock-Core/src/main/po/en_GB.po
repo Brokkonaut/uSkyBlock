@@ -488,10 +488,6 @@ msgstr ""
 msgid "successfully regenerated chunk at {0},{1}"
 msgstr ""
 
-#, java-format
-msgid "§4FAILED!§e could not regenerate chunk at {0},{1}"
-msgstr ""
-
 msgid "unload current chunk"
 msgstr ""
 
@@ -752,6 +748,9 @@ msgstr "§7advanced info about NBT stuff"
 msgid "shows the NBTTag for the currently held item"
 msgstr "§7shows the NBTTag for the currently held item"
 
+msgid "§cNo item in hand!"
+msgstr "§4* §7No item in hand!"
+
 #, java-format
 msgid "§eInfo for §9{0}"
 msgstr "§e* §7Info for §9{0}"
@@ -763,9 +762,6 @@ msgstr "§7 - name: §9{0}"
 #, java-format
 msgid "§7 - nbttag: §9{0}"
 msgstr "§7 - nbttag: §9{0}"
-
-msgid "§cNo item in hand!"
-msgstr "§4* §7No item in hand!"
 
 msgid "§eCan only be executed as a player"
 msgstr "§4* §7Can only be executed as a player"
@@ -1602,6 +1598,15 @@ msgstr "§4NOTE: §7Your entire island and all your belongings will be §4RESET!
 msgid "set the island-home"
 msgstr "set the island-home"
 
+msgid "§4You must be closer to your island to set your skyblock home!"
+msgstr "§4* §7You must be closer to your island to set your skyblock home!"
+
+msgid "§4Your current location is not a safe home-location."
+msgstr "§4* §7Your current location is not a safe home-location."
+
+msgid "§aYour skyblock home has been set to your current location."
+msgstr "§9* §7Your skyblock home has been set to your current location."
+
 msgid "set your island''s warp location"
 msgstr "set your island''s warp location"
 
@@ -2025,6 +2030,9 @@ msgstr "VILLAGER"
 msgid "GOLEM"
 msgstr "GOLEM"
 
+msgid "WATERANIMAL"
+msgstr "WATERANIMAL"
+
 #, java-format
 msgid "§c{0}"
 msgstr "§c{0}"
@@ -2384,18 +2392,26 @@ msgid ""
 "(including Guardians) will\n"
 "spawn normally."
 msgstr ""
+"The deep-ocean biome.\n"
+"Passive mobs like animals will\n"
+"not spawn. Hostile mobs \n"
+"(including Guardians) will\n"
+"spawn normally."
 
 msgid "Snowy Tundra"
-msgstr ""
+msgstr "Snowy Tundra"
 
 msgid ""
 "The snowy tundra biome.\n"
 "Mobs will spawn naturally.\n"
 "including polar-bears"
 msgstr ""
+"The snowy tundra biome.\n"
+"Mobs will spawn naturally.\n"
+"including polar-bears"
 
 msgid "Warm Ocean"
-msgstr ""
+msgstr "Warm Ocean"
 
 msgid ""
 "The warm ocean biome.\n"
@@ -2404,6 +2420,59 @@ msgid ""
 "pufferfish and cod will spawn here.\n"
 "Hostile mobs will spawn normally."
 msgstr ""
+"The warm ocean biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but tropical fish,\n"
+"pufferfish and cod will spawn here.\n"
+"Hostile mobs will spawn normally."
+
+msgid "River"
+msgstr "River"
+
+msgid ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+
+msgid "Soul Sand Valley"
+msgstr "Soul Sand Valley"
+
+msgid ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+msgstr ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+
+msgid "Crimson Forest"
+msgstr "Crimson Forest"
+
+msgid ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+msgstr ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+
+msgid "Warped Forest"
+msgstr "Warped Forest"
+
+msgid ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
+msgstr ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
 
 msgid "Permissions"
 msgstr "Permissions"
@@ -2970,15 +3039,6 @@ msgstr "§buSkyBlock§e depends on §9{0}§e >= §av{1}"
 
 msgid "§4Player is already assigned to this island!"
 msgstr "§4* §7Player is already assigned to this island!"
-
-msgid "§4You must be closer to your island to set your skyblock home!"
-msgstr "§4* §7You must be closer to your island to set your skyblock home!"
-
-msgid "§aYour skyblock home has been set to your current location."
-msgstr "§9* §7Your skyblock home has been set to your current location."
-
-msgid "§4Your current location is not a safe home-location."
-msgstr "§4* §7Your current location is not a safe home-location."
 
 msgid "§cYour island is in the process of generating, you cannot create now."
 msgstr ""

@@ -493,10 +493,6 @@ msgstr ""
 msgid "successfully regenerated chunk at {0},{1}"
 msgstr ""
 
-#, java-format
-msgid "§4FAILED!§e could not regenerate chunk at {0},{1}"
-msgstr ""
-
 msgid "unload current chunk"
 msgstr ""
 
@@ -758,6 +754,9 @@ msgstr "§9* §7info avanzate sull''NBT"
 msgid "shows the NBTTag for the currently held item"
 msgstr "§9* §7mostra i Tag NBT per l''oggetto corrente in mano"
 
+msgid "§cNo item in hand!"
+msgstr "§4* §7Nessun oggetto in mano!"
+
 #, java-format
 msgid "§eInfo for §9{0}"
 msgstr "§e* §7Info per §9{0}"
@@ -769,9 +768,6 @@ msgstr "§7 - nome: §9{0}"
 #, java-format
 msgid "§7 - nbttag: §9{0}"
 msgstr "§7 - tag nbt: §9{0}"
-
-msgid "§cNo item in hand!"
-msgstr "§4* §7Nessun oggetto in mano!"
 
 msgid "§eCan only be executed as a player"
 msgstr "§4* §7Può essere eseguito solo come giocatore"
@@ -1622,6 +1618,16 @@ msgstr "§4NOTA: §7La tua intera isola e tutti gli effetti saranno §4RESETTATI
 msgid "set the island-home"
 msgstr "imposta la casa dell''isola"
 
+msgid "§4You must be closer to your island to set your skyblock home!"
+msgstr ""
+"§4* §7Devi essere più vicino alla tua isola per impostare la casa skyblock!"
+
+msgid "§4Your current location is not a safe home-location."
+msgstr "§4* §7La tua posizione attuale non è sicura."
+
+msgid "§aYour skyblock home has been set to your current location."
+msgstr "§9* §7La tua casa skyblock è stata impostata alla tua posizione."
+
 msgid "set your island''s warp location"
 msgstr "imposta la posizione del warp della tua isola"
 
@@ -2055,6 +2061,9 @@ msgstr "VILLICO"
 msgid "GOLEM"
 msgstr "GOLEM"
 
+msgid "WATERANIMAL"
+msgstr ""
+
 #, java-format
 msgid "§c{0}"
 msgstr "§c{0}"
@@ -2436,6 +2445,42 @@ msgid ""
 "not spawn, but tropical fish,\n"
 "pufferfish and cod will spawn here.\n"
 "Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "River"
+msgstr ""
+
+msgid ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Soul Sand Valley"
+msgstr ""
+
+msgid ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+msgstr ""
+
+msgid "Crimson Forest"
+msgstr ""
+
+msgid ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+msgstr ""
+
+msgid "Warped Forest"
+msgstr ""
+
+msgid ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
 msgstr ""
 
 msgid "Permissions"
@@ -3005,16 +3050,6 @@ msgstr "§buSkyBlock§e dipende da §9{0}§e >= §av{1}"
 
 msgid "§4Player is already assigned to this island!"
 msgstr "§4* §7Il giocatore è già assegnato a questa isola!"
-
-msgid "§4You must be closer to your island to set your skyblock home!"
-msgstr ""
-"§4* §7Devi essere più vicino alla tua isola per impostare la casa skyblock!"
-
-msgid "§aYour skyblock home has been set to your current location."
-msgstr "§9* §7La tua casa skyblock è stata impostata alla tua posizione."
-
-msgid "§4Your current location is not a safe home-location."
-msgstr "§4* §7La tua posizione attuale non è sicura."
 
 msgid "§cYour island is in the process of generating, you cannot create now."
 msgstr ""

@@ -489,10 +489,6 @@ msgstr ""
 msgid "successfully regenerated chunk at {0},{1}"
 msgstr ""
 
-#, java-format
-msgid "§4FAILED!§e could not regenerate chunk at {0},{1}"
-msgstr ""
-
 msgid "unload current chunk"
 msgstr ""
 
@@ -753,6 +749,9 @@ msgstr ""
 msgid "shows the NBTTag for the currently held item"
 msgstr ""
 
+msgid "§cNo item in hand!"
+msgstr ""
+
 #, java-format
 msgid "§eInfo for §9{0}"
 msgstr ""
@@ -763,9 +762,6 @@ msgstr ""
 
 #, java-format
 msgid "§7 - nbttag: §9{0}"
-msgstr ""
-
-msgid "§cNo item in hand!"
 msgstr ""
 
 msgid "§eCan only be executed as a player"
@@ -1580,6 +1576,15 @@ msgstr "§eGhi chú: Mọi thử trên đảo và vật phẩm của bạn sẽ 
 msgid "set the island-home"
 msgstr "thiết đặt vị trí nhà"
 
+msgid "§4You must be closer to your island to set your skyblock home!"
+msgstr "§4Cần phải ở trên đảo của bạn để thiết đặt nhà chính!"
+
+msgid "§4Your current location is not a safe home-location."
+msgstr "§4Vị trí hiện tại không an toàn."
+
+msgid "§aYour skyblock home has been set to your current location."
+msgstr "§aNhà chính đã được đặt tại vị trí hiện tại."
+
 msgid "set your island''s warp location"
 msgstr "thiết đặt điểm dịch chuyển của đảo"
 
@@ -1981,6 +1986,9 @@ msgstr "Dân làng"
 msgid "GOLEM"
 msgstr "Người máy"
 
+msgid "WATERANIMAL"
+msgstr ""
+
 #, java-format
 msgid "§c{0}"
 msgstr "§c{0}"
@@ -2337,6 +2345,42 @@ msgid ""
 "not spawn, but tropical fish,\n"
 "pufferfish and cod will spawn here.\n"
 "Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "River"
+msgstr ""
+
+msgid ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Soul Sand Valley"
+msgstr ""
+
+msgid ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+msgstr ""
+
+msgid "Crimson Forest"
+msgstr ""
+
+msgid ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+msgstr ""
+
+msgid "Warped Forest"
+msgstr ""
+
+msgid ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
 msgstr ""
 
 msgid "Permissions"
@@ -2865,15 +2909,6 @@ msgstr "§buSkyblock phụ thuộc vào §9{0}§e >= §av{1}"
 
 msgid "§4Player is already assigned to this island!"
 msgstr "§4Đảo đã chuyển giao cho người chơi"
-
-msgid "§4You must be closer to your island to set your skyblock home!"
-msgstr "§4Cần phải ở trên đảo của bạn để thiết đặt nhà chính!"
-
-msgid "§aYour skyblock home has been set to your current location."
-msgstr "§aNhà chính đã được đặt tại vị trí hiện tại."
-
-msgid "§4Your current location is not a safe home-location."
-msgstr "§4Vị trí hiện tại không an toàn."
 
 msgid "§cYour island is in the process of generating, you cannot create now."
 msgstr "§cĐảo đang trong quá trình khởi tạo, không thể tạo mới ngay bây giờ."

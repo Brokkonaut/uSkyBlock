@@ -3,11 +3,9 @@ package us.talabrek.ultimateskyblock.world;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
@@ -18,8 +16,6 @@ import us.talabrek.ultimateskyblock.uSkyBlock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import static org.bukkit.World.Environment;
 
 /**
  * Class responsible for regenerating chunks.
@@ -74,18 +70,19 @@ public class ChunkRegenerator {
         spawnTeleportPlayers(chunk);
 
         Random random = new Random();
-        BiomeGrid biomeGrid = new DefaultBiomeGrid(world.getEnvironment());
-        ChunkData chunkData = chunkGen.generateChunkData(world, random, chunk.getX(), chunk.getZ(), biomeGrid);
-
+        ChunkData chunkData = new CustomChunkData(world, chunk.getX(), chunk.getZ());
+        chunkGen.generateNoise(world, random, 0, 0, chunkData);
+        chunkGen.generateSurface(world, random, 0, 0, chunkData);
+        chunkGen.generateBedrock(world, random, 0, 0, chunkData);
+        chunkGen.generateCaves(world, random, 0, 0, chunkData);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = chunk.getWorld().getMinHeight(); y < chunk.getWorld().getMaxHeight(); y++) {
                     chunk.getBlock(x, y, z).setBlockData(chunkData.getBlockData(x, y, z));
-                    chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
+                    chunk.getBlock(x, y, z).setBiome(chunkGen.getDefaultBiomeProvider(world).getBiome(world, x + chunk.getX() * 16, y, z + chunk.getZ() * 16));
                 }
             }
         }
-
         removeEntities(chunk);
     }
 
@@ -108,51 +105,6 @@ public class ChunkRegenerator {
             if (entity instanceof Player) {
                 uSkyBlock.getInstance().getTeleportLogic().spawnTeleport((Player) entity, true);
             }
-        }
-    }
-
-    /**
-     * Default BiomeGrid used by uSkyBlock when regenerating chunks.
-     */
-    static class DefaultBiomeGrid implements BiomeGrid {
-        private Biome defaultBiome;
-
-        DefaultBiomeGrid(Environment env) {
-            switch (env) {
-                case THE_END:
-                    defaultBiome = Biome.THE_END;
-                    break;
-                case NETHER:
-                    defaultBiome = Biome.NETHER_WASTES;
-                    break;
-                default:
-                    defaultBiome = Biome.OCEAN;
-                    break;
-            }
-        }
-
-        @NotNull
-        @Deprecated
-        @Override
-        public Biome getBiome(int x, int z) {
-            return defaultBiome;
-        }
-
-        @NotNull
-        @Override
-        public Biome getBiome(int x, int y, int z) {
-            return defaultBiome;
-        }
-
-        @Deprecated
-        @Override
-        public void setBiome(int x, int z, @NotNull Biome bio) {
-            defaultBiome = bio;
-        }
-
-        @Override
-        public void setBiome(int x, int y, int z, @NotNull Biome bio) {
-            defaultBiome = bio;
         }
     }
 }

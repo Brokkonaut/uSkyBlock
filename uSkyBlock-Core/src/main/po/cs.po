@@ -485,10 +485,6 @@ msgstr ""
 msgid "successfully regenerated chunk at {0},{1}"
 msgstr ""
 
-#, java-format
-msgid "§4FAILED!§e could not regenerate chunk at {0},{1}"
-msgstr ""
-
 msgid "unload current chunk"
 msgstr ""
 
@@ -748,6 +744,9 @@ msgstr "Pokrocile informace o NBT "
 msgid "shows the NBTTag for the currently held item"
 msgstr "Ukaze NBTTag pro drzeny predmet."
 
+msgid "§cNo item in hand!"
+msgstr "§cZadny predmet v ruce!"
+
 #, java-format
 msgid "§eInfo for §9{0}"
 msgstr "§eInformace pro§9{0}"
@@ -759,9 +758,6 @@ msgstr "§7 - jmeno: §9{0}"
 #, java-format
 msgid "§7 - nbttag: §9{0}"
 msgstr "§7 - nbttag: §9{0}"
-
-msgid "§cNo item in hand!"
-msgstr "§cZadny predmet v ruce!"
 
 msgid "§eCan only be executed as a player"
 msgstr "§eLze provest pouze jako hrac."
@@ -1591,6 +1587,15 @@ msgstr "§ePOZOR: Tvuj cely ostrov a vsechny veci na nem budou RESETOVANY!"
 msgid "set the island-home"
 msgstr "Nastav home pozici na ostrove"
 
+msgid "§4You must be closer to your island to set your skyblock home!"
+msgstr "§4Musis byt bliz sveho ostrova aby si mohl nastavit domov!"
+
+msgid "§4Your current location is not a safe home-location."
+msgstr "§4Tvoje momentalni pozice neni bezpecna pro nastaveni domova."
+
+msgid "§aYour skyblock home has been set to your current location."
+msgstr "§aTvuj domov na SkyBlocku byl nastaven na tvoje aktualni pozici."
+
 msgid "set your island''s warp location"
 msgstr "Nastav lokaci warpu na ostrove"
 
@@ -2005,6 +2010,9 @@ msgstr "Vesnicanu"
 msgid "GOLEM"
 msgstr "Golemu"
 
+msgid "WATERANIMAL"
+msgstr ""
+
 #, java-format
 msgid "§c{0}"
 msgstr "§c{0}"
@@ -2368,6 +2376,42 @@ msgid ""
 "not spawn, but tropical fish,\n"
 "pufferfish and cod will spawn here.\n"
 "Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "River"
+msgstr ""
+
+msgid ""
+"The river biome.\n"
+"Passive mobs like animals will\n"
+"not spawn, but salmons will spawn here.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Soul Sand Valley"
+msgstr ""
+
+msgid ""
+"The soul sand valley biome.\n"
+"only ghast, skeletons, endermen\n"
+"and strider can spawn here."
+msgstr ""
+
+msgid "Crimson Forest"
+msgstr ""
+
+msgid ""
+"The crimson forest biome.\n"
+"only zombified piglins, hoglins,\n"
+"piglins and strider can spawn here."
+msgstr ""
+
+msgid "Warped Forest"
+msgstr ""
+
+msgid ""
+"The warped forest biome.\n"
+"only endermen and strider can spawn here."
 msgstr ""
 
 msgid "Permissions"
@@ -2912,15 +2956,6 @@ msgstr "§buSkyBlock§e zalezi na§9{0}§e >= §av{1}"
 
 msgid "§4Player is already assigned to this island!"
 msgstr "§4Hrac je jiz prirazen na tento ostrov!"
-
-msgid "§4You must be closer to your island to set your skyblock home!"
-msgstr "§4Musis byt bliz sveho ostrova aby si mohl nastavit domov!"
-
-msgid "§aYour skyblock home has been set to your current location."
-msgstr "§aTvuj domov na SkyBlocku byl nastaven na tvoje aktualni pozici."
-
-msgid "§4Your current location is not a safe home-location."
-msgstr "§4Tvoje momentalni pozice neni bezpecna pro nastaveni domova."
 
 msgid "§cYour island is in the process of generating, you cannot create now."
 msgstr "§cTvuj ostrov se prave vytvari, nemuzes hned zalozit novy!"
