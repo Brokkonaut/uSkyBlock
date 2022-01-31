@@ -61,6 +61,9 @@ public class LimitLogic {
                 creatures.addAll(WorldGuardHandler.getCreaturesInRegion(nether, islandRegionAt));
             }
             for (LivingEntity creature : creatures) {
+                if (!creature.hasAI()) {
+                    continue;
+                }
                 CreatureType key = getCreatureType(creature);
                 if (!mapCount.containsKey(key)) {
                     mapCount.put(key, 0);

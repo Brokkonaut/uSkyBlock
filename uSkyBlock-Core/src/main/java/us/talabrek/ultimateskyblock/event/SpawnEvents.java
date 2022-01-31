@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -113,7 +114,9 @@ public class SpawnEvents implements Listener {
         if (!event.isCancelled() && ADMIN_INITIATED.contains(event.getSpawnReason()) && !currentlySpawningGuardian) {
             return; // Allow it, the above method would have blocked it if it should be blocked.
         }
-        checkLimits(event, event.getEntity().getType(), event.getLocation());
+        if (event.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
+            checkLimits(event, event.getEntity().getType(), event.getLocation());
+        }
         if (event.getEntity() instanceof WaterMob) {
             Location loc = event.getLocation();
             if (isDeepOceanBiome(loc) && isPrismarineRoof(loc)) {

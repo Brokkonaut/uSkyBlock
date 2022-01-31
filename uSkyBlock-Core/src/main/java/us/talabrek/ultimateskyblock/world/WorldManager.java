@@ -72,7 +72,7 @@ public class WorldManager {
                         new Location(target.getWorld(), (px + x * 16), py, (pz + z * 16)));
 
                 Arrays.stream(chunk.getEntities())
-                        .filter(entity -> entity instanceof Monster)
+                        .filter(entity -> entity instanceof Monster && ((Monster)entity).hasAI()) // only monsters and only with ai
                         .filter(entity -> entity.getCustomName() == null)
                         .filter(entity -> !(entity instanceof ZombieVillager)  || !((ZombieVillager)entity).isConverting()) // do not remove zombie villagers that have started converting to a villager
                         .forEach(Entity::remove);
