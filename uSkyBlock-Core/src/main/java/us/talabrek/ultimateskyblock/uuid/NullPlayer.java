@@ -6,10 +6,15 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
-
+import org.jetbrains.annotations.Nullable;
+import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class NullPlayer implements OfflinePlayer {
     public static final NullPlayer INSTANCE = new NullPlayer();
@@ -184,5 +189,94 @@ public class NullPlayer implements OfflinePlayer {
     @Override
     public long getLastSeen() {
         return 0;
+    }
+
+    @Override
+    public @NotNull PlayerProfile getPlayerProfile() {
+        return new PlayerProfile() {
+            @Override
+            public @NotNull Map<String, Object> serialize() {
+                return Collections.emptyMap();
+            }
+
+            @Override
+            public @Nullable UUID getUniqueId() {
+                return PlayerDB.UNKNOWN_PLAYER_UUID;
+            }
+
+            @Override
+            public @Nullable String getName() {
+                return PlayerDB.UNKNOWN_PLAYER_NAME;
+            }
+
+            @Override
+            public @NotNull PlayerTextures getTextures() {
+                return new PlayerTextures() {
+                    @Override
+                    public boolean isEmpty() {
+                        return true;
+                    }
+
+                    @Override
+                    public void clear() {
+                    }
+
+                    @Override
+                    public @Nullable URL getSkin() {
+                        return null;
+                    }
+
+                    @Override
+                    public void setSkin(@Nullable URL skinUrl) {
+                    }
+
+                    @Override
+                    public void setSkin(@Nullable URL skinUrl, @Nullable SkinModel skinModel) {
+                    }
+
+                    @Override
+                    public @NotNull SkinModel getSkinModel() {
+                        return null;
+                    }
+
+                    @Override
+                    public @Nullable URL getCape() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+
+                    @Override
+                    public void setCape(@Nullable URL capeUrl) {
+                    }
+                    
+                    @Override
+                    public long getTimestamp() {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isSigned() {
+                        return false;
+                    }};
+            }
+
+            @Override
+            public void setTextures(@Nullable PlayerTextures textures) {
+            }
+
+            @Override
+            public boolean isComplete() {
+                return false;
+            }
+
+            @Override
+            public @NotNull CompletableFuture<PlayerProfile> update() {
+                return null;
+            }
+
+            @Override
+            public @NotNull PlayerProfile clone() {
+                return null;
+            }};
     }
 }
