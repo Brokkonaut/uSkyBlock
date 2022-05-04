@@ -103,14 +103,10 @@ public class BiomeCommand extends RequireIslandCommand {
                 int radius = Integer.parseInt(args[1], 10);
                 Location loc = location.clone().add(-radius, 0, -radius);
                 loc.setY(Math.max(loc.getY() - radius, loc.getWorld().getMinHeight()));
-                if (region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
-                    minP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-                }
+                minP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                 loc = location.clone().add(radius, 0, radius);
                 loc.setY(Math.min(loc.getY() + radius, loc.getWorld().getMaxHeight()));
-                if (region.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
-                    maxP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-                }
+                maxP = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
                 player.sendMessage(tr("\u00a77The pixies are busy changing the biome near you to \u00a79{0}\u00a77, be patient.", biome));
             } else if (args.length == 2 && args[1].equalsIgnoreCase("chunk")) {
                 Chunk chunk = location.clone().getChunk();
@@ -120,6 +116,10 @@ public class BiomeCommand extends RequireIslandCommand {
             } else if (args.length < 2 || args[1].equalsIgnoreCase("all")) {
                 player.sendMessage(tr("\u00a77The pixies are busy changing the biome of your island to \u00a79{0}\u00a77, be patient.", biome));
             }
+            // clamp to island size
+            minP = BlockVector3.at(Math.max(region.getMinimumPoint().getBlockX(), minP.getBlockX()), Math.max(region.getMinimumPoint().getBlockY(), minP.getBlockY()), Math.max(region.getMinimumPoint().getBlockZ(), minP.getBlockZ()));
+            maxP = BlockVector3.at(Math.min(region.getMaximumPoint().getBlockX(), maxP.getBlockX()), Math.min(region.getMaximumPoint().getBlockY(), maxP.getBlockY()), Math.min(region.getMaximumPoint().getBlockZ(), maxP.getBlockZ()));
+
             Biome biomeEnum = BIOMES.get(biome);
             if (biomeEnum == null) {
                 player.sendMessage(tr("\u00a7eInvalid biome {0} supplied!", biome));
