@@ -37,7 +37,6 @@ public class PerkLogic {
                 0,
                 0,
                 null, null);
-        System.out.println("WATERANIMALSCHECK defaultPerk " + defaultPerk.getWaterAnimals() + " " + plugin.getConfig().getInt("options.island.spawn-limits.wateranimals", 30));
         donorPerks = new ConcurrentHashMap<>();
         addDonorPerks(null, plugin.getConfig().getConfigurationSection("donor-perks"));
         addExtraPermissionPerks(plugin.getConfig().getConfigurationSection("options.island.extraPermissions"));
@@ -83,9 +82,6 @@ public class PerkLogic {
                         1d, 0d));
             }
         }
-        for(Entry<String, IslandPerk> e : islandPerks.entrySet()) {
-            System.out.println("WATERANIMALSCHECK islandPerks "+e.getKey() +" "  + e.getValue().getPerk().getWaterAnimals());
-        }
     }
 
     public Perk getDefaultPerk() {
@@ -110,8 +106,6 @@ public class PerkLogic {
         if (islandPerks.containsKey(schemeName)) {
             return islandPerks.get(schemeName);
         }
-        System.out.println("WATERANIMALSCHECK is nich da... "+schemeName +" da ist: " + islandPerks.keySet());
-        System.out.println("WATERANIMALSCHECK is nich da... "+ defaultPerk.getWaterAnimals());
         return new IslandPerk(schemeName, "usb.schematic." + schemeName,
                 ItemStackUtil.createItemStack("GRASS", schemeName, null), defaultPerk);
     }

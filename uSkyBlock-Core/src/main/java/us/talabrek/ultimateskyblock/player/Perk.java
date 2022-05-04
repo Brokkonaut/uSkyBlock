@@ -73,8 +73,6 @@ public class Perk {
     }
 
     public int getWaterAnimals() {
-        // System.out.println("WATERANIMALSCHECK waterAnimals " + waterAnimals);
-
         return waterAnimals;
     }
 

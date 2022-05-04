@@ -314,7 +314,6 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
 
     @Override
     public int getMaxWaterAnimals() {
-        // System.out.println("WATERANIMALSCHECK getSchematicName " + getSchematicName());
         return getMaxPartyIntValue("maxWaterAnimals",
                 plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getWaterAnimals());
     }
@@ -362,9 +361,6 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
                     }
                 }
             }
-        }
-        if(name.equals("maxWaterAnimals")) {
-            // System.out.println("WATERANIMALSCHECK getMaxPartyIntValue " + defaultValue + ";" + value);
         }
         return value;
     }
