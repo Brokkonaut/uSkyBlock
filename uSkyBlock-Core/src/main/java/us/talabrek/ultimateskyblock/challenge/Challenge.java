@@ -1,6 +1,5 @@
 package us.talabrek.ultimateskyblock.challenge;
 
-import dk.lockfuglsang.minecraft.nbt.NBTUtil;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
@@ -22,7 +21,7 @@ import static dk.lockfuglsang.minecraft.util.FormatUtil.*;
  * The data-object for a challenge
  */
 public class Challenge {
-    public static final Pattern REQ_PATTERN = Pattern.compile("(?<itemstack>(?<type>[0-9A-Z_]+)(:(?<subtype>[0-9]+))?(?<meta>\\{.*\\})?):(?<amount>[0-9]+)(;(?<op>[+\\-*\\^])(?<inc>[0-9]+))?");
+    public static final Pattern REQ_PATTERN = Pattern.compile("(?<itemstack>(?<type>[0-9A-Z_]+)(?<meta>\\{.*\\})?):(?<amount>[0-9]+)(;(?<op>[+\\-*\\^])(?<inc>[0-9]+))?");
     public static final int MAX_DETAILS = 11;
     public static final int MAX_LINE = 30;
 
@@ -127,7 +126,6 @@ public class Challenge {
                 ItemStack mat = ItemStackUtil.createItemStack(m.group("itemstack"));
                 ItemMeta meta = mat.getItemMeta();
                 mat.setItemMeta(meta);
-                mat = NBTUtil.addNBTTag(mat, m.group("meta"));
                 mat.setAmount(amount);
                 items.add(mat);
             } else if (!item.matches("[0-9]+") && type != Type.ISLAND_LEVEL) {
