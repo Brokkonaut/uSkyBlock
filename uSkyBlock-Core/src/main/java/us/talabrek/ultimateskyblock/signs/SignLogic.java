@@ -287,7 +287,7 @@ public class SignLogic {
                 if (playerInfo == null) {
                     return;
                 }
-                if (!challenge.getRank().isAvailable(playerInfo)) {
+                if (!challenge.getRank().isAvailable(playerInfo) || !challenge.getMissingRequirements(playerInfo).isEmpty()) {
                     player.sendMessage(tr("\u00a74The {0} challenge is not available yet!", challenge.getDisplayName()));
                     return;
                 }
