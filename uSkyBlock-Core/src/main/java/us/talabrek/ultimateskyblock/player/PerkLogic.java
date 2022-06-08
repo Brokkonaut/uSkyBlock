@@ -66,7 +66,7 @@ public class PerkLogic {
                         .extraItems(ItemStackUtil.createItemList(config.getStringList("extraItems")))
                         .build();
                 ItemStack itemStack = ItemStackUtil.createItemStack(
-                        config.getString("displayItem", "SAPLING"),
+                        config.getString("displayItem", "OAK_SAPLING"),
                         schemeName,
                         config.getString("description", null)
                 );

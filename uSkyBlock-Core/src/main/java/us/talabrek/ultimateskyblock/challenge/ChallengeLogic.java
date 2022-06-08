@@ -341,7 +341,7 @@ public class ChallengeLogic implements Listener {
     public int getCountOf(Inventory inventory, ItemStack required) {
         int count = 0;
         for (ItemStack invItem : inventory.all(required.getType()).values()) {
-            if (NBTUtil.getNBTTag(invItem).equals(NBTUtil.getNBTTag(required))) {
+            if (invItem != null && invItem.isSimilar(required)) {
                 count += invItem.getAmount();
             }
         }
