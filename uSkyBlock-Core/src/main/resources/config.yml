@@ -429,7 +429,7 @@ tool-menu:
   commands:
     CHEST: island
     BEDROCK: island spawn
-    WORKBENCH: challenges
+    CRAFTING_TABLE: challenges
 
 # Placeholders - enable these to get placeholder substitution
 # usb_version

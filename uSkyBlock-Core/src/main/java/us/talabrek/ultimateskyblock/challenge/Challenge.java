@@ -81,6 +81,15 @@ public class Challenge {
         this.repeatReward = repeatReward;
         this.description = description;
         this.repeatLimit = repeatLimit;
+        for (String item : requiredItems) {
+            if (item == null || item.trim().isEmpty()) {
+                continue; // Just skip it
+            }
+            Matcher m = REQ_PATTERN.matcher(item);
+            if (!m.matches() && !(type == Type.ISLAND_LEVEL && item.matches("[0-9]+"))) {
+                uSkyBlock.getInstance().getLogger().log(Level.INFO, "Malformed challenge " + name + ", item: " + item + " is not a valid required item");
+            }
+        }
     }
 
     public boolean isRepeatable() {
@@ -128,7 +137,7 @@ public class Challenge {
                 mat.setItemMeta(meta);
                 mat.setAmount(amount);
                 items.add(mat);
-            } else if (!item.matches("[0-9]+") && type != Type.ISLAND_LEVEL) {
+            } else if (!(type == Type.ISLAND_LEVEL && item.matches("[0-9]+"))) {
                 uSkyBlock.getInstance().getLogger().log(Level.INFO, "Malformed challenge " + name + ", item: " + item + " is not a valid required item");
             }
         }
