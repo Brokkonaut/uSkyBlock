@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class BlockLimitLogic {
-    public enum CanPlace { YES, UNCERTAIN, NO};
+    public enum CanPlace { YES, UNCERTAIN, NO}
 
     private static final Logger log = Logger.getLogger(BlockLimitLogic.class.getName());
     private uSkyBlock plugin;

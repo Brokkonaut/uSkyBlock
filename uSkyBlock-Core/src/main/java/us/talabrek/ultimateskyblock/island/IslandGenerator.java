@@ -83,7 +83,7 @@ public class IslandGenerator {
         // Hacky, but clear the Orphan info
         next.setYaw(0);
         next.setPitch(0);
-        next.setY((double) Settings.island_height);
+        next.setY(Settings.island_height);
         File schemFile = getSchematicFile(cSchem != null ? cSchem : "default");
         File netherFile = getSchematicFile(cSchem != null ? cSchem + "Nether" : "uSkyBlockNether");
         if (netherFile == null) {

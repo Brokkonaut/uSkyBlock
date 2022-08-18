@@ -31,7 +31,7 @@ public class Challenge {
         static Type from(String s) {
             if (s == null || s.trim().isEmpty() || s.trim().toLowerCase().equals("onplayer")) {
                 return PLAYER;
-            } else if (s != null && s.equalsIgnoreCase("islandlevel")) {
+            } else if (s.equalsIgnoreCase("islandlevel")) {
                 return ISLAND_LEVEL;
             }
             return ISLAND;

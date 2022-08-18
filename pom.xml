@@ -11,9 +11,9 @@
         <jbannotations.version>19.0.0</jbannotations.version>
         <api.version>${project.version}</api.version>
         <bukkit-utils.version>1.26-brokko-SNAPSHOT</bukkit-utils.version>
-        <paperlib.version>1.0.4</paperlib.version>
+        <paperlib.version>1.0.7</paperlib.version>
         <deluxechat.version>1.6</deluxechat.version>
-        <spigotapi.version>1.16.1-R0.1-SNAPSHOT</spigotapi.version>
+        <spigotapi.version>1.19.2-R0.1-SNAPSHOT</spigotapi.version>
         <vault.version>1.7</vault.version>
         <worldedit.version>7.2.0-SNAPSHOT</worldedit.version>
         <worldguard.version>7.0.4-SNAPSHOT</worldguard.version>
@@ -25,18 +25,18 @@
         <msgfmtCmd>msgfmt</msgfmtCmd>
         <msgmergeCmd>msgmerge</msgmergeCmd>
         <!-- necessary for intellij to function -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <!-- We only want to deploy specific submodules -->
         <maven.deploy.skip>true</maven.deploy.skip>
 
         <!-- Testing -->
-        <hamcrest.version>2.1</hamcrest.version>
-        <junit.version>4.12</junit.version>
-        <junit-vintage-engine.version>5.5.1</junit-vintage-engine.version>
-        <mockito.version>3.2.4</mockito.version>
-        <powermock.version>2.0.4</powermock.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <junit.version>4.13.2</junit.version>
+        <junit-vintage-engine.version>5.9.0</junit-vintage-engine.version>
+        <mockito.version>4.7.0</mockito.version>
+        <powermock.version>2.0.9</powermock.version>
     </properties>
 
     <modules>
@@ -61,7 +61,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.10.1</version>
                     <configuration>
                         <release>17</release>
                     </configuration>
@@ -69,22 +69,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.0.0-M7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -96,7 +96,7 @@
         </repository>
         <repository> <!-- PaperLib -->
             <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository> <!-- WorldEdit/WorldGuard -->
             <id>sk89q-repo</id>

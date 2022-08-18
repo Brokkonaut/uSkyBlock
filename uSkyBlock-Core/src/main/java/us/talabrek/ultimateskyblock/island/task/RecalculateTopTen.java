@@ -32,7 +32,7 @@ public class RecalculateTopTen extends BukkitRunnable {
                 }
             });
         } else {
-            plugin.fireAsyncEvent(new uSkyBlockEvent(null, plugin.getAPI(), uSkyBlockEvent.Cause.RANK_UPDATED));
+            plugin.fireAsyncEvent(new uSkyBlockEvent(null, uSkyBlock.getAPI(), uSkyBlockEvent.Cause.RANK_UPDATED));
         }
     }
 }

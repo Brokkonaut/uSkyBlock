@@ -105,7 +105,7 @@ public class NetherTerraFormEvents implements Listener {
             return; // Not a block we terra-form on.
         }
         // TODO: 10/07/2016 - R4zorax: Handle dual-wielding (would break 1.8 compatibility)
-        ItemStack tool = event.getPlayer().getItemInHand();
+        ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
         if (event.getBlock().getDrops(tool).isEmpty()) {
             return; // Only terra-form when stuff is mined correctly
         }

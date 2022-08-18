@@ -622,9 +622,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
             player.sendMessage(tr("\u00a7eYou do not have access to that island-schematic!"));
             return;
         }
-        if (pi != null) {
-            pi.setIslandGenerating(true);
-        }
+        pi.setIslandGenerating(true);
         try {
             Location next = getIslandLocatorLogic().getNextIslandLocation(player);
             if (getWorldManager().isSkyWorld(player.getWorld())) {

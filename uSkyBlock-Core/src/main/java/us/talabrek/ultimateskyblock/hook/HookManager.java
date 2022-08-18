@@ -8,8 +8,6 @@ import us.talabrek.ultimateskyblock.hook.permissions.VaultPermissions;
 import us.talabrek.ultimateskyblock.hook.world.MultiverseHook;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

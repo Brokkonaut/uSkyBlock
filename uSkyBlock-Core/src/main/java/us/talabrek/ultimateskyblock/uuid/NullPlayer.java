@@ -241,7 +241,6 @@ public class NullPlayer implements OfflinePlayer {
 
                     @Override
                     public @Nullable URL getCape() {
-                        // TODO Auto-generated method stub
                         return null;
                     }
 
@@ -278,5 +277,10 @@ public class NullPlayer implements OfflinePlayer {
             public @NotNull PlayerProfile clone() {
                 return null;
             }};
+    }
+
+    @Override
+    public @Nullable Location getLastDeathLocation() {
+        return null;
     }
 }

@@ -1,6 +1,5 @@
 package us.talabrek.ultimateskyblock.challenge;
 
-import dk.lockfuglsang.minecraft.nbt.NBTUtil;
 import dk.lockfuglsang.minecraft.util.FormatUtil;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import org.bukkit.Bukkit;

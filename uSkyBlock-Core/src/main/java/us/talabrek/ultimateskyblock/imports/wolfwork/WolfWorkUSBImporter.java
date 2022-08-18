@@ -67,7 +67,7 @@ public class WolfWorkUSBImporter implements USBImporter {
             Object stackObj = in.readObject();
             if (stackObj instanceof Stack) {
                 int countOrphan = 0;
-                Stack<SerializableLocation> stack = (Stack) stackObj;
+                Stack<SerializableLocation> stack = (Stack<SerializableLocation>) stackObj;
                 while (!stack.isEmpty()) {
                     SerializableLocation remove = stack.remove(0);
                     plugin.getOrphanLogic().addOrphan(remove.getLocation());

@@ -148,7 +148,7 @@ public class IntegerEditMenu extends AbstractConfigMenu implements EditMenu {
             col--;
         } while (nvalue != 0 && col > 0);
         if (value < 0) {
-            menu.setItem(getIndex(1, col), createItem(Material.RED_CARPET, factory.INT + value, null));
+            menu.setItem(getIndex(1, col), createItem(Material.RED_CARPET, MenuItemFactory.INT + value, null));
         }
         ItemStack valueItem = factory.createIntegerItem(value, path, config, false);
         List<String> lore = valueItem.getItemMeta().getLore();

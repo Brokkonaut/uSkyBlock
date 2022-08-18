@@ -131,7 +131,7 @@ public enum AsyncWorldEditHandler {;
                         editSession.setReorderMode(EditSession.ReorderMode.MULTI_STAGE);
                         editSession.setSideEffectApplier(SideEffectSet.defaults());
                         editSession.getWorld().regenerate(region, editSession);
-                        editSession.flushSession();
+                        editSession.close();
                     } finally {
                         onCompletion.run();
                     }

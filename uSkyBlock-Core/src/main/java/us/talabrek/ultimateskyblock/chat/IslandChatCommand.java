@@ -49,7 +49,7 @@ public abstract class IslandChatCommand extends BaseCommandExecutor {
                     player.sendMessage(tr("\u00a7aToggled chat \u00a7cOFF\u00a7a for {0}", chatType));
                 }
                 return true;
-            } else if (args != null && args.length == 1 && (args[0].equalsIgnoreCase("?") || args[0].equalsIgnoreCase("help"))) {
+            } else if (args.length == 1 && (args[0].equalsIgnoreCase("?") || args[0].equalsIgnoreCase("help"))) {
                 showUsage(commandSender, 1);
                 return true;
             }

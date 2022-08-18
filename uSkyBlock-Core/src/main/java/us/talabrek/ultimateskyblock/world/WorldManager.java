@@ -22,6 +22,7 @@ import us.talabrek.ultimateskyblock.uSkyBlock;
 import us.talabrek.ultimateskyblock.util.LocationUtil;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -136,11 +137,11 @@ public class WorldManager {
         try {
             String clazz = plugin.getConfig().getString("options.advanced.chunk-generator",
                     "us.talabrek.ultimateskyblock.world.SkyBlockChunkGenerator");
-            Object generator = Class.forName(clazz).newInstance();
+            Object generator = Class.forName(clazz).getConstructor().newInstance();
             if (generator instanceof ChunkGenerator) {
                 return (ChunkGenerator) generator;
             }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             logger.log(Level.WARNING, "Invalid overworld chunk-generator configured: " + ex);
         }
         return new SkyBlockChunkGenerator();

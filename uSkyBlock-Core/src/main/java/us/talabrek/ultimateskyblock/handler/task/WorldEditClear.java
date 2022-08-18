@@ -74,7 +74,7 @@ public class WorldEditClear extends IncrementalRunnable {
         while (!regions.isEmpty()) {
             final Region region = regions.remove(0);
             final EditSession editSession = WorldEditHandler.createEditSession(
-                    new BukkitWorld(world), region.getArea() * 255 * 2);
+                    new BukkitWorld(world), -1);
             editSession.setReorderMode(EditSession.ReorderMode.MULTI_STAGE);
             editSession.setSideEffectApplier(SideEffectSet.defaults());
             try {
@@ -82,7 +82,7 @@ public class WorldEditClear extends IncrementalRunnable {
             } catch (MaxChangedBlocksException e) {
                 log.log(Level.INFO, "Warning: we got MaxChangedBlocks from WE, please increase it!");
             }
-            editSession.flushSession();
+            editSession.close();
             if (!tick()) {
                 break;
             }

@@ -69,7 +69,7 @@ public class EntityMatch {
 
     private boolean matchFieldGetter(Entity entity, String key, Object value) {
         try {
-            Method method = entity.getClass().getMethod("get" + key, null);
+            Method method = entity.getClass().getMethod("get" + key);
             Object entityValue = method.invoke(entity);
             return matchValues(entityValue, value);
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -83,15 +83,9 @@ public class EntityMatch {
     private boolean matchField(Entity entity, String key, Object value) {
         try {
             Field field = entity.getClass().getDeclaredField(key);
-            boolean wasAccessible = field.isAccessible();
-            if (!wasAccessible) {
-                field.setAccessible(true);
-            }
+            field.setAccessible(true);
             Object entityValue = field.get(entity);
             boolean matchResult = matchValues(entityValue, value);
-            if (!wasAccessible) {
-                field.setAccessible(false);
-            }
             return matchResult;
         } catch (IllegalAccessException | NoSuchFieldException e) {
             // Ignore
@@ -101,9 +95,9 @@ public class EntityMatch {
 
     private boolean matchValues(Object entityValue, Object value) {
         if (value instanceof Number && entityValue instanceof Enum) {
-            return ((Number) value).intValue() == ((Enum) entityValue).ordinal();
+            return ((Number) value).intValue() == ((Enum<?>) entityValue).ordinal();
         } else if (value instanceof String && entityValue instanceof Enum) {
-            return ((String) value).equalsIgnoreCase(((Enum) entityValue).name());
+            return ((String) value).equalsIgnoreCase(((Enum<?>) entityValue).name());
         }
         return ("" + entityValue).equalsIgnoreCase("" + value);
     }

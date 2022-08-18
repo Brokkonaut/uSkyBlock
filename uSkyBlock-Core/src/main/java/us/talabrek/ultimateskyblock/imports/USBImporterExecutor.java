@@ -57,7 +57,7 @@ public class USBImporterExecutor {
             importers.add(new USBUpdateImporter());
             importers.add(new Name2UUIDImporter());
             importers.add(new ConfigPre113Importer());
-            ServiceLoader serviceLoader = ServiceLoader.load(USBImporter.class, getClass().getClassLoader());
+            ServiceLoader<USBImporter> serviceLoader = ServiceLoader.load(USBImporter.class, getClass().getClassLoader());
             for (Iterator<USBImporter> it = serviceLoader.iterator(); it.hasNext(); ) {
                 importers.add(it.next());
             }

@@ -2,7 +2,6 @@ package us.talabrek.ultimateskyblock.command.completion;
 
 import dk.lockfuglsang.minecraft.command.completion.AbstractTabCompleter;
 import org.bukkit.command.CommandSender;
-import us.talabrek.ultimateskyblock.uSkyBlock;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

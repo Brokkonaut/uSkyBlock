@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,13 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * Responsible for calculating player specific perks based on permissions.
  */
 public class PerkLogic {
-    private final uSkyBlock plugin;
     private final Perk defaultPerk;
     private Map<String, Perk> donorPerks;
     private Map<String, IslandPerk> islandPerks;
 
     public PerkLogic(uSkyBlock plugin, IslandGenerator islandGenerator) {
-        this.plugin = plugin;
         defaultPerk = new Perk(Collections.emptyList(), Settings.general_maxPartySize,
                 plugin.getConfig().getInt("options.island.spawn-limits.animals", 30),
                 plugin.getConfig().getInt("options.island.spawn-limits.monsters", 50),
