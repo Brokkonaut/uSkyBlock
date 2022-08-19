@@ -47,6 +47,27 @@ msgstr ""
 msgid "§4Error writing documentation: {0}"
 msgstr ""
 
+msgid "changes the language of the plugin, and reloads"
+msgstr "changer le langage du plugin, et le recharger"
+
+#, java-format
+msgid "§aSuccessfully changed language to §e{0}"
+msgstr "§aLangage changé avec succès en §e{0}"
+
+#, java-format
+msgid "§cFailed to change language to §e{0}"
+msgstr "§cLe langage n''a pas pu être changé en §e{0}"
+
+msgid "§9Supported Languages:\n"
+msgstr "§9Langues supportés:\n"
+
+#, java-format
+msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
+msgstr "§f{0} §7{1} §9 par {2} §7{3}\n"
+
+msgid "§cUnable to locate any languages."
+msgstr "§cImpossible de trouver toutes les langues."
+
 msgid "Command"
 msgstr ""
 
@@ -704,27 +725,6 @@ msgstr "temps"
 
 msgid "name"
 msgstr "nom"
-
-msgid "changes the language of the plugin, and reloads"
-msgstr "changer le langage du plugin, et le recharger"
-
-#, java-format
-msgid "§aSuccessfully changed language to §e{0}"
-msgstr "§aLangage changé avec succès en §e{0}"
-
-#, java-format
-msgid "§cFailed to change language to §e{0}"
-msgstr "§cLe langage n''a pas pu être changé en §e{0}"
-
-msgid "§9Supported Languages:\n"
-msgstr "§9Langues supportés:\n"
-
-#, java-format
-msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
-msgstr "§f{0} §7{1} §9 par {2} §7{3}\n"
-
-msgid "§cUnable to locate any languages."
-msgstr "§cImpossible de trouver toutes les langues."
 
 msgid "transfer leadership to another player"
 msgstr "transferer le chef vers un autre joueur"
@@ -2418,6 +2418,34 @@ msgstr ""
 msgid ""
 "The warped forest biome.\n"
 "only endermen and strider can spawn here."
+msgstr ""
+
+msgid "Jagged Peaks"
+msgstr ""
+
+msgid ""
+"The jagged peaks biome.\n"
+"Goats and hostile\n"
+"mobs will spawn."
+msgstr ""
+
+msgid "Savanna Plateau"
+msgstr ""
+
+msgid ""
+"The savanna plateau biome.\n"
+"This is the only biome\n"
+"where llamas can spawn.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Mangrove Swamp"
+msgstr ""
+
+msgid ""
+"The mangrove swamp biome.\n"
+"Frogs, slimes and hostile\n"
+"mobs will spawn."
 msgstr ""
 
 msgid "Permissions"

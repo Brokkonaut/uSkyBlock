@@ -161,6 +161,18 @@ public class SkyBlockMenu {
             new BiomeMenuItem(new ItemStack(Material.WARPED_NYLIUM, 1),
                     "warped_forest", tr("Warped Forest"),
                     tr("The warped forest biome.\nonly endermen and strider can spawn here.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.GOAT_HORN),
+                    "jagged_peaks", tr("Jagged Peaks"),
+                    tr("The jagged peaks biome.\nGoats and hostile\nmobs will spawn.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.ACACIA_SAPLING),
+                    "savanna_plateau", tr("Savanna Plateau"),
+                    tr("The savanna plateau biome.\nThis is the only biome\nwhere llamas can spawn.\nHostile mobs will spawn normally.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.MANGROVE_PROPAGULE),
+                    "mangrove_swamp", tr("Mangrove Swamp"),
+                    tr("The mangrove swamp biome.\nFrogs, slimes and hostile\nmobs will spawn.")
             )
     );
 

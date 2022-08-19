@@ -42,6 +42,27 @@ msgstr "{0}에 문서를 작성합니다."
 msgid "§4Error writing documentation: {0}"
 msgstr "§4다음 문서 저장중 오류가 발생했습니다: {0}"
 
+msgid "changes the language of the plugin, and reloads"
+msgstr "플러그인의 언어를 바꾸고 리로드합니다"
+
+#, java-format
+msgid "§aSuccessfully changed language to §e{0}"
+msgstr "§a성공적으로 언어를 §e{0}로 바꾸었습니다"
+
+#, java-format
+msgid "§cFailed to change language to §e{0}"
+msgstr "§cF언어를 §e{0}로 바꾸는데 실패하였습니다"
+
+msgid "§9Supported Languages:\n"
+msgstr "§9지원되는 언어:\n"
+
+#, java-format
+msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
+msgstr "§f{0} §7{1} §9 by {2} §7{3}\n"
+
+msgid "§cUnable to locate any languages."
+msgstr "§c어떤 언어든 설정할 수 없습니다."
+
 msgid "Command"
 msgstr "명령어"
 
@@ -699,27 +720,6 @@ msgstr "시간"
 
 msgid "name"
 msgstr "이름"
-
-msgid "changes the language of the plugin, and reloads"
-msgstr "플러그인의 언어를 바꾸고 리로드합니다"
-
-#, java-format
-msgid "§aSuccessfully changed language to §e{0}"
-msgstr "§a성공적으로 언어를 §e{0}로 바꾸었습니다"
-
-#, java-format
-msgid "§cFailed to change language to §e{0}"
-msgstr "§cF언어를 §e{0}로 바꾸는데 실패하였습니다"
-
-msgid "§9Supported Languages:\n"
-msgstr "§9지원되는 언어:\n"
-
-#, java-format
-msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
-msgstr "§f{0} §7{1} §9 by {2} §7{3}\n"
-
-msgid "§cUnable to locate any languages."
-msgstr "§c어떤 언어든 설정할 수 없습니다."
 
 msgid "transfer leadership to another player"
 msgstr "다른 플레이어에게 리더 권한을 전달합니다"
@@ -2420,6 +2420,34 @@ msgstr ""
 msgid ""
 "The warped forest biome.\n"
 "only endermen and strider can spawn here."
+msgstr ""
+
+msgid "Jagged Peaks"
+msgstr ""
+
+msgid ""
+"The jagged peaks biome.\n"
+"Goats and hostile\n"
+"mobs will spawn."
+msgstr ""
+
+msgid "Savanna Plateau"
+msgstr ""
+
+msgid ""
+"The savanna plateau biome.\n"
+"This is the only biome\n"
+"where llamas can spawn.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Mangrove Swamp"
+msgstr ""
+
+msgid ""
+"The mangrove swamp biome.\n"
+"Frogs, slimes and hostile\n"
+"mobs will spawn."
 msgstr ""
 
 msgid "Permissions"

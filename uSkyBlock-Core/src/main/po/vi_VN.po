@@ -43,6 +43,27 @@ msgstr "Đã ghi thông tin vào {0}"
 msgid "§4Error writing documentation: {0}"
 msgstr "§4Lỗi khi ghi thông tin: {0}"
 
+msgid "changes the language of the plugin, and reloads"
+msgstr "chuyên ngôn ngữ, và reload"
+
+#, java-format
+msgid "§aSuccessfully changed language to §e{0}"
+msgstr "§aĐã chuyển ngon ngữ sang §e{0}"
+
+#, java-format
+msgid "§cFailed to change language to §e{0}"
+msgstr "§aThất bại chuyển ngon ngữ sang §e{0}"
+
+msgid "§9Supported Languages:\n"
+msgstr "§9Các ngôn ngữ được hỗ trợ:\n"
+
+#, java-format
+msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
+msgstr "§f{0} §7{1} §9 dịch bởi {2} §7{3}\n"
+
+msgid "§cUnable to locate any languages."
+msgstr "§cKhông thể xác định ngôn ngữ"
+
 msgid "Command"
 msgstr "Lệnh"
 
@@ -702,27 +723,6 @@ msgstr ""
 
 msgid "name"
 msgstr ""
-
-msgid "changes the language of the plugin, and reloads"
-msgstr "chuyên ngôn ngữ, và reload"
-
-#, java-format
-msgid "§aSuccessfully changed language to §e{0}"
-msgstr "§aĐã chuyển ngon ngữ sang §e{0}"
-
-#, java-format
-msgid "§cFailed to change language to §e{0}"
-msgstr "§aThất bại chuyển ngon ngữ sang §e{0}"
-
-msgid "§9Supported Languages:\n"
-msgstr "§9Các ngôn ngữ được hỗ trợ:\n"
-
-#, java-format
-msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
-msgstr "§f{0} §7{1} §9 dịch bởi {2} §7{3}\n"
-
-msgid "§cUnable to locate any languages."
-msgstr "§cKhông thể xác định ngôn ngữ"
 
 msgid "transfer leadership to another player"
 msgstr "Chuyển đổi thủ lĩnh cho người chơi"
@@ -2381,6 +2381,34 @@ msgstr ""
 msgid ""
 "The warped forest biome.\n"
 "only endermen and strider can spawn here."
+msgstr ""
+
+msgid "Jagged Peaks"
+msgstr ""
+
+msgid ""
+"The jagged peaks biome.\n"
+"Goats and hostile\n"
+"mobs will spawn."
+msgstr ""
+
+msgid "Savanna Plateau"
+msgstr ""
+
+msgid ""
+"The savanna plateau biome.\n"
+"This is the only biome\n"
+"where llamas can spawn.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Mangrove Swamp"
+msgstr ""
+
+msgid ""
+"The mangrove swamp biome.\n"
+"Frogs, slimes and hostile\n"
+"mobs will spawn."
 msgstr ""
 
 msgid "Permissions"

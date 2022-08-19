@@ -44,6 +44,27 @@ msgstr ""
 msgid "§4Error writing documentation: {0}"
 msgstr ""
 
+msgid "changes the language of the plugin, and reloads"
+msgstr "cambia el lenguaje del plugin, y hace una recarga."
+
+#, java-format
+msgid "§aSuccessfully changed language to §e{0}"
+msgstr "§aEl lenguaje ha sido satisfactoriamente cambiado a §e{0}"
+
+#, java-format
+msgid "§cFailed to change language to §e{0}"
+msgstr "§cFalló el cambio de lenguaje a §e{0}"
+
+msgid "§9Supported Languages:\n"
+msgstr "§9Lenguajes soportados: \n"
+
+#, java-format
+msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
+msgstr "§f{0} §7{1} §9 por {2} §7{3}\n"
+
+msgid "§cUnable to locate any languages."
+msgstr "§cIncapaz de localizar algún lenguaje."
+
 msgid "Command"
 msgstr ""
 
@@ -701,27 +722,6 @@ msgstr "tiempo"
 
 msgid "name"
 msgstr "nombre"
-
-msgid "changes the language of the plugin, and reloads"
-msgstr "cambia el lenguaje del plugin, y hace una recarga."
-
-#, java-format
-msgid "§aSuccessfully changed language to §e{0}"
-msgstr "§aEl lenguaje ha sido satisfactoriamente cambiado a §e{0}"
-
-#, java-format
-msgid "§cFailed to change language to §e{0}"
-msgstr "§cFalló el cambio de lenguaje a §e{0}"
-
-msgid "§9Supported Languages:\n"
-msgstr "§9Lenguajes soportados: \n"
-
-#, java-format
-msgid "§f{0} §7{1} §9 by {2} §7{3}\n"
-msgstr "§f{0} §7{1} §9 por {2} §7{3}\n"
-
-msgid "§cUnable to locate any languages."
-msgstr "§cIncapaz de localizar algún lenguaje."
 
 msgid "transfer leadership to another player"
 msgstr "transfiere el liderazgo a otro jugador"
@@ -2426,6 +2426,34 @@ msgstr ""
 msgid ""
 "The warped forest biome.\n"
 "only endermen and strider can spawn here."
+msgstr ""
+
+msgid "Jagged Peaks"
+msgstr ""
+
+msgid ""
+"The jagged peaks biome.\n"
+"Goats and hostile\n"
+"mobs will spawn."
+msgstr ""
+
+msgid "Savanna Plateau"
+msgstr ""
+
+msgid ""
+"The savanna plateau biome.\n"
+"This is the only biome\n"
+"where llamas can spawn.\n"
+"Hostile mobs will spawn normally."
+msgstr ""
+
+msgid "Mangrove Swamp"
+msgstr ""
+
+msgid ""
+"The mangrove swamp biome.\n"
+"Frogs, slimes and hostile\n"
+"mobs will spawn."
 msgstr ""
 
 msgid "Permissions"
