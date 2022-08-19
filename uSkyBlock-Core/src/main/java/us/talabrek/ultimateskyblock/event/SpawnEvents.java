@@ -115,6 +115,11 @@ public class SpawnEvents implements Listener {
             return; // Allow it, the above method would have blocked it if it should be blocked.
         }
         if (event.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
+            if (event.getEntity() instanceof Ghast && event.getLocation().getWorld().getEnvironment() != World.Environment.NETHER) {
+                // Disallow ghasts for now...
+                event.setCancelled(true);
+                return;
+            }
             checkLimits(event, event.getEntity().getType(), event.getLocation());
         }
         if (event.getEntity() instanceof WaterMob) {
@@ -155,11 +160,6 @@ public class SpawnEvents implements Listener {
         String islandName = WorldGuardHandler.getIslandNameAt(location);
         if (islandName == null) {
             event.setCancelled(true); // Only allow spawning on active islands...
-            return;
-        }
-        if (entityType.getEntityClass().isAssignableFrom(Ghast.class) && location.getWorld().getEnvironment() != World.Environment.NETHER) {
-            // Disallow ghasts for now...
-            event.setCancelled(true);
             return;
         }
         us.talabrek.ultimateskyblock.api.IslandInfo islandInfo = plugin.getIslandInfo(islandName);
