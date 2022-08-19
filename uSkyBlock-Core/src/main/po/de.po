@@ -945,10 +945,10 @@ msgid "reload configuration from file."
 msgstr "Lade die Einstellungen von einer Datei."
 
 msgid "§eConfiguration reloaded from file."
-msgstr "§eEInstellungen geladen von der Datei."
+msgstr "§eEinstellungen geladen von der Datei."
 
 msgid "advanced command for setting island-data"
-msgstr "fortgeschrittenes Kommando um Insel Einstellungen festzulegen"
+msgstr "Erweiterter Befehl um Inseleinstellungen festzulegen"
 
 #, java-format
 msgid "§c{0} was set to ''{1}''"
