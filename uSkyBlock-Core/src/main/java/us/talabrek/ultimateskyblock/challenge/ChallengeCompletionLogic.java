@@ -12,7 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
 import us.talabrek.ultimateskyblock.uSkyBlock;
-
+import us.talabrek.ultimateskyblock.api.event.ChallengeCompletedEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -166,6 +166,7 @@ public class ChallengeCompletionLogic {
                 }
             }
             completion.addTimesCompleted();
+            new ChallengeCompletedEvent(playerInfo, challengeName).callEvent();
         }
     }
 
