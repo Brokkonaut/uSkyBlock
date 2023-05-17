@@ -7,11 +7,26 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
 public class BlockCollection {
+    private static final Map<Material, Material> defaultMaterialReplacements = new HashMap<>();
+    static {
+        for (Material m : Material.values()) {
+            if (m.name().contains("_WALL_")) {
+                try {
+                    Material replacement = Material.valueOf(m.name().replace("_WALL_", "_"));
+                    defaultMaterialReplacements.put(m, replacement);
+                } catch (IllegalArgumentException ignored) {
+                    // ignored
+                }
+            }
+        }
+    }
+
     Map<Material, Integer> blockCount;
 
     public BlockCollection() {
@@ -19,7 +34,9 @@ public class BlockCollection {
     }
 
     public synchronized void add(Block block) {
-        int currentValue = blockCount.getOrDefault(block.getType(), 0);
+        Material blockType = block.getType();
+        blockType = defaultMaterialReplacements.getOrDefault(blockType, blockType);
+        int currentValue = blockCount.getOrDefault(blockType, 0);
         blockCount.put(block.getType(), currentValue + 1);
     }
 
@@ -31,7 +48,9 @@ public class BlockCollection {
     public synchronized String diff(Collection<ItemStack> itemStacks) {
         StringBuilder sb = new StringBuilder();
         for (ItemStack item : itemStacks) {
-            int diff = item.getAmount() - count(item.getType());
+            Material blockType = item.getType();
+            blockType = defaultMaterialReplacements.getOrDefault(blockType, blockType);
+            int diff = item.getAmount() - count(blockType);
             if (diff > 0) {
                 sb.append(tr(" \u00a7f{0}x \u00a77{1}", diff, ItemStackUtil.getItemName(item)));
             }
