@@ -37,7 +37,7 @@ public class BlockCollection {
         Material blockType = block.getType();
         blockType = defaultMaterialReplacements.getOrDefault(blockType, blockType);
         int currentValue = blockCount.getOrDefault(blockType, 0);
-        blockCount.put(block.getType(), currentValue + 1);
+        blockCount.put(blockType, currentValue + 1);
     }
 
     /**
