@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class BlockCollection {
     Map<Material, Integer> blockCount;
 
     public BlockCollection() {
-        this.blockCount = new EnumMap<>(Material.class);
+        this.blockCount = new HashMap<>();
     }
 
     public synchronized void add(Block block) {

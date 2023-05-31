@@ -270,7 +270,7 @@ public class ChallengeLogic implements Listener {
 
     private boolean hasEntitiesNear(Player player, List<EntityMatch> requiredEntities, int radius) {
         Map<EntityMatch, Integer> countMap = new LinkedHashMap<>();
-        Map<EntityType, Set<EntityMatch>> matchMap = new EnumMap<>(EntityType.class);
+        Map<EntityType, Set<EntityMatch>> matchMap = new HashMap<>();
         for (EntityMatch match : requiredEntities) {
             countMap.put(match, match.getCount());
             Set<EntityMatch> set = matchMap.get(match.getType());
