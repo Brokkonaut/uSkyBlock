@@ -44,14 +44,14 @@ public class BlockCollection {
      * @param itemStacks
      * @return
      */
-    public synchronized String diff(Collection<ItemStack> itemStacks) {
+    public synchronized String diff(Collection<BlockStack> itemStacks) {
         StringBuilder sb = new StringBuilder();
-        for (ItemStack item : itemStacks) {
-            Material blockType = item.getType();
+        for (BlockStack item : itemStacks) {
+            Material blockType = item.getBlock();
             blockType = defaultMaterialReplacements.getOrDefault(blockType, blockType);
             int diff = item.getAmount() - count(blockType);
             if (diff > 0) {
-                sb.append(tr(" \u00a7f{0}x \u00a77{1}", diff, ItemStackUtil.getItemName(item)));
+                sb.append(tr(" \u00a7f{0}x \u00a77{1}", diff, ItemStackUtil.getMaterialName(blockType)));
             }
         }
         if (sb.toString().trim().isEmpty()) {

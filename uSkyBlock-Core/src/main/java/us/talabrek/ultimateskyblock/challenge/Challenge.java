@@ -1,9 +1,11 @@
 package us.talabrek.ultimateskyblock.challenge;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
 import us.talabrek.ultimateskyblock.uSkyBlock;
+import us.talabrek.ultimateskyblock.block.BlockStack;
 import dk.lockfuglsang.minecraft.util.FormatUtil;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 
@@ -122,23 +124,45 @@ public class Challenge {
 
     public List<ItemStack> getRequiredItems(int timesCompleted) {
         List<ItemStack> items = new ArrayList<>();
-        for (String item : requiredItems) {
-            if (item == null || item.trim().isEmpty()) {
-                continue; // Just skip it
+        if (type == Type.PLAYER) {
+            for (String item : requiredItems) {
+                if (item == null || item.trim().isEmpty()) {
+                    continue; // Just skip it
+                }
+                Matcher m = REQ_PATTERN.matcher(item);
+                if (m.matches()) {
+                    int amount = Integer.parseInt(m.group("amount"), 10);
+                    char op = m.group("op") != null ? m.group("op").charAt(0) : 0;
+                    int inc = m.group("inc") != null ? Integer.parseInt(m.group("inc"), 10) : 0;
+                    amount = ChallengeLogic.calcAmount(amount, op, inc, timesCompleted);
+                    ItemStack mat = ItemStackUtil.createItemStack(m.group("itemstack"));
+                    ItemMeta meta = mat.getItemMeta();
+                    mat.setItemMeta(meta);
+                    mat.setAmount(amount);
+                    items.add(mat);
+                } else {
+                    uSkyBlock.getInstance().getLogger().log(Level.INFO, "Malformed challenge " + name + ", item: " + item + " is not a valid required item");
+                }
             }
-            Matcher m = REQ_PATTERN.matcher(item);
-            if (m.matches()) {
-                int amount = Integer.parseInt(m.group("amount"), 10);
-                char op = m.group("op") != null ? m.group("op").charAt(0) : 0;
-                int inc = m.group("inc") != null ? Integer.parseInt(m.group("inc"), 10) : 0;
-                amount = ChallengeLogic.calcAmount(amount, op, inc, timesCompleted);
-                ItemStack mat = ItemStackUtil.createItemStack(m.group("itemstack"));
-                ItemMeta meta = mat.getItemMeta();
-                mat.setItemMeta(meta);
-                mat.setAmount(amount);
-                items.add(mat);
-            } else if (!(type == Type.ISLAND_LEVEL && item.matches("[0-9]+"))) {
-                uSkyBlock.getInstance().getLogger().log(Level.INFO, "Malformed challenge " + name + ", item: " + item + " is not a valid required item");
+        }
+        return items;
+    }
+
+    public List<BlockStack> getRequiredBlocks() {
+        List<BlockStack> items = new ArrayList<>();
+        if (type == Type.ISLAND) {
+            for (String item : requiredItems) {
+                if (item == null || item.trim().isEmpty()) {
+                    continue; // Just skip it
+                }
+                Matcher m = REQ_PATTERN.matcher(item);
+                if (m.matches()) {
+                    int amount = Integer.parseInt(m.group("amount"), 10);
+                    Material material = Material.matchMaterial(m.group("itemstack"));
+                    items.add(new BlockStack(material, amount));
+                } else {
+                    uSkyBlock.getInstance().getLogger().log(Level.INFO, "Malformed challenge " + name + ", block: " + item + " is not a valid required block");
+                }
             }
         }
         return items;
@@ -202,7 +226,8 @@ public class Challenge {
             reward = getRepeatReward();
         }
         List<ItemStack> reqItems = getRequiredItems(timesCompleted);
-        if ((reqItems != null && !reqItems.isEmpty()) || (requiredEntities != null && !requiredEntities.isEmpty())) {
+        List<BlockStack> reqBlocks = getRequiredBlocks();
+        if ((reqItems != null && !reqItems.isEmpty()) || (reqBlocks != null && !reqBlocks.isEmpty()) || (requiredEntities != null && !requiredEntities.isEmpty())) {
             lores.add(tr("\u00a7eThis challenge requires:"));
         }
         List<String> details = new ArrayList<>();
@@ -215,6 +240,17 @@ public class Challenge {
                 details.add(item.getAmount() > 1
                         ? tr("\u00a7f{0}x \u00a77{1}", item.getAmount(), ItemStackUtil.getItemName(item))
                         : tr("\u00a77{0}", ItemStackUtil.getItemName(item)));
+            }
+        }
+        if (reqBlocks != null && !reqBlocks.isEmpty()) {
+            for (BlockStack item : reqBlocks) {
+                if (wrappedDetails(details).size() >= MAX_DETAILS) {
+                    details.add(tr("\u00a77and more..."));
+                    break;
+                }
+                details.add(item.getAmount() > 1
+                        ? tr("\u00a7f{0}x \u00a77{1}", item.getAmount(), ItemStackUtil.getMaterialName(item.getBlock()))
+                        : tr("\u00a77{0}", ItemStackUtil.getMaterialName(item.getBlock())));
             }
         }
         if (requiredEntities != null && !requiredEntities.isEmpty() && wrappedDetails(details).size() < MAX_DETAILS) {

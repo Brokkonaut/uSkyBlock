@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.talabrek.ultimateskyblock.api.event.MemberJoinedEvent;
 import us.talabrek.ultimateskyblock.block.BlockCollection;
+import us.talabrek.ultimateskyblock.block.BlockStack;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.player.Perk;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
@@ -227,7 +228,7 @@ public class ChallengeLogic implements Listener {
         return false;
     }
 
-    private boolean islandContains(Player player, List<ItemStack> itemStacks, int radius) {
+    private boolean islandContains(Player player, List<BlockStack> itemStacks, int radius) {
         final Location l = player.getLocation();
         final int px = l.getBlockX();
         final int py = l.getBlockY();
@@ -259,7 +260,7 @@ public class ChallengeLogic implements Listener {
      */
     private boolean tryCompleteOnIsland(Player player, String challengeName) {
         Challenge challenge = getChallenge(challengeName);
-        List<ItemStack> requiredItems = challenge.getRequiredItems(0);
+        List<BlockStack> requiredItems = challenge.getRequiredBlocks();
         int radius = challenge.getRadius();
         if (islandContains(player, requiredItems, radius) && hasEntitiesNear(player, challenge.getRequiredEntities(), radius)) {
             giveReward(player, challenge);
