@@ -6,13 +6,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.profile.PlayerProfile;
+
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -275,7 +279,74 @@ public class NullPlayer implements OfflinePlayer {
 
             @Override
             public @NotNull PlayerProfile clone() {
+                return this;
+            }
+
+            @Override
+            public @NotNull String setName(@Nullable String name) {
                 return null;
+            }
+
+            @Override
+            public @Nullable UUID getId() {
+                return PlayerDB.UNKNOWN_PLAYER_UUID;
+            }
+
+            @Override
+            public @Nullable UUID setId(@Nullable UUID uuid) {
+                return null;
+            }
+
+            @Override
+            public @NotNull Set<ProfileProperty> getProperties() {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public boolean hasProperty(@Nullable String property) {
+                return false;
+            }
+
+            @Override
+            public void setProperty(@NotNull ProfileProperty property) {
+            }
+
+            @Override
+            public void setProperties(@NotNull Collection<ProfileProperty> properties) {
+            }
+
+            @Override
+            public boolean removeProperty(@Nullable String property) {
+                return false;
+            }
+
+            @Override
+            public void clearProperties() {
+            }
+
+            @Override
+            public boolean completeFromCache() {
+                return false;
+            }
+
+            @Override
+            public boolean completeFromCache(boolean onlineMode) {
+                return false;
+            }
+
+            @Override
+            public boolean completeFromCache(boolean lookupUUID, boolean onlineMode) {
+                return false;
+            }
+
+            @Override
+            public boolean complete(boolean textures) {
+                return false;
+            }
+
+            @Override
+            public boolean complete(boolean textures, boolean onlineMode) {
+                return false;
             }};
     }
 

@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -49,14 +50,16 @@ public class SignEvents implements Listener {
             logic.updateSign(e.getClickedBlock().getLocation());
         } else {
             logic.signClicked(e.getPlayer(), e.getClickedBlock().getLocation());
+            e.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSignChanged(SignChangeEvent e) {
         if (!plugin.getWorldManager().isSkyAssociatedWorld(e.getPlayer().getWorld())
-                || !e.getLines()[0].equalsIgnoreCase("[usb]")
-                || e.getLines()[1].trim().isEmpty()
+                || e.getSide() != Side.FRONT
+                || !e.getLine(0).equalsIgnoreCase("[usb]")
+                || e.getLine(1).trim().isEmpty()
                 || !e.getPlayer().hasPermission("usb.island.signs.place")
                 || (e.getBlock().getType().data != WallSign.class)
                 || !(e.getBlock().getState() instanceof Sign)
