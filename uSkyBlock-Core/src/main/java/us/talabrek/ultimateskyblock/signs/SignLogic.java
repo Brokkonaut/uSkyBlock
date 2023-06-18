@@ -267,8 +267,11 @@ public class SignLogic {
         }
     }
 
-    void signClicked(final Player player, final Location location) {
+    boolean signClicked(final Player player, final Location location) {
         plugin.async(() -> tryCompleteAsync(player, location));
+        String signLoc = LocationUtil.asKey(location);
+        String challengeName = config.getString("signs." + signLoc + ".challenge", null);
+        return challengeName != null && challengeLogic.getChallenge(challengeName) != null;
     }
 
     private void tryCompleteAsync(final Player player, Location location) {

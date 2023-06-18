@@ -49,8 +49,9 @@ public class SignEvents implements Listener {
         if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
             logic.updateSign(e.getClickedBlock().getLocation());
         } else {
-            logic.signClicked(e.getPlayer(), e.getClickedBlock().getLocation());
-            e.setCancelled(true);
+            if (logic.signClicked(e.getPlayer(), e.getClickedBlock().getLocation())) {
+                e.setCancelled(true);
+            }
         }
     }
 
