@@ -124,7 +124,7 @@ public class IslandLocatorLogic {
         return !(plugin.islandInSpawn(next) || plugin.islandAtLocation(next) || isReserved(next));
     }
 
-    private boolean isReserved(Location next) {
+    public boolean isReserved(Location next) {
         return reservations.containsKey(LocationUtil.getIslandName(next));
     }
 

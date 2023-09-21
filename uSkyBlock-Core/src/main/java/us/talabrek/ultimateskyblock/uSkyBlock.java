@@ -462,7 +462,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         String islandName = WorldGuardHandler.getIslandNameAt(l);
         if (islandName == null && getWorldManager().isSkyWorld(sender.getWorld())) {
             Location possibleIslandLoc = LocationUtil.alignToDistance(sender.getLocation(), Settings.island_distance);
-            if (islandLocatorLogic.isAvailableLocation(possibleIslandLoc)) {
+            if (!islandLocatorLogic.isReserved(possibleIslandLoc)) {
                 islandName = LocationUtil.getIslandName(possibleIslandLoc);
             }
         }
