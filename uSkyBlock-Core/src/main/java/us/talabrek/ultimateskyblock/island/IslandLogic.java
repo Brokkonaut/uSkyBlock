@@ -127,7 +127,7 @@ public class IslandLogic {
     }
 
     public void clearIsland(final Location loc, final Runnable afterDeletion) {
-        log.log(Level.FINE, "clearing island at {0}", loc);
+        log.log(Level.INFO, "clearing island at {0}", loc);
         Runnable clearNether = new Runnable() {
             @Override
             public void run() {
