@@ -18,6 +18,6 @@ public class MobLimitCommand extends AbstractIslandInfoCommand {
 
     @Override
     protected void doExecute(CommandSender sender, PlayerInfo playerInfo, IslandInfo islandInfo, String... args) {
-        sender.sendMessage(plugin.getLimitLogic().getSummary(islandInfo).split("\n"));
+        sender.sendMessage(plugin.getLimitLogic().getSummary(islandInfo));
     }
 }

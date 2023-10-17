@@ -18,12 +18,18 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.inventory.ItemStack;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
+import us.talabrek.ultimateskyblock.util.EntityUtil;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
@@ -74,6 +80,37 @@ public class LimitLogic {
         return mapCount;
     }
 
+
+    public Map<CreatureType, Map<EntityType, Integer>> getDetailedCreatureCount(us.talabrek.ultimateskyblock.api.IslandInfo islandInfo) {
+        Map<CreatureType, Map<EntityType, Integer>> mapCount = new HashMap<>();
+        for (CreatureType type : CreatureType.values()) {
+            TreeMap<EntityType, Integer> entries = new TreeMap<>((e1, e2) -> e1 == null ? (e2 == null ? 0 : -1) : (e2 == null ? 1 : e1.name().compareTo(e2.name())));
+            entries.put(null, 0);
+            mapCount.put(type, entries);
+        }
+        Location islandLocation = islandInfo.getIslandLocation();
+        ProtectedRegion islandRegionAt = WorldGuardHandler.getIslandRegionAt(islandLocation);
+        if (islandRegionAt != null) {
+            // Nether and Overworld regions are more or less equal (same x,z coords)
+            List<LivingEntity> creatures = WorldGuardHandler.getCreaturesInRegion(plugin.getWorldManager().getWorld(),
+                    islandRegionAt);
+            World nether = plugin.getWorldManager().getNetherWorld();
+            if (nether != null) {
+                creatures.addAll(WorldGuardHandler.getCreaturesInRegion(nether, islandRegionAt));
+            }
+            for (LivingEntity creature : creatures) {
+                if (!creature.hasAI()) {
+                    continue;
+                }
+                CreatureType key = getCreatureType(creature);
+                Map<EntityType, Integer> typeCount = mapCount.get(key);
+                typeCount.put(null, typeCount.get(null) + 1);
+                typeCount.put(creature.getType(), typeCount.getOrDefault(creature.getType(), 0) + 1);
+            }
+        }
+        return mapCount;
+    }
+    
     public Map<CreatureType, Integer> getCreatureMax(us.talabrek.ultimateskyblock.api.IslandInfo islandInfo) {
         Map<CreatureType, Integer> max = new LinkedHashMap<>();
         for (CreatureType creatureType : CreatureType.values()) {
@@ -143,33 +180,54 @@ public class LimitLogic {
         return Integer.MAX_VALUE;
     }
 
-    public String getSummary(us.talabrek.ultimateskyblock.api.IslandInfo islandInfo) {
+    public Component getSummary(us.talabrek.ultimateskyblock.api.IslandInfo islandInfo) {
+        Component result = Component.empty();
+        
         Map<LimitLogic.CreatureType, Integer> creatureMax = getCreatureMax(islandInfo);
-        Map<LimitLogic.CreatureType, Integer> count = getCreatureCount(islandInfo);
-        StringBuilder sb = new StringBuilder();
+        Map<CreatureType, Map<EntityType, Integer>> count = getDetailedCreatureCount(islandInfo);
         for (LimitLogic.CreatureType key : creatureMax.keySet()) {
             if (key == CreatureType.UNKNOWN) {
                 continue; // Skip
             }
-            int cnt = count.containsKey(key) ? count.get(key) : 0;
+            Map<EntityType, Integer> countForCreatueType = count.get(key);
+            int cnt = countForCreatueType.get(null);
             int max = creatureMax.get(key);
-            sb.append(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})", tr(key.name()), cnt >= max ? tr("\u00a7c{0}",cnt) : cnt, max) + "\n");
+            Component line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})", tr(key.name()), cnt >= max ? tr("\u00a7c{0}", cnt) : cnt, max));
+            Component hoverText = Component.empty();
+            for (Entry<EntityType, Integer> e : countForCreatueType.entrySet()) {
+                if (e.getKey() != null) {
+                    if (hoverText != Component.empty()) {
+                        hoverText = hoverText.append(Component.newline());
+                    }
+                    hoverText = hoverText.append(Component.text(EntityUtil.getEntityDisplayName(e.getKey()) + ": " + e.getValue()));
+                }
+            }
+            line = line.hoverEvent(HoverEvent.showText(hoverText));
+            if (result != Component.empty()) {
+                result = result.append(Component.newline());
+            }
+            result = result.append(line);
         }
         Map<Material, Integer> blockLimits = plugin.getBlockLimitLogic().getLimits();
-        for (Map.Entry<Material,Integer> entry : blockLimits.entrySet()) {
+        for (Map.Entry<Material, Integer> entry : blockLimits.entrySet()) {
             int blockCount = plugin.getBlockLimitLogic().getCount(entry.getKey(), islandInfo.getIslandLocation());
+            Component line;
             if (blockCount >= 0) {
-                sb.append(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
+                line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
                         ItemStackUtil.getItemName(new ItemStack(entry.getKey())),
                         blockCount >= entry.getValue() ? tr("\u00a7c{0}", blockCount) : blockCount,
-                        entry.getValue()) + "\n");
+                        entry.getValue()));
             } else {
-                sb.append(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
+                line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
                         ItemStackUtil.getItemName(new ItemStack(entry.getKey())),
                         tr("\u00a7c{0}", "?"),
-                        entry.getValue()) + "\n");
+                        entry.getValue()));
             }
+            if (result != Component.empty()) {
+                result = result.append(Component.newline());
+            }
+            result = result.append(line);
         }
-        return sb.toString().trim();
+        return result;
     }
 }
