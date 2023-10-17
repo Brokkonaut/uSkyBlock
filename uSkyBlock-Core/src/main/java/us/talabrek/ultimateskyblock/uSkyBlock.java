@@ -388,9 +388,12 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         final PlayerInfo finalPI = pi;
         final IslandInfo islandInfo = getIslandInfo(pi);
         Location islandLocation = islandInfo.getIslandLocation();
-        for (String member : islandInfo.getMembers()) {
+        for (UUID member : islandInfo.getMemberUUIDs()) {
             pi = playerLogic.getPlayerInfo(member);
             islandInfo.removeMember(pi);
+        }
+        for (UUID member : islandInfo.getTrusteeUUIDs()) {
+            islandInfo.untrustPlayer(Bukkit.getOfflinePlayer( member));
         }
         islandLogic.clearIsland(islandLocation, new Runnable() {
             @Override
