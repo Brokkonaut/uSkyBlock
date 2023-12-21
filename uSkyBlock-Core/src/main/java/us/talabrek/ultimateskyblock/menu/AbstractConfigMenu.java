@@ -79,7 +79,11 @@ public class AbstractConfigMenu {
             ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1);
             Bukkit.getUnsafe().modifyItemStack(itemStack, item);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setDisplayName(tr(itemMeta.getDisplayName()));
+            try {
+                itemMeta.setDisplayName(tr(itemMeta.getDisplayName()));
+            } catch (Exception ex) {
+                // ignore
+            }
             itemStack.setItemMeta(itemMeta);
             return itemStack;
         }
