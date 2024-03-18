@@ -58,24 +58,24 @@ public class SetBiomeTask extends IncrementalRunnable {
         while (it.hasNext()) {
             BlockVector2 chunk = it.next();
             it.remove();
-            world.getChunkAt(chunk.getBlockX(), chunk.getBlockZ());
-            int cx = chunk.getBlockX() << 4;
-            int cz = chunk.getBlockZ() << 4;
+            world.getChunkAt(chunk.x(), chunk.z());
+            int cx = chunk.x() << 4;
+            int cz = chunk.z() << 4;
             int mx = cx + 15;
             int mz = cz + 15;
-            int miny = minP.getBlockY();
-            int maxy = maxP.getBlockY();
-            if (cx < minP.getBlockX()) {
-                cx = minP.getBlockX();
+            int miny = minP.y();
+            int maxy = maxP.y();
+            if (cx < minP.x()) {
+                cx = minP.x();
             }
-            if (cz < minP.getBlockZ()) {
-                cz = minP.getBlockZ();
+            if (cz < minP.z()) {
+                cz = minP.z();
             }
-            if (mx > maxP.getBlockX()) {
-                mx = maxP.getBlockX();
+            if (mx > maxP.x()) {
+                mx = maxP.x();
             }
-            if (mz > maxP.getBlockZ()) {
-                mz = maxP.getBlockZ();
+            if (mz > maxP.z()) {
+                mz = maxP.z();
             }
             for (int x = cx; x <= mx; x++) {
                 for (int z = cz; z <= mz; z++) {
@@ -86,7 +86,7 @@ public class SetBiomeTask extends IncrementalRunnable {
             }
 
             //noinspection deprecation
-            world.refreshChunk(chunk.getBlockX(), chunk.getBlockZ());
+            world.refreshChunk(chunk.x(), chunk.z());
 
             if (!tick()) {
                 return isDone();

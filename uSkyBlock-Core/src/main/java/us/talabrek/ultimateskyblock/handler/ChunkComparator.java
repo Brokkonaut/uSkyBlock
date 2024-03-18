@@ -15,10 +15,10 @@ public class ChunkComparator implements Comparator<BlockVector2> {
     public int compare(BlockVector2 o1, BlockVector2 o2) {
         int cmp = Math.round(origin.distanceSq(o1) -  origin.distanceSq(o2));
         if (cmp == 0) {
-            cmp = o1.getBlockX() - o2.getBlockX();
+            cmp = o1.x() - o2.x();
         }
         if (cmp == 0) {
-            cmp = o1.getBlockZ() - o2.getBlockZ();
+            cmp = o1.z() - o2.z();
         }
         return cmp;
     }

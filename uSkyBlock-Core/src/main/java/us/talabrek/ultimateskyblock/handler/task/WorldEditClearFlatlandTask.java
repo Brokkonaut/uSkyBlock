@@ -49,8 +49,8 @@ public class WorldEditClearFlatlandTask extends IncrementalRunnable {
         innerChunks = WorldEditHandler.getInnerChunks(region);
         borderRegions = WorldEditHandler.getBorderRegions(region);
         bukkitWorld = new BukkitWorld(plugin.getWorldManager().getWorld());
-        minY = Math.min(region.getMinimumPoint().getBlockY(), region.getMaximumPoint().getBlockY());
-        maxY = Math.max(region.getMinimumPoint().getBlockY(), region.getMaximumPoint().getBlockY());
+        minY = Math.min(region.getMinimumPoint().y(), region.getMaximumPoint().y());
+        maxY = Math.max(region.getMinimumPoint().y(), region.getMaximumPoint().y());
         maxBlocks = 2*Math.max(region.getLength(), region.getWidth())*16*(maxY-minY);
     }
 
@@ -61,13 +61,12 @@ public class WorldEditClearFlatlandTask extends IncrementalRunnable {
         while (!isComplete()) {
             EditSession editSession = AsyncWorldEditHandler.createEditSession(bukkitWorld, maxBlocks);
             editSession.setSideEffectApplier(SideEffectSet.defaults());
-            editSession.setReorderMode(EditSession.ReorderMode.MULTI_STAGE);
             if (inner.hasNext()) {
                 BlockVector2 chunk = inner.next();
                 inner.remove();
                 try {
-                    int x = chunk.getX() << 4;
-                    int z = chunk.getZ() << 4;
+                    int x = chunk.x() << 4;
+                    int z = chunk.z() << 4;
                     editSession.setBlocks(new CuboidRegion(bukkitWorld,
                                     BlockVector3.at(x, minY, z),
                                     BlockVector3.at(x + 15, maxY, z + 15)),
@@ -84,7 +83,7 @@ public class WorldEditClearFlatlandTask extends IncrementalRunnable {
                     plugin.getLogger().log(Level.WARNING, "Unable to clear flat-land", e);
                 }
             }
-            editSession.flushSession();
+            editSession.close();
             if (!tick()) {
                 break;
             }

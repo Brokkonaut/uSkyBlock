@@ -334,10 +334,8 @@ public class WorldGuardHandler {
     }
 
     public static ProtectedCuboidRegion getIslandRegion(Location islandLocation) {
-        int r = Settings.island_radius;
-        BlockVector3 islandCenter = BlockVector3.at(islandLocation.getBlockX(), 0, islandLocation.getBlockZ());
         return new ProtectedCuboidRegion(
-                String.format("%d,%disland", islandCenter.getBlockX(), islandLocation.getBlockZ()),
+                String.format("%d,%disland", islandLocation.getBlockX(), islandLocation.getBlockZ()),
                 getProtectionVectorLeft(islandLocation),
                 getProtectionVectorRight(islandLocation));
     }

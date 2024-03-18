@@ -115,8 +115,8 @@ public class BiomeCommand extends RequireIslandCommand {
                 player.sendMessage(tr("\u00a77The pixies are busy changing the biome of your island to \u00a79{0}\u00a77, be patient.", biome));
             }
             // clamp to island size
-            minP = BlockVector3.at(Math.max(region.getMinimumPoint().getBlockX() - 5, minP.getBlockX()), Math.max(region.getMinimumPoint().getBlockY(), minP.getBlockY()), Math.max(region.getMinimumPoint().getBlockZ() - 5, minP.getBlockZ()));
-            maxP = BlockVector3.at(Math.min(region.getMaximumPoint().getBlockX() + 5, maxP.getBlockX()), Math.min(region.getMaximumPoint().getBlockY(), maxP.getBlockY()), Math.min(region.getMaximumPoint().getBlockZ() + 5, maxP.getBlockZ()));
+            minP = BlockVector3.at(Math.max(region.getMinimumPoint().x() - 5, minP.x()), Math.max(region.getMinimumPoint().y(), minP.y()), Math.max(region.getMinimumPoint().z() - 5, minP.z()));
+            maxP = BlockVector3.at(Math.min(region.getMaximumPoint().x() + 5, maxP.x()), Math.min(region.getMaximumPoint().y(), maxP.y()), Math.min(region.getMaximumPoint().z() + 5, maxP.z()));
 
             Biome biomeEnum = BIOMES.get(biome);
             if (biomeEnum == null) {
