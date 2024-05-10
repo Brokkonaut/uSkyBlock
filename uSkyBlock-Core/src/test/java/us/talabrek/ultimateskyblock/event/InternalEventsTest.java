@@ -32,7 +32,7 @@ public class InternalEventsTest {
 
     @Before
     public void setUp() {
-        fakePlugin = spy(mock(uSkyBlock.class));
+        fakePlugin = mock(uSkyBlock.class);
         internalEvents = new InternalEvents(fakePlugin);
 
         YamlConfiguration config = new YamlConfiguration();
@@ -40,7 +40,7 @@ public class InternalEventsTest {
         config.set("options.party.leave-commands", Arrays.asList("dont", "stop", "me", "now"));
         doReturn(config).when(fakePlugin).getConfig();
 
-        fakeBlockLimitLogic = spy(mock(BlockLimitLogic.class));
+        fakeBlockLimitLogic = mock(BlockLimitLogic.class);
         doNothing().when(fakeBlockLimitLogic).updateBlockCount(any(), any());
         doReturn(fakeBlockLimitLogic).when(fakePlugin).getBlockLimitLogic();
 
@@ -73,7 +73,7 @@ public class InternalEventsTest {
     @Test
     public void testOnMemberJoin() {
         IslandInfo fakeIslandInfo = mock(IslandInfo.class);
-        PlayerInfo fakePlayerInfo = spy(mock(PlayerInfo.class));
+        PlayerInfo fakePlayerInfo = mock(PlayerInfo.class);
         doReturn(true).when(fakePlayerInfo).execCommands(any());
 
         List<String> commandList = fakePlugin.getConfig().getStringList("options.party.join-commands");
@@ -86,7 +86,7 @@ public class InternalEventsTest {
     @Test
     public void testOnMemberLeft() {
         IslandInfo fakeIslandInfo = mock(IslandInfo.class);
-        PlayerInfo fakePlayerInfo = spy(mock(PlayerInfo.class));
+        PlayerInfo fakePlayerInfo = mock(PlayerInfo.class);
         doReturn(true).when(fakePlayerInfo).execCommands(any());
 
         List<String> commandList = fakePlugin.getConfig().getStringList("options.party.leave-commands");

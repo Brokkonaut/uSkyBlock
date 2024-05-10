@@ -607,7 +607,7 @@ public class SkyBlockMenu {
         }
 
         lores.clear();
-        menuItem = new ItemStack(Material.GRASS, 1);
+        menuItem = new ItemStack(Material.SHORT_GRASS, 1);
         meta = menuItem.getItemMeta();
         meta.setDisplayName(tr("\u00a7a\u00a7lReturn to Spawn"));
         addLore(lores, "\u00a7f", tr("Teleport to the spawn area."));
@@ -754,7 +754,7 @@ public class SkyBlockMenu {
         menu.addItem(menuItem);
         lores.clear();
 
-        menuItem = new ItemStack(Material.GRASS, 1);
+        menuItem = new ItemStack(Material.SHORT_GRASS, 1);
         meta4 = menuItem.getItemMeta();
         meta4.setDisplayName(tr("\u00a7a\u00a7lReturn to Spawn"));
         addLore(lores, "\u00a7f", tr("Teleport to the spawn area."));
@@ -931,7 +931,7 @@ public class SkyBlockMenu {
             p.closeInventory();
             p.performCommand("island sethome");
             p.performCommand("island");
-        } else if (currentItem.getType() == Material.GRASS) {
+        } else if (currentItem.getType() == Material.SHORT_GRASS) {
             p.closeInventory();
             p.performCommand("island spawn");
         } else if (currentItem.getType() == Material.HOPPER) {

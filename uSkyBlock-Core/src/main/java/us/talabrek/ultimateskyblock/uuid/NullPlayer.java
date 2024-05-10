@@ -378,4 +378,14 @@ public class NullPlayer implements OfflinePlayer {
     public <E extends BanEntry<? super PlayerProfile>> @Nullable E ban(@Nullable String reason, @Nullable Duration duration, @Nullable String source) {
         return null;
     }
+
+    @Override
+    public @Nullable Location getRespawnLocation() {
+        return null;
+    }
+
+    @Override
+    public @Nullable Location getLocation() {
+        return null;
+    }
 }
