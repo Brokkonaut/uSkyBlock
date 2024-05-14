@@ -84,29 +84,27 @@ public class AbstractConfigMenu {
         if (item == null) {
             return null;
         }
-        Matcher m = UUID_PATTERN.matcher(item);
-        if (m.matches()) {
-            ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1);
-            uSkyBlock.getInstance().getLogger().info("createItem: " + item);
-            String[] parts = item.split(" ");
-            String name = parts[0];
-            UUID uuid = UUID.fromString(parts[1]);
-            String texturesString = parts[2];
-
-            if (itemStack.getItemMeta() instanceof SkullMeta head) {
-                PlayerProfile profile = Bukkit.createProfile(uuid, name);
-                profile.setProperty(new ProfileProperty("textures", texturesString));
-                head.setPlayerProfile(profile);
-                try {
-                    head.setDisplayName(tr(name));
-                } catch (Exception ex) {
-                    // ignore
-                    head.setDisplayName(name);
-                }
-                itemStack.setItemMeta(head);
-            }
-            return itemStack;
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1);
+        String[] parts = item.split(" ");
+        if (parts.length != 3) {
+            return null;
         }
-        return null;
+        String name = parts[0];
+        UUID uuid = UUID.fromString(parts[1]);
+        String texturesString = parts[2];
+
+        if (itemStack.getItemMeta() instanceof SkullMeta head) {
+            PlayerProfile profile = Bukkit.createProfile(uuid, name);
+            profile.setProperty(new ProfileProperty("textures", texturesString));
+            head.setPlayerProfile(profile);
+            try {
+                head.setDisplayName(tr(name));
+            } catch (Exception ex) {
+                // ignore
+                head.setDisplayName(name);
+            }
+            itemStack.setItemMeta(head);
+        }
+        return itemStack;
     }
 }

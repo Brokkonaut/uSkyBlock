@@ -86,7 +86,7 @@ public class StringEditMenu extends AbstractConfigMenu implements EditMenu {
         String path = returnItem.getItemMeta().getLore().get(1);
         int page = getPage(returnItem.getItemMeta().getLore().get(2));
         ItemStack currentItem = e.getCurrentItem();
-        boolean isCaps = e.getInventory().getItem(capsIndex).getItemMeta().getDisplayName().equals(tr("Caps On"));
+        boolean isCaps = e.getInventory().getItem(capsIndex).getItemMeta().getDisplayName().equals(capsOn.getItemMeta().getDisplayName());
         if (currentItem != null) {
             YmlConfiguration config = FileUtil.getYmlConfiguration(configName);
             String value = config.getString(path);
@@ -109,7 +109,7 @@ public class StringEditMenu extends AbstractConfigMenu implements EditMenu {
                 return true;
             } else if (currentItem.getType() == Material.PLAYER_HEAD) {
                 String character = stripFormatting(currentItem.getItemMeta().getDisplayName());
-                if (character.isEmpty()) {
+                if (character.isEmpty() || character.toLowerCase().equals("space")) {
                     character = " ";
                 }
                 value += isCaps ? character.toUpperCase() : character.toLowerCase();
