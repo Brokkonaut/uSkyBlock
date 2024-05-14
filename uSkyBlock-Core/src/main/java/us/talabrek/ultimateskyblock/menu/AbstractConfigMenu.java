@@ -5,15 +5,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerTextures;
+import org.jetbrains.annotations.NotNull;
+import us.talabrek.ultimateskyblock.uSkyBlock;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.kyori.adventure.text.Component;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
+
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import com.google.gson.Gson;
 
 /**
  * Created by R4zorax on 03/10/2015.
@@ -77,14 +87,24 @@ public class AbstractConfigMenu {
         Matcher m = UUID_PATTERN.matcher(item);
         if (m.matches()) {
             ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD, 1);
-            Bukkit.getUnsafe().modifyItemStack(itemStack, item);
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            try {
-                itemMeta.setDisplayName(tr(itemMeta.getDisplayName()));
-            } catch (Exception ex) {
-                // ignore
+            uSkyBlock.getInstance().getLogger().info("createItem: " + item);
+            String[] parts = item.split(" ");
+            String name = parts[0];
+            UUID uuid = UUID.fromString(parts[1]);
+            String texturesString = parts[2];
+
+            if (itemStack.getItemMeta() instanceof SkullMeta head) {
+                PlayerProfile profile = Bukkit.createProfile(uuid, name);
+                profile.setProperty(new ProfileProperty("textures", texturesString));
+                head.setPlayerProfile(profile);
+                try {
+                    head.setDisplayName(tr(name));
+                } catch (Exception ex) {
+                    // ignore
+                    head.setDisplayName(name);
+                }
+                itemStack.setItemMeta(head);
             }
-            itemStack.setItemMeta(itemMeta);
             return itemStack;
         }
         return null;
