@@ -17,7 +17,7 @@
     </properties>
 
     <build>
-        <finalName>uSkyBlock-${project.version}</finalName>
+        <finalName>uSkyBlock</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -40,7 +40,7 @@
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <classesDirectory>${project.build.directory}/uSkyBlock-${project.version}-Plugin</classesDirectory>
+                    <classesDirectory>${project.build.directory}/uSkyBlock-Plugin</classesDirectory>
                 </configuration>
             </plugin>
         </plugins>
