@@ -83,7 +83,7 @@ public class InfoCommand extends RequireIslandCommand {
                         for (BlockScore score : getState().getTop((currentPage - 1) * 10, 10)) {
                             player.sendMessage(score.getState().getColor() + tr("{0,number,00.00}  {1,number,#} {2}",
                                     score.getScore(), score.getCount(),
-                                    ItemStackUtil.getItemName(score.getBlock())));
+                                    score.getName()));
                         }
                         player.sendMessage(tr("\u00a7aIsland level is {0,number,###.##}", getState().getScore()));
                     }

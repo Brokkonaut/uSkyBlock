@@ -1,7 +1,7 @@
 package us.talabrek.ultimateskyblock.api.model;
 
 import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 
 /**
  * How much of your score is calculated based on a specific blockId.
@@ -15,7 +15,7 @@ public interface BlockScore {
      * @return The type of block.
      * @since v2.1.2
      */
-    ItemStack getBlock();
+    Material getBlock();
 
     /**
      * The number of blocks of this type found on the island.

@@ -3,7 +3,6 @@ package us.talabrek.ultimateskyblock.block;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.HashMap;

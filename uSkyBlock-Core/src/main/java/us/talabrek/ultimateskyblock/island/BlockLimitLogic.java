@@ -65,7 +65,7 @@ public class BlockLimitLogic {
     private Map<Material,Integer> asBlockCount(IslandScore score) {
         Map<Material, Integer> countMap = new ConcurrentHashMap<>();
         for (BlockScore blockScore : score.getTop()) {
-            Material type = blockScore.getBlock().getType();
+            Material type = blockScore.getBlock();
             if (blockLimits.containsKey(type)) {
                 int initalValue = countMap.getOrDefault(type, 0);
                 initalValue += blockScore.getCount();

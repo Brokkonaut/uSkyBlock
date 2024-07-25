@@ -1,6 +1,5 @@
 package us.talabrek.ultimateskyblock.island.level;
 
-import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import us.talabrek.ultimateskyblock.api.model.BlockScore;
 
 import java.util.Comparator;
@@ -16,7 +15,7 @@ public class BlockScoreComparator implements Comparator<BlockScore> {
             cmp = o2.getCount() - o1.getCount();
         }
         if (cmp == 0) {
-            cmp = ItemStackUtil.getItemName(o2.getBlock()).compareTo(ItemStackUtil.getItemName(o1.getBlock()));
+            cmp = o2.getName().compareTo(o1.getName());
         }
         return cmp;
     }

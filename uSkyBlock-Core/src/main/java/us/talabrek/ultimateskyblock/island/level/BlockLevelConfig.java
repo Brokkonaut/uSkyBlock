@@ -1,7 +1,6 @@
 package us.talabrek.ultimateskyblock.island.level;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import us.talabrek.ultimateskyblock.api.model.BlockScore;
 
 import java.util.Objects;
@@ -65,7 +64,7 @@ public class BlockLevelConfig {
             adjustedCount = dReturns(adjustedCount, diminishingReturns);
         }
         double blockScore = adjustedCount * scorePerBlock;
-        return new BlockScoreImpl(new ItemStack(baseBlock, 1), count, blockScore/pointsPerLevel, state);
+        return new BlockScoreImpl(baseBlock, count, blockScore/pointsPerLevel, state);
     }
 
     private double dReturns(final double val, final double scale) {
