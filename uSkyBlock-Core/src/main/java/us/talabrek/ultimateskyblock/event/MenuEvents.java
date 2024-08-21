@@ -17,12 +17,13 @@ public class MenuEvents implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void guiClick(final InventoryClickEvent event) {
         if (!(event.getInventory().getHolder() instanceof UltimateHolder)) {
             // Not our menu.
             return;
         }
+        event.setCancelled(true);
 
         UltimateHolder holder = (UltimateHolder) event.getInventory().getHolder();
         if (holder.getMenuType() == UltimateHolder.MenuType.CONFIG) {
