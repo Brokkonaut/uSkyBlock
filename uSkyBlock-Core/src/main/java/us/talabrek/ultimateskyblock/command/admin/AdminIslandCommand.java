@@ -92,6 +92,46 @@ public class AdminIslandCommand extends CompositeCommand {
                 return false;
             }
         });
+        add(new AbstractPlayerInfoCommand("untrust", "usb.admin.untrust", marktr("untrust the player on the island")) {
+            @Override
+            protected void doExecute(CommandSender sender, PlayerInfo playerInfo) {
+                String islandName = WorldGuardHandler.getIslandNameAt(((Player) sender).getLocation());
+                IslandInfo islandInfo = plugin.getIslandInfo(islandName);
+                if (islandInfo == null) {
+                    sender.sendMessage(tr("\\u00a74No valid island at your location"));
+                    return;
+                }
+                if (playerInfo == null || playerInfo.getUniqueId() == null) {
+                    sender.sendMessage(tr("\u00a74No valid player-name supplied."));
+                    return;
+                }
+                sender.sendMessage(tr("Untrusting {0} on island", playerInfo.getPlayerName()));
+                if (islandInfo.untrustPlayer(playerInfo.getOfflinePlayer())) {
+                    playerInfo.save();
+                    WorldGuardHandler.updateRegion(islandInfo);
+                }
+            }
+        });
+        add(new AbstractPlayerInfoCommand("trust", "usb.admin.trust", marktr("trust the player on the island")) {
+            @Override
+            protected void doExecute(CommandSender sender, PlayerInfo playerInfo) {
+                String islandName = WorldGuardHandler.getIslandNameAt(((Player) sender).getLocation());
+                IslandInfo islandInfo = plugin.getIslandInfo(islandName);
+                if (islandInfo == null) {
+                    sender.sendMessage(tr("\\u00a74No valid island at your location"));
+                    return;
+                }
+                if (playerInfo == null || playerInfo.getUniqueId() == null) {
+                    sender.sendMessage(tr("\u00a74No valid player-name supplied."));
+                    return;
+                }
+                sender.sendMessage(tr("Trusting {0} on island", playerInfo.getPlayerName()));
+                if (islandInfo.trustPlayer(playerInfo.getOfflinePlayer())) {
+                    playerInfo.save();
+                    WorldGuardHandler.updateRegion(islandInfo);
+                }
+            }
+        });
         add(new AbstractIslandInfoCommand("info", "usb.admin.info", marktr("print out info about the island")) {
             @Override
             protected void doExecute(CommandSender sender, PlayerInfo playerInfo, IslandInfo islandInfo, String... args) {

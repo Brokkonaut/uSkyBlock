@@ -105,6 +105,8 @@ permissions:
     description: The default group for administrator uSkyBlock usage
     default: false
     children:
+      usb.admin.trust: true
+      usb.admin.untrust: true
       usb.admin.addmember: true
       usb.admin.cooldown: true
       usb.admin.delete: true
@@ -138,6 +140,8 @@ permissions:
   usb.admin.*:
     default: op # default-value, redundant
     children:
+      usb.admin.trust: true
+      usb.admin.untrust: true
       usb.admin.addmember: true
       usb.admin.cache: true
       usb.admin.config: true
@@ -253,6 +257,12 @@ permissions:
   #
   # Permission Descriptions
   # =======================
+  usb.admin.trust:
+    description: 'Grants access to /usb island trust - trusts the player at some the island'
+
+  usb.admin.untrust:
+    description: 'Grants access to /usb island untrust - untrusts the player at some the island'
+
   usb.admin.addmember:
     description: 'Grants access to /usb island addmember - adds the player to the island'
 
