@@ -520,6 +520,11 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
                 || locationIsOnNetherIsland(player, player.getLocation());
     }
 
+    public boolean locationIsOnOwnIslandOrNetherIsland(Player player, Location location) {
+        return locationIsOnIsland(player, location)
+                || locationIsOnNetherIsland(player, location);
+    }
+
     private boolean playerIsTrusted(Player player) {
         String islandName = WorldGuardHandler.getIslandNameAt(player.getLocation());
         if (islandName != null) {

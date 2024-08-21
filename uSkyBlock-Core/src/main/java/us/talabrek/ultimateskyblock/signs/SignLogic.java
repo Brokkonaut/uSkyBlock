@@ -11,7 +11,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import us.talabrek.ultimateskyblock.challenge.Challenge;
 import us.talabrek.ultimateskyblock.challenge.ChallengeCompletion;
 import us.talabrek.ultimateskyblock.challenge.ChallengeLogic;
@@ -19,13 +18,12 @@ import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
 import us.talabrek.ultimateskyblock.uSkyBlock;
-import dk.lockfuglsang.minecraft.util.ItemStackUtil;
+import dk.lockfuglsang.minecraft.util.ItemStackAndAmount;
 import us.talabrek.ultimateskyblock.util.LocationUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -178,7 +176,7 @@ public class SignLogic {
         if (challenge == null || challenge.getType() != Challenge.Type.PLAYER) {
             return;
         }
-        final List<ItemStack> requiredItems = new ArrayList<>();
+        final List<ItemStackAndAmount> requiredItems = new ArrayList<>();
         boolean isChallengeAvailable = false;
         if (challengeLogic.isIslandSharing()) {
             final ChallengeCompletion completion = challengeLogic.getIslandCompletion(islandName, challengeName);
@@ -201,7 +199,7 @@ public class SignLogic {
         plugin.sync(() -> updateSignFromChestSync(chestLoc, signLocation, challenge, requiredItems, challengeLocked));
     }
 
-    private void updateSignFromChestSync(Location chestLoc, Location signLoc, Challenge challenge, List<ItemStack> requiredItems, boolean challengeLocked) {
+    private void updateSignFromChestSync(Location chestLoc, Location signLoc, Challenge challenge, List<ItemStackAndAmount> requiredItems, boolean challengeLocked) {
         Block chestBlock = chestLoc.getBlock();
         Block signBlock = signLoc != null ? signLoc.getBlock() : null;
         if (signBlock != null && isChest(chestBlock) && signBlock.getState().getBlockData() instanceof WallSign) {
@@ -210,10 +208,10 @@ public class SignLogic {
             int missing = -1;
             if (!requiredItems.isEmpty() && !challengeLocked) {
                 missing = 0;
-                for (ItemStack required : requiredItems) {
-                    if (!chest.getInventory().containsAtLeast(required, required.getAmount())) {
+                for (ItemStackAndAmount required : requiredItems) {
+                    if (!chest.getInventory().containsAtLeast(required.stack(), required.amount())) {
                         // Max shouldn't be needed, provided containsAtLeast matches getCountOf... but it might not
-                        missing += Math.max(0, required.getAmount() - plugin.getChallengeLogic().getCountOf(chest.getInventory(), required));
+                        missing += Math.max(0, required.amount() - plugin.getChallengeLogic().getCountOf(chest.getInventory(), required.stack()));
                     }
                 }
             }
@@ -268,82 +266,24 @@ public class SignLogic {
     }
 
     boolean signClicked(final Player player, final Location location) {
-        plugin.async(() -> tryCompleteAsync(player, location));
         String signLoc = LocationUtil.asKey(location);
         String challengeName = config.getString("signs." + signLoc + ".challenge", null);
-        return challengeName != null && challengeLogic.getChallenge(challengeName) != null;
-    }
-
-    private void tryCompleteAsync(final Player player, Location location) {
-        String signLoc = LocationUtil.asKey(location);
-        String challengeName = config.getString("signs." + signLoc + ".challenge", null);
-        if (challengeName != null) {
-            String islandName = WorldGuardHandler.getIslandNameAt(location);
-            String chestLocString = config.getString("signs." + signLoc + ".chest", null);
-            final Location chestLoc = LocationUtil.fromString(chestLocString);
-            if (islandName != null && chestLoc != null) {
-                final Challenge challenge = challengeLogic.getChallenge(challengeName);
-                if (challenge == null || challenge.getType() != Challenge.Type.PLAYER) {
-                    return;
-                }
-                PlayerInfo playerInfo = plugin.getPlayerInfo(player);
-                if (playerInfo == null) {
-                    return;
-                }
-                if (!challenge.getRank().isAvailable(playerInfo) || !challenge.getMissingRequirements(playerInfo).isEmpty()) {
-                    player.sendMessage(tr("\u00a74The {0} challenge is not available yet!", challenge.getDisplayName()));
-                    return;
-                }
-                plugin.sync(() -> tryComplete(player, chestLoc, challenge));
-            }
+        String chestLocString = config.getString("signs." + signLoc + ".chest", null);
+        Challenge challenge = challengeName == null ? null : challengeLogic.getChallenge(challengeName);
+        if (challenge == null || chestLocString == null) {
+            return false;
         }
-    }
-
-    private void tryComplete(Player player, Location chestLoc, Challenge challenge) {
+        final Location chestLoc = LocationUtil.fromString(chestLocString);
+        if (!plugin.locationIsOnOwnIslandOrNetherIsland(player, chestLoc)) {
+            return false;
+        }
         BlockState state = chestLoc.getBlock().getState();
-        if (!(state instanceof Chest)) {
-            return;
+        if (!(state instanceof Chest chest)) {
+            return false;
         }
-        PlayerInfo playerInfo = plugin.getPlayerInfo(player);
-        if (playerInfo == null || !playerInfo.getHasIsland()) {
-            return;
-        }
-        ChallengeCompletion completion = challengeLogic.getChallenge(playerInfo, challenge.getName());
-        List<ItemStack> requiredItems = challenge.getRequiredItems(completion.getTimesCompletedInCooldown());
-        Chest chest = (Chest) state;
-        int missing = 0;
-        for (ItemStack required : requiredItems) {
-            int diff = 0;
-            if (!player.getInventory().containsAtLeast(required, required.getAmount())) {
-                diff = required.getAmount() - plugin.getChallengeLogic().getCountOf(player.getInventory(), required);
-            }
-            if (diff > 0 && !chest.getInventory().containsAtLeast(required, diff)) {
-                diff -= plugin.getChallengeLogic().getCountOf(chest.getInventory(), required);
-            } else {
-                diff = 0;
-            }
-            missing += diff;
-        }
-        if (missing == 0) {
-            ItemStack[] items = requiredItems.toArray(new ItemStack[0]);
-            ItemStack[] copy = ItemStackUtil.clone(requiredItems).toArray(new ItemStack[requiredItems.size()]);
-            HashMap<Integer, ItemStack> missingItems = player.getInventory().removeItem(items);
-            missingItems = chest.getInventory().removeItem(missingItems.values().toArray(new ItemStack[0]));
-            if (!missingItems.isEmpty()) {
-                // This effectively means, we just donated some items to the player (exploit!!)
-                log.warning("Not all items removed from chest and player: " + missingItems.values());
-            }
-            HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(copy);
-            if (leftOvers.isEmpty()) {
-                plugin.getChallengeLogic().completeChallenge(player, challenge.getName());
-            } else {
-                chest.getInventory().addItem(leftOvers.values().toArray(new ItemStack[0]));
-                player.sendMessage(tr("\u00a7cWARNING:\u00a7e Could not transfer all the required items to your inventory!"));
-            }
-            updateSignsOnContainer(chest.getLocation());
-        } else {
-            player.sendMessage(tr("\u00a7cNot enough items in chest to complete challenge!"));
-        }
-    }
 
+        plugin.getChallengeLogic().completeChallenge(player, chest.getInventory(), challenge.getName());
+        updateSignsOnContainer(chest.getLocation());
+        return true;
+    }
 }

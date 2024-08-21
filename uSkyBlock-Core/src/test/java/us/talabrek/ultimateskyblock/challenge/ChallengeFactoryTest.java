@@ -1,6 +1,7 @@
 package us.talabrek.ultimateskyblock.challenge;
 
 import dk.lockfuglsang.minecraft.util.BukkitServerMock;
+import dk.lockfuglsang.minecraft.util.ItemStackAndAmount;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,6 +19,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class ChallengeFactoryTest {
 
@@ -53,9 +55,10 @@ public class ChallengeFactoryTest {
         Challenge challenge = ChallengeFactory.createChallenge(rank, rankSection.getConfigurationSection("challenges.villageguard"), defaults);
 
         assertThat(challenge, notNullValue());
-        List<ItemStack> requiredItems = challenge.getRequiredItems(0);
+        List<ItemStackAndAmount> requiredItems = challenge.getRequiredItems(0);
         assertThat(requiredItems.size(), is(1));
-        assertThat(ItemStackUtil.asString(requiredItems.get(0)), is(ItemStackUtil.asString(new ItemStack(Material.COBBLESTONE, 257))));
+        assertThat(ItemStackUtil.asString(requiredItems.get(0).stack()), is(ItemStackUtil.asString(new ItemStack(Material.COBBLESTONE, 1))));
+        assertEquals(requiredItems.get(0).amount(), 257);
     }
 
 }

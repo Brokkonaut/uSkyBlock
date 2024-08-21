@@ -7,6 +7,7 @@ import us.talabrek.ultimateskyblock.player.PlayerInfo;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 import us.talabrek.ultimateskyblock.block.BlockStack;
 import dk.lockfuglsang.minecraft.util.FormatUtil;
+import dk.lockfuglsang.minecraft.util.ItemStackAndAmount;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 
 import java.util.ArrayList;
@@ -122,8 +123,8 @@ public class Challenge {
         return requiredLevel;
     }
 
-    public List<ItemStack> getRequiredItems(int timesCompleted) {
-        List<ItemStack> items = new ArrayList<>();
+    public List<ItemStackAndAmount> getRequiredItems(int timesCompleted) {
+        List<ItemStackAndAmount> items = new ArrayList<>();
         if (type == Type.PLAYER) {
             for (String item : requiredItems) {
                 if (item == null || item.trim().isEmpty()) {
@@ -138,8 +139,7 @@ public class Challenge {
                     ItemStack mat = ItemStackUtil.createItemStack(m.group("itemstack"));
                     ItemMeta meta = mat.getItemMeta();
                     mat.setItemMeta(meta);
-                    mat.setAmount(amount);
-                    items.add(mat);
+                    items.add(new ItemStackAndAmount(mat,amount));
                 } else {
                     uSkyBlock.getInstance().getLogger().log(Level.INFO, "Malformed challenge " + name + ", item: " + item + " is not a valid required item");
                 }
@@ -225,21 +225,21 @@ public class Challenge {
             }
             reward = getRepeatReward();
         }
-        List<ItemStack> reqItems = getRequiredItems(timesCompleted);
+        List<ItemStackAndAmount> reqItems = getRequiredItems(timesCompleted);
         List<BlockStack> reqBlocks = getRequiredBlocks();
         if ((reqItems != null && !reqItems.isEmpty()) || (reqBlocks != null && !reqBlocks.isEmpty()) || (requiredEntities != null && !requiredEntities.isEmpty())) {
             lores.add(tr("\u00a7eThis challenge requires:"));
         }
         List<String> details = new ArrayList<>();
         if (reqItems != null && !reqItems.isEmpty()) {
-            for (ItemStack item : reqItems) {
+            for (ItemStackAndAmount item : reqItems) {
                 if (wrappedDetails(details).size() >= MAX_DETAILS) {
                     details.add(tr("\u00a77and more..."));
                     break;
                 }
-                details.add(item.getAmount() > 1
-                        ? tr("\u00a7f{0}x \u00a77{1}", item.getAmount(), ItemStackUtil.getItemName(item))
-                        : tr("\u00a77{0}", ItemStackUtil.getItemName(item)));
+                details.add(item.amount() > 1
+                        ? tr("\u00a7f{0}x \u00a77{1}", item.amount(), ItemStackUtil.getItemName(item.stack()))
+                        : tr("\u00a77{0}", ItemStackUtil.getItemName(item.stack())));
             }
         }
         if (reqBlocks != null && !reqBlocks.isEmpty()) {

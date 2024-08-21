@@ -1,6 +1,7 @@
 package us.talabrek.ultimateskyblock.challenge;
 
 import dk.lockfuglsang.minecraft.util.FormatUtil;
+import dk.lockfuglsang.minecraft.util.ItemStackAndAmount;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -130,7 +131,7 @@ public class ChallengeLogic implements Listener {
         return ranks.containsKey(rank) ? ranks.get(rank).getChallenges() : Collections.emptyList();
     }
 
-    public void completeChallenge(final Player player, String challengeName) {
+    public void completeChallenge(final Player player, Inventory inventory, String challengeName) {
         final PlayerInfo pi = plugin.getPlayerInfo(player);
         Challenge challenge = getChallenge(challengeName);
         if (challenge == null) {
@@ -157,9 +158,9 @@ public class ChallengeLogic implements Listener {
         }
         player.sendMessage(tr("\u00a7eTrying to complete challenge \u00a7a{0}", challenge.getDisplayName()));
         if (challenge.getType() == Challenge.Type.PLAYER) {
-            tryComplete(player, challengeName, "onPlayer");
+            tryComplete(player, inventory, challengeName, "onPlayer");
         } else if (challenge.getType() == Challenge.Type.ISLAND) {
-            if (!tryComplete(player, challengeName, "onIsland")) {
+            if (!tryComplete(player, inventory, challengeName, "onIsland")) {
                 player.sendMessage(tr("\u00a74{0}", challenge.getDescription()));
                 player.sendMessage(tr("\u00a74You must be standing within {0} blocks of all required items.", challenge.getRadius()));
             }
@@ -204,9 +205,9 @@ public class ChallengeLogic implements Listener {
         return amount;
     }
 
-    public boolean tryComplete(final Player player, final String challenge, final String type) {
+    public boolean tryComplete(final Player player, Inventory invenory, final String challenge, final String type) {
         if (type.equalsIgnoreCase("onPlayer")) {
-            return tryCompleteOnPlayer(player, challenge);
+            return tryCompleteOnPlayer(player, invenory, challenge);
         } else if (type.equalsIgnoreCase("onIsland")) {
             return tryCompleteOnIsland(player, challenge);
         } else {
@@ -311,24 +312,28 @@ public class ChallengeLogic implements Listener {
         return countMap.isEmpty();
     }
 
-    private boolean tryCompleteOnPlayer(Player player, String challengeName) {
+    private boolean tryCompleteOnPlayer(Player player, Inventory inventory, String challengeName) {
         Challenge challenge = getChallenge(challengeName);
         PlayerInfo playerInfo = plugin.getPlayerInfo(player);
         ChallengeCompletion completion = playerInfo.getChallenge(challengeName);
         if (challenge != null && completion != null) {
             StringBuilder sb = new StringBuilder();
             boolean hasAll = true;
-            List<ItemStack> requiredItems = challenge.getRequiredItems(completion.getTimesCompletedInCooldown());
-            for (ItemStack required : requiredItems) {
-                String name = ItemStackUtil.getItemName(required);
-                if (!player.getInventory().containsAtLeast(required, required.getAmount())) {
-                    sb.append(tr(" \u00a74{0} \u00a7b{1}", (required.getAmount() - getCountOf(player.getInventory(), required)), name));
+            List<ItemStackAndAmount> requiredItems = challenge.getRequiredItems(completion.getTimesCompletedInCooldown());
+            for (ItemStackAndAmount required : requiredItems) {
+                String name = ItemStackUtil.getItemName(required.stack());
+                if (!inventory.containsAtLeast(required.stack(), required.amount())) {
+                    sb.append(tr(" \u00a74{0} \u00a7b{1}", (required.amount() - getCountOf(inventory, required.stack())), name));
                     hasAll = false;
                 }
             }
             if (hasAll) {
+                boolean success = true;
                 if (challenge.isTakeItems()) {
-                    player.getInventory().removeItem(requiredItems.toArray(new ItemStack[requiredItems.size()]));
+                    success = ItemStackUtil.removeItems(inventory, requiredItems);
+                }
+                if (!success) {
+                    return false;
                 }
                 giveReward(player, challenge);
                 return true;
