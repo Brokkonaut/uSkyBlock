@@ -103,7 +103,8 @@ public class Rank {
     private int getLeeway(PlayerInfo playerInfo) {
         int leeway = challenges.size();
         for (Challenge challenge : challenges) {
-            if (playerInfo.getChallenge(challenge.getName()).getTimesCompleted() > 0) {
+             ChallengeCompletion playerChallengeCompletion = playerInfo.getChallenge(challenge.getName());
+            if (playerChallengeCompletion != null && playerChallengeCompletion.getTimesCompleted() > 0) {
                 leeway--;
             }
         }
