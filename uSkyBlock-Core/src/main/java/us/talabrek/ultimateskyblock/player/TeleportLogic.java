@@ -110,7 +110,7 @@ public class TeleportLogic implements Listener {
             if (Settings.extras_sendToSpawn) {
                 plugin.execCommand(player, "op:spawn", false);
             } else {
-                player.teleport(spawnLocation);
+                plugin.sync(() -> player.teleport(spawnLocation));
                 // PaperLib.teleportAsync(player, spawnLocation);
             }
         } else {
