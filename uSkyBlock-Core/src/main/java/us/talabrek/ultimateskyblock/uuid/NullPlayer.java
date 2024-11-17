@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import io.papermc.paper.persistence.PersistentDataContainerView;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
@@ -386,6 +387,11 @@ public class NullPlayer implements OfflinePlayer {
 
     @Override
     public @Nullable Location getLocation() {
+        return null;
+    }
+    
+    @Override
+    public @NotNull PersistentDataContainerView getPersistentDataContainer() {
         return null;
     }
 }
