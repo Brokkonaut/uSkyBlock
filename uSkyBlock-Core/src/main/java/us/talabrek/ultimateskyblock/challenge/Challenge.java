@@ -24,7 +24,7 @@ import static dk.lockfuglsang.minecraft.util.FormatUtil.*;
  * The data-object for a challenge
  */
 public class Challenge {
-    public static final Pattern REQ_PATTERN = Pattern.compile("(?<itemstack>(?<type>[0-9A-Z_]+)(?<meta>\\{.*\\})?):(?<amount>[0-9]+)(;(?<op>[+\\-*\\^])(?<inc>[0-9]+))?");
+    public static final Pattern REQ_PATTERN = Pattern.compile("(?<itemstack>(?<type>[0-9A-Z_]+)(?<meta>\\[.*\\])?):(?<amount>[0-9]+)(;(?<op>[+\\-*\\^])(?<inc>[0-9]+))?");
     public static final int MAX_DETAILS = 11;
     public static final int MAX_LINE = 30;
 

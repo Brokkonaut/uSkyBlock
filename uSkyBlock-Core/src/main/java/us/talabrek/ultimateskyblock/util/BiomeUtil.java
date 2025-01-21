@@ -1,7 +1,9 @@
 package us.talabrek.ultimateskyblock.util;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
-
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +18,12 @@ public enum BiomeUtil {;
     }
 
     public static Biome getBiome(String name) {
-        try {
-            return Biome.valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        Biome b = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME).get(NamespacedKey.fromString(name.toLowerCase()));
+        if(b == null) {
             if (biomeAlias.containsKey(name)) {
                 return getBiome(biomeAlias.get(name));
             }
         }
-        return null;
+        return b;
     }
 }
