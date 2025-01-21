@@ -160,7 +160,7 @@ public class AdminIslandCommand extends CompositeCommand {
                         sender.sendMessage(tr("\u00a74No valid island at your location"));
                         return false;
                     }
-                    setBiome(sender, islandInfo, biome.name());
+                    setBiome(sender, islandInfo, args[0]);
                     return true;
                 }
                 return false;

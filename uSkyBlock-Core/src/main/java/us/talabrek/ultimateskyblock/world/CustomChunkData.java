@@ -60,6 +60,7 @@ public class CustomChunkData implements ChunkData {
         setBlockAt(x, y, z, material);
     }
 
+    @Deprecated
     @Override
     public void setBlock(int x, int y, int z, @NotNull MaterialData material) {
         throw new RuntimeException();
@@ -81,6 +82,7 @@ public class CustomChunkData implements ChunkData {
         }
     }
 
+    @Deprecated
     @Override
     public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, @NotNull MaterialData material) {
         throw new RuntimeException();
@@ -123,6 +125,7 @@ public class CustomChunkData implements ChunkData {
         return ((BlockData) current).getMaterial();
     }
 
+    @Deprecated
     @Override
     public @NotNull MaterialData getTypeAndData(int x, int y, int z) {
         throw new RuntimeException();
