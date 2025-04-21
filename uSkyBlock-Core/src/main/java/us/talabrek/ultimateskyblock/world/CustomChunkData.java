@@ -1,5 +1,6 @@
 package us.talabrek.ultimateskyblock.world;
 
+import org.bukkit.HeightMap;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -7,6 +8,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 @SuppressWarnings("deprecation")
 public class CustomChunkData implements ChunkData {
@@ -33,6 +35,11 @@ public class CustomChunkData implements ChunkData {
     @Override
     public int getMaxHeight() {
         return maxY;
+    }
+    
+    @Override
+    public int getHeight(@NotNull HeightMap heightMap, @Range(from = 0, to = 15) int x, @Range(from = 0, to = 15) int z) {
+        return 0;
     }
 
     @Override
