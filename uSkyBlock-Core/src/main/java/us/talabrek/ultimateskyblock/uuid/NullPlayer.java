@@ -384,6 +384,11 @@ public class NullPlayer implements OfflinePlayer {
     public @Nullable Location getRespawnLocation() {
         return null;
     }
+    
+    @Override
+    public @org.jspecify.annotations.Nullable Location getRespawnLocation(boolean loadLocationAndValidate) {
+        return null;
+    }
 
     @Override
     public @Nullable Location getLocation() {
