@@ -842,6 +842,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         }
         command = command
                 .replaceAll("\\{player\\}", Matcher.quoteReplacement(player.getName()))
+                .replaceAll("\\{playerId\\}", Matcher.quoteReplacement(player.getUniqueId().toString()))
                 .replaceAll("\\{playerName\\}", Matcher.quoteReplacement(player.getDisplayName()))
                 .replaceAll("\\{playername\\}", Matcher.quoteReplacement(player.getDisplayName()))
                 .replaceAll("\\{position\\}", Matcher.quoteReplacement(LocationUtil.asString(player.getLocation()))); // Figure out what this should be
