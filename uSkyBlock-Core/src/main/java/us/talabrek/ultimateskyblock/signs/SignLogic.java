@@ -19,6 +19,7 @@ import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 import dk.lockfuglsang.minecraft.util.ItemStackAndAmount;
+import us.talabrek.ultimateskyblock.util.MultiInventoryWrapper;
 import us.talabrek.ultimateskyblock.util.LocationUtil;
 
 import java.io.File;
@@ -282,7 +283,7 @@ public class SignLogic {
             return false;
         }
 
-        plugin.getChallengeLogic().completeChallenge(player, chest.getInventory(), challenge.getName());
+        plugin.getChallengeLogic().completeChallenge(player, new MultiInventoryWrapper(chest.getInventory(), player.getInventory()), challenge.getName());
         updateSignsOnContainer(chest.getLocation());
         return true;
     }

@@ -4,7 +4,7 @@ import dk.lockfuglsang.minecraft.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import us.talabrek.ultimateskyblock.uSkyBlock;
-
+import us.talabrek.ultimateskyblock.util.MultiInventoryWrapper;
 import java.util.Map;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
@@ -34,7 +34,7 @@ public class ChallengeCompleteCommand extends AbstractCommand {
         for (String arg : args) {
             challengeName += " " + arg;
         }
-        plugin.getChallengeLogic().completeChallenge(player, player.getInventory(), challengeName.trim());
+        plugin.getChallengeLogic().completeChallenge(player, new MultiInventoryWrapper(player.getInventory()), challengeName.trim());
         return true;
     }
 }
