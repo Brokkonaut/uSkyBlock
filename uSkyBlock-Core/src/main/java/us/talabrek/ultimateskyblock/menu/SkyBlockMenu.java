@@ -174,6 +174,10 @@ public class SkyBlockMenu {
             new BiomeMenuItem(new ItemStack(Material.MANGROVE_PROPAGULE),
                     "mangrove_swamp", tr("Mangrove Swamp"),
                     tr("The mangrove swamp biome.\nFrogs, slimes and hostile\nmobs will spawn.")
+            ),
+            new BiomeMenuItem(new ItemStack(Material.PALE_OAK_LEAVES),
+                    "pale_garden", tr("Pale Garden"),
+                    tr("The pale garden biome.\nHostile mobs will spawn.\nAllows growing Eyeblossoms.")
             )
     );
 

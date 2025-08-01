@@ -48,6 +48,8 @@ public class BiomeCommand extends RequireIslandCommand {
             put("savanna_plateau", Biome.SAVANNA_PLATEAU);
             // 1.19
             put("mangrove_swamp", Biome.MANGROVE_SWAMP);
+            // 1.21.2
+            put("pale_garden", Biome.PALE_GARDEN);
         }
     };
     private final SkyBlockMenu menu;
