@@ -2537,6 +2537,19 @@ msgstr ""
 "Fröschen nur Slimes und andere\n"
 "Monster spawnen."
 
+msgid "Pale Garden"
+msgstr "Blasser Garten"
+
+msgid ""
+"The pale garden biome.\n"
+"Hostile mobs will spawn.\n"
+"Allows growing Eyeblossoms."
+msgstr ""
+"Der Blasse Garten ist ein\n"
+"sehr farbloses Biome, hier\n"
+"spawnen Monster und es ist\n"
+"möglich, Augenblüten zu züchten."
+
 msgid "Permissions"
 msgstr "Rechte"
 

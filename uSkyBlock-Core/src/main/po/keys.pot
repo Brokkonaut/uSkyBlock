@@ -2342,6 +2342,15 @@ msgid ""
 "mobs will spawn."
 msgstr ""
 
+msgid "Pale Garden"
+msgstr ""
+
+msgid ""
+"The pale garden biome.\n"
+"Hostile mobs will spawn.\n"
+"Allows growing Eyeblossoms."
+msgstr ""
+
 msgid "Permissions"
 msgstr ""
 
