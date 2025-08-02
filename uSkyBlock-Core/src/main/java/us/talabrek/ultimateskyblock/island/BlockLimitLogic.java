@@ -33,8 +33,10 @@ public class BlockLimitLogic {
         if (limitsEnabled) {
             ConfigurationSection section = config.getConfigurationSection("options.island.block-limits");
             Set<String> keys = section.getKeys(false);
-            keys.remove("enabled");
             for (String key : keys) {
+                if (key.equals("enabled")) {
+                    continue;
+                }
                 Material material = Material.getMaterial(key.toUpperCase());
                 int limit = section.getInt(key, -1);
                 if (material != null && limit >= 0) {
