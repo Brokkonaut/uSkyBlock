@@ -360,7 +360,7 @@ public class IslandLogic {
     public synchronized void deleteIslandConfig(final String location) {
         try {
             IslandInfo islandInfo = cache.get(location);
-            updateRank(islandInfo, new IslandScore(0, Collections.EMPTY_LIST));
+            updateRank(islandInfo, new IslandScore(0, Collections.EMPTY_LIST, Collections.EMPTY_MAP));
             if (islandInfo.exists()) {
                 islandInfo.delete();
             }

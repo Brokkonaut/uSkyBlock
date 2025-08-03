@@ -322,20 +322,20 @@ public class PlayerEvents implements Listener {
 
         IslandInfo islandInfo = plugin.getIslandInfo(event.getBlock().getLocation());
         if (islandInfo == null) {
-            if (plugin.getBlockLimitLogic().getLimit(event.getBlock().getType()) < Integer.MAX_VALUE && player.getGameMode() != GameMode.CREATIVE) {
+            if (plugin.getBlockLimitLogic().getLimit(event.getBlock().getType()) < Integer.MAX_VALUE || plugin.getBlockLimitLogic().hasLimitedBlockStatesForMaterial(event.getBlock().getType()) && player.getGameMode() != GameMode.CREATIVE) {
                 event.setCancelled(true);
                 player.sendMessage(tr("\u00a74You cannot place this block outside of your island."));
             }
             return;
         }
-        Material type = event.getBlock().getType();
-        BlockLimitLogic.CanPlace canPlace = plugin.getBlockLimitLogic().canPlace(type, islandInfo);
-        if (canPlace == BlockLimitLogic.CanPlace.UNCERTAIN) {
+        BlockData type = event.getBlock().getBlockData();
+        BlockLimitLogic.TryPlaceResult canPlace = plugin.getBlockLimitLogic().canPlace(type, islandInfo);
+        if (canPlace.canPlace() == BlockLimitLogic.CanPlace.UNCERTAIN) {
             event.setCancelled(true);
             final String key = "usb.block-limits";
             if (!PatienceTester.isRunning(player, key)) {
                 PatienceTester.startRunning(player, key);
-                player.sendMessage(tr("\u00a74{0} is limited. \u00a7eScanning your island to see if you are allowed to place more, please be patient", ItemStackUtil.getItemName(new ItemStack(type))));
+                player.sendMessage(tr("\u00a74{0} is limited. \u00a7eScanning your island to see if you are allowed to place more, please be patient", ItemStackUtil.getMaterialName(type.getMaterial())));
                 plugin.fireAsyncEvent(new IslandInfoEvent(player, islandInfo.getIslandLocation(), new Callback<IslandScore>() {
                     @Override
                     public void run() {
@@ -346,9 +346,9 @@ public class PlayerEvents implements Listener {
             }
             return;
         }
-        if (canPlace == BlockLimitLogic.CanPlace.NO) {
+        if (canPlace.canPlace() == BlockLimitLogic.CanPlace.NO) {
             event.setCancelled(true);
-            player.sendMessage(tr("\u00a74You''ve hit the {0} limit!\u00a7e You can''t have more of that type on your island!\u00a79 Max: {1,number}", ItemStackUtil.getItemName(new ItemStack(type)), plugin.getBlockLimitLogic().getLimit(type)));
+            player.sendMessage(tr("\u00a74You''ve hit the {0} limit!\u00a7e You can''t have more of that type on your island!\u00a79 Max: {1,number}", canPlace.error().material(), canPlace.error().limit()));
             return;
         }
         plugin.getBlockLimitLogic().incBlockCount(islandInfo.getIslandLocation(), type);
@@ -363,6 +363,6 @@ public class PlayerEvents implements Listener {
         if (islandInfo == null) {
             return;
         }
-        plugin.getBlockLimitLogic().decBlockCount(islandInfo.getIslandLocation(), event.getBlock().getType());
+        plugin.getBlockLimitLogic().decBlockCount(islandInfo.getIslandLocation(), event.getBlock().getBlockData());
     }
 }

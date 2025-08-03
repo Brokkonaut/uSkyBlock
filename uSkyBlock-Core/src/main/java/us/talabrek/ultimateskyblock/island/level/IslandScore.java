@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.block.data.BlockData;
 
 /**
  * The summary of island calculation.
@@ -15,10 +16,12 @@ public class IslandScore implements us.talabrek.ultimateskyblock.api.model.Islan
     private final double score;
     private final List<BlockScore> top;
     private boolean isSorted = false;
+    private final Map<BlockData, Integer> limitedStateCounts;
 
-    public IslandScore(double score, List<BlockScore> top) {
+    public IslandScore(double score, List<BlockScore> top, Map<BlockData, Integer> limitedStateCounts) {
         this.score = score;
         this.top = joinTop(top);
+        this.limitedStateCounts = limitedStateCounts;
     }
 
     /**
@@ -82,4 +85,7 @@ public class IslandScore implements us.talabrek.ultimateskyblock.api.model.Islan
         return top.size();
     }
 
+    public Map<BlockData, Integer> getLimitedStateCounts() {
+        return limitedStateCounts;
+    }
 }
