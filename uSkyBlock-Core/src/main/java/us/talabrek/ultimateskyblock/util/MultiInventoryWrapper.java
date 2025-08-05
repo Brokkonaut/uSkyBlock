@@ -27,7 +27,7 @@ public class MultiInventoryWrapper {
         for (Inventory inventory : inventories) {
             for (ItemStack invStack : inventory.getStorageContents()) {
                 if (invStack != null && invStack.getType() == type && invStack.isSimilar(stack)) {
-                    found += stack.getAmount();
+                    found += invStack.getAmount();
                 }
             }
         }
