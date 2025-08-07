@@ -167,6 +167,9 @@ public class BlockLimitLogic {
                 if (state.matches(limitedBlockState)) {
                     int limit = blockStateLimits.get(limitedBlockState);
                     int existing = getBlockStateCount(limitedBlockState, islandInfo.getIslandLocation());
+                    if (existing == -2) {
+                        return new TryPlaceResult(CanPlace.UNCERTAIN, null);
+                    }
                     if (existing >= 0 && existing >= limit) {
                         String name = blockStateLimitCustomNames.get(limitedBlockState);
                         return new TryPlaceResult(CanPlace.NO, new TryPlaceError(name != null ? name : limitedBlockState.getAsString(true), limit));
