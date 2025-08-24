@@ -1,10 +1,10 @@
 package us.talabrek.ultimateskyblock.island;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.EntityType;
@@ -16,7 +16,6 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.WaterMob;
-import org.bukkit.inventory.ItemStack;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.util.EntityUtil;
 import us.talabrek.ultimateskyblock.uSkyBlock;
@@ -214,12 +213,32 @@ public class LimitLogic {
             Component line;
             if (blockCount >= 0) {
                 line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
-                        ItemStackUtil.getItemName(new ItemStack(entry.getKey())),
+                        plugin.getBlockLimitLogic().getBlockLimitCustomName(entry.getKey()),
                         blockCount >= entry.getValue() ? tr("\u00a7c{0}", blockCount) : blockCount,
                         entry.getValue()));
             } else {
                 line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
-                        ItemStackUtil.getItemName(new ItemStack(entry.getKey())),
+                        plugin.getBlockLimitLogic().getBlockLimitCustomName(entry.getKey()),
+                        tr("\u00a7c{0}", "?"),
+                        entry.getValue()));
+            }
+            if (result != Component.empty()) {
+                result = result.append(Component.newline());
+            }
+            result = result.append(line);
+        }
+        Map<BlockData, Integer> blockStateLimits = plugin.getBlockLimitLogic().getBlockStateLimits();
+        for (Map.Entry<BlockData, Integer> entry : blockStateLimits.entrySet()) {
+            int blockCount = plugin.getBlockLimitLogic().getBlockStateCount(entry.getKey(), islandInfo.getIslandLocation());
+            Component line;
+            if (blockCount >= 0) {
+                line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
+                        plugin.getBlockLimitLogic().getBlockStateLimitCustomName(entry.getKey()),
+                        blockCount >= entry.getValue() ? tr("\u00a7c{0}", blockCount) : blockCount,
+                        entry.getValue()));
+            } else {
+                line = LegacyComponentSerializer.legacySection().deserialize(tr("\u00a77{0}: \u00a7a{1}\u00a77 (max. {2})",
+                        plugin.getBlockLimitLogic().getBlockStateLimitCustomName(entry.getKey()),
                         tr("\u00a7c{0}", "?"),
                         entry.getValue()));
             }

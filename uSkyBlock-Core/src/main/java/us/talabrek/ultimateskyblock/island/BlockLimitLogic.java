@@ -102,6 +102,20 @@ public class BlockLimitLogic {
         return Collections.unmodifiableMap(blockLimits);
     }
 
+    public Map<BlockData, Integer> getBlockStateLimits() {
+        return Collections.unmodifiableMap(blockStateLimits);
+    }
+    
+    public String getBlockLimitCustomName(Material type) {
+        String name = blockLimitCustomNames.get(type);
+        return name != null ? name : ItemStackUtil.getMaterialName(type);
+    }
+
+    public String getBlockStateLimitCustomName(BlockData type) {
+        String name = blockStateLimitCustomNames.get(type);
+        return name != null ? name : type.getAsString(true);
+    }
+
     public void updateBlockCount(Location islandLocation, IslandScore score) {
         if (!limitsEnabled) {
             return;
@@ -157,8 +171,7 @@ public class BlockLimitLogic {
             int materiallimit = blockLimits.getOrDefault(type, Integer.MAX_VALUE);
             ok = count < materiallimit;
             if (!ok) {
-                String name = blockLimitCustomNames.get(type);
-                return new TryPlaceResult(CanPlace.NO, new TryPlaceError(name != null ? name : ItemStackUtil.getMaterialName(type), materiallimit));
+                return new TryPlaceResult(CanPlace.NO, new TryPlaceError(getBlockLimitCustomName(type), materiallimit));
             }
         }
         Set<BlockData> limitedBlockStates = getLimitedBlockStatesForMaterial(type);
@@ -171,8 +184,7 @@ public class BlockLimitLogic {
                         return new TryPlaceResult(CanPlace.UNCERTAIN, null);
                     }
                     if (existing >= 0 && existing >= limit) {
-                        String name = blockStateLimitCustomNames.get(limitedBlockState);
-                        return new TryPlaceResult(CanPlace.NO, new TryPlaceError(name != null ? name : limitedBlockState.getAsString(true), limit));
+                        return new TryPlaceResult(CanPlace.NO, new TryPlaceError(getBlockStateLimitCustomName(limitedBlockState), limit));
                     }
                 }
             }
