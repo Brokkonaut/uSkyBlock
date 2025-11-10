@@ -26,6 +26,7 @@ public class Perk {
     private Map<Material, Integer> blockLimits;
     private final int villagers;
     private final int golems;
+    private final int coppergolems;
     private final int waterAnimals;
 
     Perk(List<ItemStack> extraItems,
@@ -34,6 +35,7 @@ public class Perk {
          int monsters,
          int villagers,
          int golems,
+         int coppergolems,
          int waterAnimals,
          double rewBonus,
          double hungerReduction,
@@ -44,6 +46,7 @@ public class Perk {
         this.monsters = monsters >= 0 ? monsters : 0;
         this.villagers = villagers >= 0 ? villagers : 0;
         this.golems = golems >= 0 ? golems : 0;
+        this.coppergolems = coppergolems >= 0 ? coppergolems : 0;
         this.waterAnimals = waterAnimals >= 0 ? waterAnimals : 0;
         this.extraItems = extraItems != null ? extraItems : Collections.<ItemStack>emptyList();
         this.rewBonus = rewBonus >= 0 ? rewBonus : 0;
@@ -70,6 +73,10 @@ public class Perk {
 
     public int getGolems() {
         return golems;
+    }
+
+    public int getCopperGolems() {
+        return coppergolems;
     }
 
     public int getWaterAnimals() {
@@ -108,6 +115,7 @@ public class Perk {
                 Math.max(monsters, other.getMonsters()),
                 Math.max(villagers, other.getVillagers()),
                 Math.max(golems, other.getGolems()),
+                Math.max(coppergolems, other.getCopperGolems()),
                 Math.max(waterAnimals, other.getWaterAnimals()),
                 Math.max(rewBonus, other.getRewBonus()),
                 Math.max(hungerReduction, other.getHungerReduction()),

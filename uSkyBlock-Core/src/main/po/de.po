@@ -2062,6 +2062,9 @@ msgstr "Dorfbewohner"
 msgid "GOLEM"
 msgstr "Golems"
 
+msgid "COPPERGOLEM"
+msgstr "Kupfergolems"
+
 msgid "WATERANIMAL"
 msgstr "Meereslebewesen"
 

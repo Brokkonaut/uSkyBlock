@@ -2016,22 +2016,25 @@ msgid "§eYour rank is: §f{0}"
 msgstr "§9* §7Your rank is: §f{0}"
 
 msgid "UNKNOWN"
-msgstr "UNKNOWN"
+msgstr "Unknown"
 
 msgid "ANIMAL"
-msgstr "ANIMAL"
+msgstr "Animals"
 
 msgid "MONSTER"
-msgstr "MONSTER"
+msgstr "Monsters"
 
 msgid "VILLAGER"
-msgstr "VILLAGER"
+msgstr "Villagers"
 
 msgid "GOLEM"
-msgstr "GOLEM"
+msgstr "Golems"
+
+msgid "COPPERGOLEM"
+msgstr "Coppergolems"
 
 msgid "WATERANIMAL"
-msgstr "WATERANIMAL"
+msgstr "Wateranimals"
 
 #, java-format
 msgid "§c{0}"

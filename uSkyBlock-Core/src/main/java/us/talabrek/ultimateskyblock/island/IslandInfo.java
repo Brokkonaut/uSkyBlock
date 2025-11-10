@@ -313,6 +313,12 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     }
 
     @Override
+    public int getMaxCopperGolems() {
+        return getMaxPartyIntValue("maxCopperGolems",
+                plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getCopperGolems());
+    }
+
+    @Override
     public int getMaxWaterAnimals() {
         return getMaxPartyIntValue("maxWaterAnimals",
                 plugin.getPerkLogic().getIslandPerk(getSchematicName()).getPerk().getWaterAnimals());

@@ -55,6 +55,14 @@ public interface IslandInfo {
     int getMaxGolems();
 
     /**
+     * Returns the maximum number of copper golems that can spawn on this island.
+     *
+     * Note: Only enforced if <pre>spawn-limits</pre> are enabled in <pre>config.yml</pre>
+     * @return the maximum number of coppergolems that can spawn on this island.
+     */
+    int getMaxCopperGolems();
+
+    /**
      * Returns the maximum number of water animals that can spawn on this island.
      *
      * Note: Only enforced if <pre>spawn-limits</pre> are enabled in <pre>config.yml</pre>

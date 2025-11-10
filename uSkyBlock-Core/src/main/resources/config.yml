@@ -76,6 +76,7 @@ options:
       monsters: 50
       villagers: 16
       golems: 5
+      coppergolems: 5
       wateranimals: 30
     block-limits:
       enabled: true
@@ -280,6 +281,7 @@ donor-perks:
     monsters: 60
     villagers: 20
     golems: 6
+    coppergolems: 6
     # 10% more XP
     rewardBonus: 0.1
     # 10% less hunger
@@ -317,6 +319,7 @@ island-schemes:
     monsters: 50
     villagers: 16
     golems: 5
+    coppergolems: 5
 
     # Get 100% of the normal score
     scoreMultiply: 1.0
@@ -337,6 +340,7 @@ island-schemes:
     monsters: 50
     villagers: 16
     golems: 5
+    coppergolems: 5
     scoreMultiply: 0.9
     scoreOffset: 40
   spawn:

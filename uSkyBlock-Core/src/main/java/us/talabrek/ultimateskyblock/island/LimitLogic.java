@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.CopperGolem;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Golem;
@@ -34,7 +35,7 @@ import static dk.lockfuglsang.minecraft.po.I18nUtil.marktr;
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
 public class LimitLogic {
-    public enum CreatureType { UNKNOWN, ANIMAL, MONSTER, VILLAGER, GOLEM, WATERANIMAL }
+    public enum CreatureType { UNKNOWN, ANIMAL, MONSTER, VILLAGER, GOLEM, COPPERGOLEM, WATERANIMAL }
     static {
         marktr("UNKNOWN");
         marktr("ANIMAL");
@@ -42,6 +43,7 @@ public class LimitLogic {
         marktr("VILLAGER");
         marktr("GOLEM");
         marktr("WATERANIMAL");
+        marktr("COPPERGOLEM");
     }
 
     private final uSkyBlock plugin;
@@ -131,6 +133,8 @@ public class LimitLogic {
             return CreatureType.ANIMAL;
         } else if (creature instanceof Villager) {
             return CreatureType.VILLAGER;
+        } else if (creature instanceof CopperGolem) {
+            return CreatureType.COPPERGOLEM;
         } else if (creature instanceof Golem) {
             return CreatureType.GOLEM;
         }
@@ -152,6 +156,8 @@ public class LimitLogic {
             return CreatureType.ANIMAL;
         } else if (Villager.class.isAssignableFrom(entityType.getEntityClass())) {
             return CreatureType.VILLAGER;
+        } else if (CopperGolem.class.isAssignableFrom(entityType.getEntityClass())) {
+            return CreatureType.COPPERGOLEM;
         } else if (Golem.class.isAssignableFrom(entityType.getEntityClass())) {
             return CreatureType.GOLEM;
         }
@@ -174,6 +180,7 @@ public class LimitLogic {
             case MONSTER: return islandInfo.getMaxMonsters();
             case VILLAGER: return islandInfo.getMaxVillagers();
             case GOLEM: return islandInfo.getMaxGolems();
+            case COPPERGOLEM: return islandInfo.getMaxCopperGolems();
             case WATERANIMAL: return islandInfo.getMaxWaterAnimals();
         }
         return Integer.MAX_VALUE;
