@@ -22,15 +22,15 @@
     </distributionManagement>
     <repositories>
         <repository>
-            <id>spigotmc.org</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/public</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.21.8-R0.1-SNAPSHOT</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

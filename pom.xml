@@ -13,7 +13,7 @@
         <bukkit-utils.version>1.26-brokko-SNAPSHOT</bukkit-utils.version>
         <paperlib.version>1.0.7</paperlib.version>
         <deluxechat.version>1.6</deluxechat.version>
-        <spigotapi.version>1.19.2-R0.1-SNAPSHOT</spigotapi.version>
+        <spigotapi.version>1.21.10-R0.1-SNAPSHOT</spigotapi.version>
         <vault.version>1.7</vault.version>
         <worldedit.version>7.3.0</worldedit.version>
         <worldguard.version>7.0.4-SNAPSHOT</worldguard.version>
@@ -90,11 +90,7 @@
         </pluginManagement>
     </build>
     <repositories>
-        <repository> <!-- Bukkit & Spigot API -->
-            <id>spigotmc.org</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/public</url>
-        </repository>
-        <repository> <!-- PaperLib -->
+        <repository> <!-- Paper -->
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
@@ -203,11 +199,6 @@
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${jbannotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.papermc</groupId>
-                <artifactId>paperlib</artifactId>
-                <version>${paperlib.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
