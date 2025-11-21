@@ -96,7 +96,6 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.bstats:*</include>
-                                    <include>io.papermc:paperlib</include>
                                     <include>dk.lockfuglsang.minecraft:bukkit-utils</include>
                                     <include>uSkyBlock:po-utils</include>
                                     <include>com.googlecode.json-simple:json-simple</include>
@@ -349,12 +348,6 @@
             <version>${spigotapi.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
-        </dependency>
-        <!-- PaperLib -->
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <scope>compile</scope>
         </dependency>
         <!-- Multiverse -->
         <dependency>
