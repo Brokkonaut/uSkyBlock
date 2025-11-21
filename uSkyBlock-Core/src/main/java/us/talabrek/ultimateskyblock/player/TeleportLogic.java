@@ -1,6 +1,5 @@
 package us.talabrek.ultimateskyblock.player;
 
-import io.papermc.lib.PaperLib;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -85,12 +84,12 @@ public class TeleportLogic implements Listener {
         log.log(Level.FINER, "safeTeleport " + player + " to " + targetLocation + (force ? " with force" : ""));
         final Location targetLoc = LocationUtil.centerOnBlock(targetLocation.clone());
         if (player.hasPermission("usb.mod.bypassteleport") || (teleportDelay == 0) || force) {
-            PaperLib.teleportAsync(player, targetLoc);
+            player.teleportAsync(targetLoc);
         } else {
             player.sendMessage(tr("\u00a7aYou will be teleported in {0} seconds.", teleportDelay));
             BukkitTask tpTask = plugin.sync(() -> {
                 pendingTeleports.remove(player.getUniqueId());
-                PaperLib.teleportAsync(player, targetLoc);
+                player.teleportAsync(targetLoc);
             }, TimeUtil.secondsAsMillis(teleportDelay));
             pendingTeleports.put(player.getUniqueId(), new PendingTeleport(player.getLocation(), tpTask));
         }
@@ -111,7 +110,7 @@ public class TeleportLogic implements Listener {
                 plugin.execCommand(player, "op:spawn", false);
             } else {
                 plugin.sync(() -> player.teleport(spawnLocation));
-                // PaperLib.teleportAsync(player, spawnLocation);
+                // player.teleportAsync(spawnLocation);
             }
         } else {
             player.sendMessage(tr("\u00a7aYou will be teleported in {0} seconds.", teleportDelay));
@@ -121,7 +120,7 @@ public class TeleportLogic implements Listener {
                     plugin.execCommand(player, "op:spawn", false);
                 } else {
                     player.teleport(spawnLocation);
-                    // PaperLib.teleportAsync(player, spawnLocation);
+                    // player.teleportAsync(spawnLocation);
                 }
             }, TimeUtil.secondsAsMillis(teleportDelay));
             pendingTeleports.put(player.getUniqueId(), new PendingTeleport(player.getLocation(), tpTask));

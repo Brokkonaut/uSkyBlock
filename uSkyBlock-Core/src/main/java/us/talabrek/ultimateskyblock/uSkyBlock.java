@@ -9,7 +9,6 @@ import dk.lockfuglsang.minecraft.po.I18nUtil;
 import dk.lockfuglsang.minecraft.util.TimeUtil;
 import dk.lockfuglsang.minecraft.util.VersionUtil;
 import dk.lockfuglsang.minecraft.yml.YmlConfiguration;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
@@ -242,7 +241,6 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         }, getConfig().getLong("init.initDelay", 50L));
 
         metricsManager = new MetricsManager(this);
-        PaperLib.suggestPaper(this);
     }
 
     public synchronized boolean isRequirementsMet(CommandSender sender, Command command, String... args) {
