@@ -106,7 +106,7 @@ public class PerkLogic {
             return islandPerks.get(schemeName);
         }
         return new IslandPerk(schemeName, "usb.schematic." + schemeName,
-                ItemStackUtil.createItemStack("GRASS", schemeName, null), defaultPerk);
+                ItemStackUtil.createItemStack("GRASS_BLOCK", schemeName, null), defaultPerk);
     }
 
     private Perk createPerk(Player player) {
