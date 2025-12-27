@@ -1,11 +1,14 @@
 package us.talabrek.ultimateskyblock.player;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import us.talabrek.ultimateskyblock.Settings;
 import us.talabrek.ultimateskyblock.island.IslandGenerator;
 import us.talabrek.ultimateskyblock.uSkyBlock;
+import dk.lockfuglsang.minecraft.util.FormatUtil;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 
 import java.util.Arrays;
@@ -105,8 +108,11 @@ public class PerkLogic {
         if (islandPerks.containsKey(schemeName)) {
             return islandPerks.get(schemeName);
         }
-        return new IslandPerk(schemeName, "usb.schematic." + schemeName,
-                ItemStackUtil.createItemStack("GRASS_BLOCK", schemeName, null), defaultPerk);
+        ItemStack stack = new ItemStack(Material.GRASS_BLOCK);
+        ItemMeta meta = stack.getItemMeta();
+        meta.setDisplayName(FormatUtil.normalize(schemeName));
+        stack.setItemMeta(meta);
+        return new IslandPerk(schemeName, "usb.schematic." + schemeName, stack, defaultPerk);
     }
 
     private Perk createPerk(Player player) {
