@@ -29,6 +29,7 @@ public class ChallengeCompletionLogic {
     private final File storageFolder;
     private final boolean storeOnIsland;
     private final LoadingCache<String, Map<String, ChallengeCompletion>> completionCache;
+    private final Object fileLock = new Object();
 
     public ChallengeCompletionLogic(uSkyBlock plugin, FileConfiguration config) {
         this.plugin = plugin;
@@ -58,10 +59,12 @@ public class ChallengeCompletionLogic {
         File configFile = new File(storageFolder, id + ".yml");
         FileConfiguration fileConfiguration = new YamlConfiguration();
         saveToConfiguration(fileConfiguration, map);
-        try {
-            fileConfiguration.save(configFile);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.WARNING, "Unable to store challenge-completion to " + configFile, e);
+        synchronized (fileLock) {
+            try {
+                fileConfiguration.save(configFile);
+            } catch (IOException e) {
+                plugin.getLogger().log(Level.WARNING, "Unable to store challenge-completion to " + configFile, e);
+            }
         }
     }
 
@@ -89,7 +92,9 @@ public class ChallengeCompletionLogic {
         }
         if (configFile.exists()) {
             FileConfiguration fileConfiguration = new YamlConfiguration();
-            FileUtil.readConfig(fileConfiguration, configFile);
+            synchronized (fileLock) {
+                FileUtil.readConfig(fileConfiguration, configFile);
+            }
             if (fileConfiguration.getRoot() != null) {
                 return loadFromConfiguration(fileConfiguration.getRoot());
             }

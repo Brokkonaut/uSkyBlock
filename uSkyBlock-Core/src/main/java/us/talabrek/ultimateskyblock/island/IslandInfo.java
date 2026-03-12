@@ -65,6 +65,8 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
     private final String name;
     private boolean dirty = false;
     private boolean toBeDeleted = false;
+    
+    private final Object fileLock = new Object();
 
     public IslandInfo(@NotNull String islandName, @NotNull uSkyBlock plugin) {
         Validate.notNull(islandName, "IslandName cannot be null");
@@ -75,7 +77,9 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         file = new File(directory, islandName + ".yml");
         name = islandName;
         if (file.exists()) {
-            readConfig(config, file);
+            synchronized (fileLock) {
+                readConfig(config, file);
+            }
             if (config.getInt("version", 0) < YML_VERSION || config.contains("maxSize")) {
                 updateConfig();
             }
@@ -275,7 +279,9 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         } else if (dirty) {
             try {
                 log.fine("Saving island-config: " + file);
-                config.save(file);
+                synchronized (fileLock) {
+                    config.save(file);
+                }
             } catch (IOException e) {
                 LogUtil.log(Level.SEVERE, "Unable to save island " + file, e);
             }

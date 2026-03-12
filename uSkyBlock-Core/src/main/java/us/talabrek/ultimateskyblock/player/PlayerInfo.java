@@ -54,6 +54,8 @@ public class PlayerInfo implements Serializable, us.talabrek.ultimateskyblock.ap
     private boolean islandGenerating = false;
     private boolean dirty = false;
 
+    private final Object fileLock = new Object();
+
     public PlayerInfo(String currentPlayerName, UUID playerUUID, uSkyBlock plugin) {
         this.plugin = plugin;
         this.uuid = playerUUID;
@@ -66,7 +68,9 @@ public class PlayerInfo implements Serializable, us.talabrek.ultimateskyblock.ap
         }
         playerData = new YmlConfiguration();
         if (playerConfigFile.exists()) {
-            FileUtil.readConfig(playerData, playerConfigFile);
+            synchronized (fileLock) {
+                FileUtil.readConfig(playerData, playerConfigFile);
+            }
         }
         loadPlayer();
     }
@@ -286,7 +290,9 @@ public class PlayerInfo implements Serializable, us.talabrek.ultimateskyblock.ap
             playerConfig.set("player.homePitch", 0);
         }
         try {
-            playerConfig.save(playerConfigFile);
+            synchronized (fileLock) {
+                playerConfig.save(playerConfigFile);
+            }
             LogUtil.log(Level.FINEST, "Player data saved!");
         } catch (IOException ex) {
             uSkyBlock.getInstance().getLogger().log(Level.SEVERE, "Could not save config to " + playerConfigFile, ex);
