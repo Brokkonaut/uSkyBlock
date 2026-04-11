@@ -351,9 +351,9 @@
         </dependency>
         <!-- Multiverse -->
         <dependency>
-            <groupId>com.onarandombox.multiversecore</groupId>
-            <artifactId>Multiverse-Core</artifactId>
-            <version>4.1.0</version>
+        <groupId>org.mvplugins.multiverse.core</groupId>
+        <artifactId>multiverse-core</artifactId>
+        <version>5.6.1-SNAPSHOT</version>
             <scope>provided</scope>
             <optional>true</optional>
             <exclusions>
@@ -364,9 +364,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.onarandombox.multiverseinventories</groupId>
-            <artifactId>Multiverse-Inventories</artifactId>
-            <version>3.0.0</version>
+            <groupId>org.mvplugins.multiverse.inventories</groupId>
+            <artifactId>multiverse-inventories</artifactId>
+            <version>5.3.2-SNAPSHOT</version>
             <scope>provided</scope>
             <optional>true</optional>
             <exclusions>
