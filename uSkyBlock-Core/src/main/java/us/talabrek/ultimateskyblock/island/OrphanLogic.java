@@ -57,16 +57,21 @@ public class OrphanLogic {
 
     public void save() {
         // TODO: 17/09/2015 - R4zorax: Perhaps not save to file EVERY time?
+        try {
+            saveChecked();
+        } catch (IOException e) {
+            plugin.getLogger().warning("Unable to store orphans: " + e);
+        }
+    }
+
+    /** Persists orphan metadata and lets maintenance workflows stop on an I/O failure. */
+    public void saveChecked() throws IOException {
         List<String> value = new ArrayList<>();
         for (Orphan orphan : new ArrayList<>(orphaned)) {
             value.add(orphan.toString());
         }
         config.set("orphans", value);
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-            plugin.getLogger().warning("Unable to store orphans: " + e);
-        }
+        config.save(configFile);
     }
 
     public void addOrphan(String loc) {

@@ -145,6 +145,17 @@ public class PlayerLogic {
         if (plugin.isMaintenanceMode()) {
             return null;
         }
+        return getPlayerInfoForMaintenance(uuid);
+    }
+
+    /**
+     * Internal maintenance-only access for data repair code. Unlike the public lookup this deliberately bypasses
+     * the maintenance guard, but still uses the normal cache so an already loaded object cannot overwrite a repair.
+     */
+    public PlayerInfo getPlayerInfoForMaintenance(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
         try {
             return playerCache.get(uuid);
         } catch (ExecutionException e) {

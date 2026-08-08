@@ -26,6 +26,11 @@ public class SetMaintenanceCommand extends AbstractCommand {
         if (sender instanceof ConsoleCommandSender) {
             if (args.length == 1 && args[0].matches("(true)|(false)")) {
                 boolean maintenanceMode = Boolean.parseBoolean(args[0]);
+                if (!maintenanceMode && plugin.getIslandDataIntegrityLogic() != null
+                        && plugin.getIslandDataIntegrityLogic().requiresMaintenanceMode()) {
+                    sender.sendMessage(tr("\u00a7cMaintenance mode must remain active until the integrity run is complete or cancelled."));
+                    return true;
+                }
                 plugin.setMaintenanceMode(maintenanceMode);
                 if (maintenanceMode) {
                     sender.sendMessage(tr("\u00a7cMAINTENANCE: \u00a7aActivated\u00a7e all uSkyBlock features currently disabled."));

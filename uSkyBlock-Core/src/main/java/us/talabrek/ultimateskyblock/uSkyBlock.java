@@ -43,6 +43,7 @@ import us.talabrek.ultimateskyblock.command.AdminCommand;
 import us.talabrek.ultimateskyblock.command.ChallengeCommand;
 import us.talabrek.ultimateskyblock.command.IslandCommand;
 import us.talabrek.ultimateskyblock.command.admin.DebugCommand;
+import us.talabrek.ultimateskyblock.command.admin.IntegrityCommand;
 import us.talabrek.ultimateskyblock.command.admin.SetMaintenanceCommand;
 import us.talabrek.ultimateskyblock.command.island.BiomeCommand;
 import us.talabrek.ultimateskyblock.event.ExploitEvents;
@@ -62,6 +63,7 @@ import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.handler.placeholder.PlaceholderHandler;
 import us.talabrek.ultimateskyblock.hook.HookManager;
 import us.talabrek.ultimateskyblock.imports.USBImporterExecutor;
+import us.talabrek.ultimateskyblock.integrity.IslandDataIntegrityLogic;
 import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
 import us.talabrek.ultimateskyblock.island.IslandGenerator;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
@@ -134,6 +136,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
     private LevelLogic levelLogic;
     private IslandLogic islandLogic;
     private IslandRelocationLogic islandRelocationLogic;
+    private IslandDataIntegrityLogic islandDataIntegrityLogic;
     private OrphanLogic orphanLogic;
     private PerkLogic perkLogic;
     private TeleportLogic teleportLogic;
@@ -248,8 +251,9 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
 
     public synchronized boolean isRequirementsMet(CommandSender sender, Command command, String... args) {
         if (maintenanceMode && !(
-                (command instanceof AdminCommand && args != null && args.length > 0 && args[0].equals("maintenance")) ||
-                        command instanceof SetMaintenanceCommand)) {
+                (command instanceof AdminCommand && args != null && args.length > 0
+                        && (args[0].equalsIgnoreCase("maintenance") || args[0].equalsIgnoreCase("integrity"))) ||
+                        command instanceof SetMaintenanceCommand || command instanceof IntegrityCommand)) {
             sender.sendMessage(tr("\u00a7cMAINTENANCE:\u00a7e uSkyBlock is currently in maintenance mode"));
             return false;
         }
@@ -748,6 +752,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         notifier = new PlayerNotifier(getConfig());
         playerLogic = new PlayerLogic(this);
         islandRelocationLogic = new IslandRelocationLogic(this);
+        islandDataIntegrityLogic = new IslandDataIntegrityLogic(this);
         if (autoRecalculateTask != null) {
             autoRecalculateTask.cancel();
         }
@@ -778,6 +783,10 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
 
     public IslandLogic getIslandLogic() {
         return islandLogic;
+    }
+
+    public IslandDataIntegrityLogic getIslandDataIntegrityLogic() {
+        return islandDataIntegrityLogic;
     }
 
     public OrphanLogic getOrphanLogic() {
@@ -1067,6 +1076,9 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
             }
             if (islandLogic != null) {
                 islandLogic.flushCache();
+            }
+            if (challengeLogic != null) {
+                challengeLogic.flushCache();
             }
         }
     }

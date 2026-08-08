@@ -17,6 +17,7 @@ import us.talabrek.ultimateskyblock.command.admin.FlushCommand;
 import us.talabrek.ultimateskyblock.command.admin.GenTopTenCommand;
 import us.talabrek.ultimateskyblock.command.admin.GotoIslandCommand;
 import us.talabrek.ultimateskyblock.command.admin.ImportCommand;
+import us.talabrek.ultimateskyblock.command.admin.IntegrityCommand;
 import us.talabrek.ultimateskyblock.command.admin.JobsCommand;
 import us.talabrek.ultimateskyblock.command.admin.LanguageCommand;
 import us.talabrek.ultimateskyblock.command.admin.NBTCommand;
@@ -87,6 +88,7 @@ public class AdminCommand extends BaseCommandExecutor {
         add(new DocumentCommand(plugin, "doc", "usb.admin.doc"));
         add(new RegionCommand(plugin, animationHandler));
         add(new SetMaintenanceCommand(plugin));
+        add(new IntegrityCommand(plugin));
         add(new NBTCommand());
         add(new ProtectAllCommand(plugin));
         add(new ChunkCommand(plugin));

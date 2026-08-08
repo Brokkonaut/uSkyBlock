@@ -114,6 +114,7 @@ permissions:
       usb.admin.import: true
       usb.admin.ignore: true
       usb.admin.info: true
+      usb.admin.integrity: true
       usb.admin.island: true
       usb.admin.lang: true
       usb.admin.maintenance: true
@@ -153,6 +154,7 @@ permissions:
       usb.admin.ignore: true
       usb.admin.import: true
       usb.admin.info: true
+      usb.admin.integrity: true
       usb.admin.island: true
       usb.admin.jobs: true
       usb.admin.jobs.stats: true
@@ -305,6 +307,9 @@ permissions:
     description: |
       Grants access to /usb info - show player-information
       /usb island info - print out info about the island
+
+  usb.admin.integrity:
+    description: 'Grants access to /usb integrity scan|status|confirm|cancel'
 
   usb.admin.jobs:
     description: 'Grants access to /usb jobs - controls async jobs'

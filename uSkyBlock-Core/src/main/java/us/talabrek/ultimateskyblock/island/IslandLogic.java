@@ -112,6 +112,14 @@ public class IslandLogic {
         if (islandName == null || plugin.isMaintenanceMode()) {
             return null;
         }
+        return getIslandInfoForMaintenance(islandName);
+    }
+
+    /** Internal cache access used by repair operations while maintenance mode is active. */
+    public synchronized IslandInfo getIslandInfoForMaintenance(String islandName) {
+        if (islandName == null) {
+            return null;
+        }
         try {
             return cache.get(islandName);
         } catch (ExecutionException e) {
@@ -430,6 +438,31 @@ public class IslandLogic {
         WorldGuardHandler.removeIslandRegion(islandName);
         deleteIslandConfig(islandName, false);
         return plugin.getChallengeLogic().deleteIslandChallenges(islandName);
+    }
+
+    /**
+     * Removes the metadata of a broken island without touching either world. Player, trust and ban references are
+     * repaired by the integrity plan before this operation is invoked.
+     */
+    public synchronized void releaseIslandForIntegrity(String islandName) {
+        IslandInfo islandInfo = getIslandInfoForMaintenance(islandName);
+        if (islandInfo == null || islandInfo.ignore()) {
+            throw new IllegalStateException("Refusing to release missing or ignored island " + islandName);
+        }
+        if (!plugin.getChallengeLogic().deleteIslandChallenges(islandName)) {
+            throw new IllegalStateException("Unable to delete challenge data for island " + islandName);
+        }
+        WorldGuardHandler.removeIslandRegion(islandName);
+        deleteIslandConfig(islandName, false);
+        if (new File(directoryIslands, islandName + ".yml").exists()) {
+            throw new IllegalStateException("Unable to delete island config " + islandName);
+        }
+        orphanLogic.addOrphan(islandName);
+        try {
+            orphanLogic.saveChecked();
+        } catch (java.io.IOException exception) {
+            throw new IllegalStateException("Unable to persist orphan " + islandName, exception);
+        }
     }
 
     /**

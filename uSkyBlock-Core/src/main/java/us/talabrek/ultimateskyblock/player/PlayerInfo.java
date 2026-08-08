@@ -253,12 +253,20 @@ public class PlayerInfo implements Serializable, us.talabrek.ultimateskyblock.ap
     }
 
     public void saveToFile() {
+        try {
+            saveToFileChecked();
+        } catch (IOException ex) {
+            uSkyBlock.getInstance().getLogger().log(Level.SEVERE, "Could not save config to " + playerConfigFile, ex);
+        }
+    }
+
+    /** Same persistence as {@link #saveToFile()}, but propagates failures to maintenance repair code. */
+    public void saveToFileChecked() throws IOException {
         log.fine("Saving player-info for " + playerName + " to file");
         // TODO: 11/05/2015 - R4zorax: Instead of saving directly, schedule it for later...
         log.entering(CN, "save", playerName);
         if (playerData == null) {
-            LogUtil.log(Level.INFO, "Can't save player data! (" + playerName + ", " + uuid + ", " + playerConfigFile + ")");
-            return;
+            throw new IOException("Can't save player data for " + playerName + "/" + uuid);
         }
         FileConfiguration playerConfig = playerData;
         playerConfig.set("version", YML_VERSION);
@@ -289,14 +297,10 @@ public class PlayerInfo implements Serializable, us.talabrek.ultimateskyblock.ap
             playerConfig.set("player.homeYaw", 0);
             playerConfig.set("player.homePitch", 0);
         }
-        try {
-            synchronized (fileLock) {
-                playerConfig.save(playerConfigFile);
-            }
-            LogUtil.log(Level.FINEST, "Player data saved!");
-        } catch (IOException ex) {
-            uSkyBlock.getInstance().getLogger().log(Level.SEVERE, "Could not save config to " + playerConfigFile, ex);
+        synchronized (fileLock) {
+            playerConfig.save(playerConfigFile);
         }
+        LogUtil.log(Level.FINEST, "Player data saved!");
         log.exiting(CN, "save");
         dirty = false;
     }

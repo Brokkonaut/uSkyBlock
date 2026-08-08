@@ -900,6 +900,71 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         save();
     }
 
+    /** Removes only the island-side member entry. No player data, event, message or WorldGuard state is touched. */
+    public void repairRemoveMemberReference(@NotNull String memberKey) throws IOException {
+        Validate.notNull(memberKey, "Member key cannot be null");
+        config.set("party.members." + memberKey, null);
+        persistRepair();
+    }
+
+    /** Adds an island-side member entry without changing player data or firing gameplay events. */
+    public void repairAddMemberReference(@NotNull UUID uuid, @NotNull String playerName, boolean leader)
+            throws IOException {
+        Validate.notNull(uuid, "Uuid cannot be null");
+        Validate.notNull(playerName, "Player name cannot be null");
+        String memberPath = "party.members." + UUIDUtil.asString(uuid);
+        config.set(memberPath, null);
+        ConfigurationSection section = config.createSection(memberPath);
+        section.set("name", playerName);
+        section.set("canChangeBiome", leader);
+        section.set("canToggleLock", leader);
+        section.set("canChangeWarp", leader);
+        section.set("canToggleWarp", leader);
+        section.set("canInviteOthers", leader);
+        section.set("canKickOthers", leader);
+        section.set("canBanOthers", leader);
+        if (leader) {
+            config.set("party.leader", playerName);
+            config.set("party.leader-uuid", UUIDUtil.asString(uuid));
+        }
+        persistRepair();
+    }
+
+    /** Persists a leader UUID/name resolved during the read-only scan. */
+    public void repairSetLeaderIdentity(@NotNull UUID uuid, @NotNull String playerName) throws IOException {
+        Validate.notNull(uuid, "Uuid cannot be null");
+        Validate.notNull(playerName, "Player name cannot be null");
+        config.set("party.leader", playerName);
+        config.set("party.leader-uuid", UUIDUtil.asString(uuid));
+        saveRepairToFile();
+    }
+
+    /** Persists the exact member count computed by the integrity planner. */
+    public void repairSetPartySize(int size) throws IOException {
+        if (size < 0) {
+            throw new IllegalArgumentException("Party size cannot be negative");
+        }
+        config.set("party.currentSize", size);
+        saveRepairToFile();
+    }
+
+    /** Immediately persists any metadata changed by a maintenance integration such as WorldGuard. */
+    public void repairPersist() throws IOException {
+        saveRepairToFile();
+    }
+
+    private void persistRepair() throws IOException {
+        config.set("party.currentSize", getMemberUUIDs().size());
+        saveRepairToFile();
+    }
+
+    private void saveRepairToFile() throws IOException {
+        synchronized (fileLock) {
+            config.save(file);
+        }
+        dirty = false;
+    }
+
     public void setLevel(double score) {
         config.set("general.level", score);
         save();
