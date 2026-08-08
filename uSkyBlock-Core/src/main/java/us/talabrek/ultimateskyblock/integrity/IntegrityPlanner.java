@@ -176,15 +176,19 @@ public class IntegrityPlanner {
             Set<UUID> projected = projectedMembers.get(island.getId());
             if (!projected.contains(player.getUuid())) {
                 boolean leader = player.getUuid().equals(island.getLeaderId());
-                issues.add(issue(island, "Player " + player.getUuid() + " points to island " + island.getId()
-                        + " but is missing from its members"));
-                if (!island.isIgnored()) {
+                boolean ignored = island.isIgnored() || ignoredPlayers.contains(player.getUuid());
+                issues.add(new Issue("Player " + player.getUuid() + " points to island " + island.getId()
+                        + " but is missing from its members", ignored));
+                if (!ignored && leader) {
                     projected.add(player.getUuid());
                     actions.add(Action.of(ActionType.ADD_MEMBER_REFERENCE, island.getId(), player.getUuid(), null,
-                            player.getName(), leader, -1,
-                            "add " + player.getUuid() + " to island " + island.getId()
-                                    + (leader ? " as leader" : " as member")));
+                            player.getName(), true, -1,
+                            "add " + player.getUuid() + " to island " + island.getId() + " as leader"));
                     membershipRepaired.add(island.getId());
+                } else if (!ignored) {
+                    actions.add(Action.of(ActionType.CLEAR_PLAYER_ASSIGNMENT, island.getId(), player.getUuid(), null,
+                            player.getName(), false, -1,
+                            "clear island assignment " + island.getId() + " from non-member " + player.getUuid()));
                 }
             }
         }

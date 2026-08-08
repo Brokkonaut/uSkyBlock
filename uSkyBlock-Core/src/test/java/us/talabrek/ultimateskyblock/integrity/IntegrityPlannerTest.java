@@ -51,18 +51,38 @@ public class IntegrityPlannerTest {
     }
 
     @Test
-    public void missingMemberAndLeaderEntriesAreRestoredWithCorrectRoles() {
+    public void missingLeaderEntryIsRestoredButUnlistedPlayerIsCleared() {
         Map<UUID, PlayerRecord> players = players(player(LEADER, "Leader", "100,200"),
                 player(MEMBER, "Member", "100,200"));
         IslandRecord island = island("100,200", LEADER, Collections.emptyMap(), 0, false);
 
-        List<Action> actions = new IntegrityPlanner().createPlan(players, islands(island)).getActions();
+        IntegrityPlanner.Result result = new IntegrityPlanner().createPlan(players, islands(island));
+        List<Action> actions = result.getActions();
 
         Action leader = find(actions, ActionType.ADD_MEMBER_REFERENCE, "100,200", LEADER);
-        Action member = find(actions, ActionType.ADD_MEMBER_REFERENCE, "100,200", MEMBER);
         assertTrue(leader.isLeader());
-        assertFalse(member.isLeader());
+        assertEquals(0, count(actions, ActionType.ADD_MEMBER_REFERENCE, "100,200", MEMBER));
+        assertEquals(1, count(actions, ActionType.CLEAR_PLAYER_ASSIGNMENT, "100,200", MEMBER));
+        assertEquals(set(LEADER), result.getProjectedMembers().get("100,200"));
         assertEquals(0, count(actions, ActionType.NORMALIZE_PARTY_SIZE, "100,200", null));
+    }
+
+    @Test
+    public void clearedUnlistedPlayerProducesNoActionOnSecondScan() {
+        IslandRecord island = island("100,200", LEADER, members(LEADER), 1, false);
+        Map<UUID, PlayerRecord> beforeRepair = players(player(LEADER, "Leader", "100,200"),
+                player(MEMBER, "Member", "100,200"));
+
+        List<Action> firstActions = new IntegrityPlanner().createPlan(beforeRepair, islands(island)).getActions();
+
+        assertEquals(1, count(firstActions, ActionType.CLEAR_PLAYER_ASSIGNMENT, "100,200", MEMBER));
+
+        Map<UUID, PlayerRecord> afterRepair = players(player(LEADER, "Leader", "100,200"),
+                player(MEMBER, "Member", null));
+        IntegrityPlanner.Result secondScan = new IntegrityPlanner().createPlan(afterRepair, islands(island));
+
+        assertTrue(secondScan.getIssues().isEmpty());
+        assertTrue(secondScan.getActions().isEmpty());
     }
 
     @Test
@@ -116,6 +136,19 @@ public class IntegrityPlannerTest {
 
         assertFalse(result.getIssues().isEmpty());
         assertTrue(result.getIssues().stream().allMatch(IntegrityPlan.Issue::isIgnored));
+        assertTrue(result.getActions().isEmpty());
+    }
+
+    @Test
+    public void unlistedPlayerOnIgnoredIslandIsOnlyReported() {
+        Map<UUID, PlayerRecord> players = players(player(LEADER, "Leader", "100,200"),
+                player(MEMBER, "Member", "100,200"));
+        IslandRecord ignored = island("100,200", LEADER, members(LEADER), 1, true);
+
+        IntegrityPlanner.Result result = new IntegrityPlanner().createPlan(players, islands(ignored));
+
+        assertEquals(1, result.getIssues().size());
+        assertTrue(result.getIssues().get(0).isIgnored());
         assertTrue(result.getActions().isEmpty());
     }
 

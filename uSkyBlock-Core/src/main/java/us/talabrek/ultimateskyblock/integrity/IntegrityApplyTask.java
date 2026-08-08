@@ -51,6 +51,7 @@ public class IntegrityApplyTask extends IncrementalRunnable {
     private int prepareIndex;
     private int backupIndex;
     private int actionIndex;
+    private boolean manifestFileListChecked;
     private boolean mutationsStarted;
 
     public IntegrityApplyTask(uSkyBlock plugin, CommandSender sender, IntegrityPlan plan, IntegrityReport report,
@@ -117,10 +118,13 @@ public class IntegrityApplyTask extends IncrementalRunnable {
     }
 
     private boolean verify() throws IOException {
-        Collection<File> currentFiles = IntegrityFiles.manifestFiles(plugin.getDataFolder(),
-                plugin.directoryPlayers, plugin.directoryIslands);
-        if (!plan.getManifest().hasSameFileList(currentFiles)) {
-            throw new StalePlanException("integrity data file list changed since scan");
+        if (!manifestFileListChecked) {
+            Collection<File> currentFiles = IntegrityFiles.manifestFiles(plugin.getDataFolder(),
+                    plugin.directoryPlayers, plugin.directoryIslands);
+            if (!plan.getManifest().hasSameFileList(currentFiles)) {
+                throw new StalePlanException("integrity data file list changed since scan");
+            }
+            manifestFileListChecked = true;
         }
         while (!verifyFiles.isEmpty()) {
             File file = verifyFiles.remove();
