@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -768,6 +769,18 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         return nameList;
     }
 
+    @NotNull
+    public List<UUID> getBannedUUIDs() {
+        List<UUID> banned = new ArrayList<>();
+        for (String uuid : config.getStringList("banned.list")) {
+            UUID id = UUIDUtil.fromString(uuid);
+            if (id != null) {
+                banned.add(id);
+            }
+        }
+        return banned;
+    }
+
     @Override
     @NotNull
     public List<String> getTrustees() {
@@ -1143,5 +1156,15 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
      */
     public void setConfig(FileConfiguration config) {
         this.config = config;
+    }
+
+    public FileConfiguration copyConfig() {
+        YamlConfiguration copy = new YamlConfiguration();
+        try {
+            copy.loadFromString(config.saveToString());
+        } catch (InvalidConfigurationException e) {
+            throw new IllegalStateException("Unable to copy island config " + name, e);
+        }
+        return copy;
     }
 }

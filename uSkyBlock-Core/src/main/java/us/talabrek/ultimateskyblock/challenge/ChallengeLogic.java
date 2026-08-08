@@ -633,6 +633,18 @@ public class ChallengeLogic implements Listener {
         return completionLogic.isIslandSharing();
     }
 
+    public boolean moveIslandChallenges(String sourceId, String destinationId) {
+        return completionLogic.moveIslandChallenges(sourceId, destinationId);
+    }
+
+    public boolean copyIslandChallenges(String sourceId, String destinationId) {
+        return completionLogic.copyIslandChallenges(sourceId, destinationId);
+    }
+
+    public boolean deleteIslandChallenges(String islandId) {
+        return completionLogic.deleteIslandChallenges(islandId);
+    }
+
     @EventHandler
     public void onMemberJoinedEvent(MemberJoinedEvent e) {
         if (!completionLogic.isIslandSharing() || !(e.getPlayerInfo() instanceof PlayerInfo)) {

@@ -80,6 +80,13 @@ public class OrphanLogic {
         }
     }
 
+    public void removeOrphan(String location) {
+        if (location != null) {
+            orphaned.remove(new Orphan(location));
+            save();
+        }
+    }
+
     public Location getNextValidOrphan() {
         if (orphaned.isEmpty()) {
             return null;

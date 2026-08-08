@@ -82,6 +82,20 @@ public class IslandLocatorLogicTest {
         assertThat("duplicate locations detected", set.size(), is(locations.size()));
     }
 
+    @Test
+    public void moveReservationsBlockBothIdsUntilReleased() {
+        IslandLocatorLogic locator = new IslandLocatorLogic(createPluginMock());
+
+        assertThat(locator.reserveForMove("10,20", "30,40"), is(true));
+        assertThat(locator.reserveForMove("10,20", "50,60"), is(false));
+        assertThat(locator.isReserved(new Location(null, 10, 0, 20)), is(true));
+        assertThat(locator.isReserved(new Location(null, 30, 0, 40)), is(true));
+
+        locator.releaseMoveReservation("10,20", "30,40");
+        assertThat(locator.isReserved(new Location(null, 10, 0, 20)), is(false));
+        assertThat(locator.isReserved(new Location(null, 30, 0, 40)), is(false));
+    }
+
     private Player createPlayerMock() {
         Player player = mock(Player.class);
         when(player.getLocation()).then(new Answer<Location>() {

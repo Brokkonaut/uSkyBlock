@@ -1,7 +1,6 @@
 package us.talabrek.ultimateskyblock.handler.task;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -28,6 +27,7 @@ public class WorldEditClear extends IncrementalRunnable {
     private static final int INCREMENT = 2;
     private final World world;
     private final List<Region> regions;
+    private Throwable failure;
 
     public WorldEditClear(uSkyBlock plugin, World world, Set<Region> borderRegions, Runnable onCompletion) {
         super(plugin, onCompletion);
@@ -73,18 +73,23 @@ public class WorldEditClear extends IncrementalRunnable {
     protected boolean execute() {
         while (!regions.isEmpty()) {
             final Region region = regions.remove(0);
-            final EditSession editSession = WorldEditHandler.createEditSession(new BukkitWorld(world), -1);
-            editSession.setSideEffectApplier(SideEffectSet.defaults());
-            try {
+            try (EditSession editSession = WorldEditHandler.createEditSession(new BukkitWorld(world), -1)) {
+                editSession.setSideEffectApplier(SideEffectSet.defaults());
                 editSession.setBlocks(region, BlockTypes.AIR.getDefaultState());
-            } catch (MaxChangedBlocksException e) {
-                log.log(Level.INFO, "Warning: we got MaxChangedBlocks from WE, please increase it!");
+            } catch (Throwable throwable) {
+                failure = throwable;
+                regions.clear();
+                log.log(Level.WARNING, "Unable to clear island border region", throwable);
+                return true;
             }
-            editSession.close();
             if (!tick()) {
                 break;
             }
         }
         return regions.isEmpty();
+    }
+
+    public Throwable getFailure() {
+        return failure;
     }
 }

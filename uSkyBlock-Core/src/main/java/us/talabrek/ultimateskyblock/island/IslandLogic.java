@@ -358,14 +358,20 @@ public class IslandLogic {
     }
 
     public synchronized void deleteIslandConfig(final String location) {
+        deleteIslandConfig(location, true);
+    }
+
+    public synchronized void deleteIslandConfig(final String location, boolean addOrphan) {
         try {
             IslandInfo islandInfo = cache.get(location);
-            updateRank(islandInfo, new IslandScore(0, Collections.EMPTY_LIST, Collections.EMPTY_MAP));
+            removeRank(location);
             if (islandInfo.exists()) {
                 islandInfo.delete();
             }
             cache.invalidate(location);
-            orphanLogic.addOrphan(location);
+            if (addOrphan) {
+                orphanLogic.addOrphan(location);
+            }
         } catch (ExecutionException e) {
             throw new IllegalStateException("Unable to delete island " + location, e);
         }
@@ -382,6 +388,103 @@ public class IslandLogic {
             ranks.add(islandLevel);
             Collections.sort(ranks);
         }
+    }
+
+    private void removeRank(String islandName) {
+        synchronized (ranks) {
+            ranks.remove(new IslandLevel(islandName, null, Collections.emptyList(), 0));
+        }
+    }
+
+    /**
+     * Removes all metadata associated with an island that is about to be overwritten. World blocks are untouched.
+     */
+    public synchronized boolean purgeForReplacement(String islandName) {
+        IslandInfo islandInfo = getIslandInfo(islandName);
+        if (islandInfo == null || islandInfo.ignore()) {
+            return false;
+        }
+        if (islandInfo.exists()) {
+            for (UUID member : new ArrayList<>(islandInfo.getMemberUUIDs())) {
+                PlayerInfo playerInfo = plugin.getPlayerInfo(member);
+                if (playerInfo != null) {
+                    islandInfo.removeMember(playerInfo);
+                    playerInfo.saveToFile();
+                }
+            }
+            for (UUID trustee : islandInfo.getTrusteeUUIDs()) {
+                PlayerInfo playerInfo = plugin.getPlayerInfo(trustee);
+                if (playerInfo != null) {
+                    playerInfo.removeTrust(islandName);
+                    playerInfo.saveToFile();
+                }
+            }
+            for (UUID banned : islandInfo.getBannedUUIDs()) {
+                PlayerInfo playerInfo = plugin.getPlayerInfo(banned);
+                if (playerInfo != null) {
+                    playerInfo.unbanFromIsland(islandName);
+                    playerInfo.saveToFile();
+                }
+            }
+        }
+        WorldGuardHandler.removeIslandRegion(islandName);
+        deleteIslandConfig(islandName, false);
+        return plugin.getChallengeLogic().deleteIslandChallenges(islandName);
+    }
+
+    /**
+     * Copies an island config to a new location and updates all position and reverse-reference data.
+     * The source config remains in place until the caller has successfully cleared the old world region.
+     */
+    public synchronized IslandInfo relocateIslandConfig(IslandInfo source, String destinationName,
+                                                         Location sourceLocation, Location destinationLocation) {
+        IslandInfo destination = getIslandInfo(destinationName);
+        destination.setConfig(source.copyConfig());
+
+        double dx = destinationLocation.getX() - sourceLocation.getX();
+        double dy = destinationLocation.getY() - sourceLocation.getY();
+        double dz = destinationLocation.getZ() - sourceLocation.getZ();
+        Location warp = source.getWarpLocation();
+        if (warp != null) {
+            destination.setWarpLocation(warp.clone().add(dx, dy, dz));
+        } else {
+            destination.save();
+        }
+
+        for (UUID member : source.getMemberUUIDs()) {
+            PlayerInfo playerInfo = plugin.getPlayerInfo(member);
+            if (playerInfo == null) {
+                continue;
+            }
+            Location oldHome = playerInfo.getHomeLocation();
+            playerInfo.setIslandLocation(destinationLocation);
+            if (oldHome != null) {
+                playerInfo.setHomeLocation(oldHome.clone().add(dx, dy, dz));
+            } else {
+                playerInfo.setHomeLocation(destinationLocation);
+            }
+            playerInfo.saveToFile();
+        }
+        for (UUID trustee : source.getTrusteeUUIDs()) {
+            PlayerInfo playerInfo = plugin.getPlayerInfo(trustee);
+            if (playerInfo != null) {
+                playerInfo.removeTrust(source.getName());
+                playerInfo.addTrust(destinationName);
+                playerInfo.saveToFile();
+            }
+        }
+        for (UUID banned : source.getBannedUUIDs()) {
+            PlayerInfo playerInfo = plugin.getPlayerInfo(banned);
+            if (playerInfo != null) {
+                playerInfo.unbanFromIsland(source.getName());
+                playerInfo.banFromIsland(destinationName);
+                playerInfo.saveToFile();
+            }
+        }
+
+        updateRank(destination, new IslandScore(source.getLevel(), Collections.emptyList(), Collections.emptyMap()));
+        destination.saveToFile();
+        return destination;
     }
 
     public boolean hasIsland(Location loc) {
@@ -412,6 +515,7 @@ public class IslandLogic {
             }
             WorldGuardHandler.removeIslandRegion(islandName);
             deleteIslandConfig(islandName);
+            plugin.getChallengeLogic().deleteIslandChallenges(islandName);
             return true;
         }
         return false;

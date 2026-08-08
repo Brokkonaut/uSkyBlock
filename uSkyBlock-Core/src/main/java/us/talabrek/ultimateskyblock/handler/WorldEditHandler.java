@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -225,8 +226,18 @@ public class WorldEditHandler {
 
     public static void clearIsland(@NotNull final World islandWorld, @NotNull final ProtectedRegion region,
                                    @Nullable final Runnable afterDeletion) {
+        clearIsland(islandWorld, region, failure -> {
+            if (failure == null && afterDeletion != null) {
+                afterDeletion.run();
+            }
+        });
+    }
+
+    public static void clearIsland(@NotNull final World islandWorld, @NotNull final ProtectedRegion region,
+                                   @NotNull final Consumer<Throwable> afterDeletion) {
         Validate.notNull(islandWorld, "IslandWorld cannot be null");
         Validate.notNull(region, "Region cannot be null");
+        Validate.notNull(afterDeletion, "AfterDeletion cannot be null");
 
         log.finer("Clearing island " + region);
         uSkyBlock plugin = uSkyBlock.getInstance();
@@ -236,9 +247,7 @@ public class WorldEditHandler {
             long diff = System.currentTimeMillis() - t;
             LogUtil.log(Level.INFO, String.format("Cleared island on %s in %d.%03d seconds",
                     islandWorld.getName(), (diff / 1000), (diff % 1000)));
-            if (afterDeletion != null) {
-                afterDeletion.run();
-            }
+            afterDeletion.accept(null);
         };
         Set<BlockVector2> innerChunks;
         Set<Region> borderRegions = new HashSet<>();
@@ -256,8 +265,22 @@ public class WorldEditHandler {
         for (BlockVector2 vector : innerChunks) {
             chunkList.add(islandWorld.getChunkAt(vector.x(), vector.z()));
         }
-        WorldEditClear weClear = new WorldEditClear(plugin, islandWorld, borderRegions, onCompletion);
-        plugin.getWorldManager().getChunkRegenerator(islandWorld).regenerateChunks(chunkList, weClear);
+        WorldEditClear[] weClear = new WorldEditClear[1];
+        weClear[0] = new WorldEditClear(plugin, islandWorld, borderRegions, () -> {
+            Throwable failure = weClear[0].getFailure();
+            if (failure == null) {
+                onCompletion.run();
+            } else {
+                afterDeletion.accept(failure);
+            }
+        });
+        plugin.getWorldManager().getChunkRegenerator(islandWorld).regenerateChunks(chunkList, failure -> {
+            if (failure == null) {
+                weClear[0].run();
+            } else {
+                afterDeletion.accept(failure);
+            }
+        });
     }
 
     public static Region getRegion(World skyWorld, ProtectedRegion region) {

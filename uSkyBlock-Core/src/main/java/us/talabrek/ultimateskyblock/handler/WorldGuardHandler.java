@@ -17,6 +17,7 @@ import dk.lockfuglsang.minecraft.po.I18nUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -92,6 +93,10 @@ public class WorldGuardHandler {
     }
 
     public static void updateRegion(IslandInfo islandInfo) {
+        updateRegionChecked(islandInfo);
+    }
+
+    public static boolean updateRegionChecked(IslandInfo islandInfo) {
         try {
             ProtectedCuboidRegion region = setRegionFlags(islandInfo);
             RegionManager regionManager = getRegionManager(uSkyBlock.getInstance().getWorldManager().getWorld());
@@ -107,8 +112,10 @@ public class WorldGuardHandler {
                 regionManager.addRegion(region);
             }
             islandInfo.setRegionVersion(getVersion());
+            return true;
         } catch (Exception e) {
             LogUtil.log(Level.SEVERE, "ERROR: Failed to update region for " + islandInfo.getName(), e);
+            return false;
         }
     }
 
@@ -128,6 +135,9 @@ public class WorldGuardHandler {
         if (regionName != null && regionName.endsWith("nether")) {
             minPoint = minPoint.withY(6);
             maxPoint = maxPoint.withY(120);
+        } else if (islandLocation.getWorld() != null) {
+            minPoint = minPoint.withY(islandLocation.getWorld().getMinHeight());
+            maxPoint = maxPoint.withY(islandLocation.getWorld().getMaxHeight() - 1);
         }
         ProtectedCuboidRegion region = new ProtectedCuboidRegion(regionName, minPoint, maxPoint);
         final DefaultDomain owners = new DefaultDomain();
@@ -271,9 +281,20 @@ public class WorldGuardHandler {
     }
 
     public static void removeIslandRegion(String islandName) {
-        RegionManager regionManager = getRegionManager(uSkyBlock.getInstance().getWorldManager().getWorld());
-        regionManager.removeRegion(islandName + "island");
-        regionManager.removeRegion(islandName + "nether");
+        uSkyBlock plugin = uSkyBlock.getInstance();
+        RegionManager overworldRegions = getRegionManager(plugin.getWorldManager().getWorld());
+        if (overworldRegions != null) {
+            overworldRegions.removeRegion(islandName + "island");
+            // Clean up regions written to the wrong manager by older uSkyBlock versions.
+            overworldRegions.removeRegion(islandName + "nether");
+        }
+        World netherWorld = plugin.getWorldManager().getNetherWorld();
+        if (netherWorld != null) {
+            RegionManager netherRegions = getRegionManager(netherWorld);
+            if (netherRegions != null) {
+                netherRegions.removeRegion(islandName + "nether");
+            }
+        }
     }
 
     public static void setupGlobal(World world) {
@@ -334,10 +355,91 @@ public class WorldGuardHandler {
     }
 
     public static ProtectedCuboidRegion getIslandRegion(Location islandLocation) {
+        int minY = islandLocation.getWorld() != null ? islandLocation.getWorld().getMinHeight() : -64;
+        int maxY = islandLocation.getWorld() != null ? islandLocation.getWorld().getMaxHeight() - 1 : 319;
         return new ProtectedCuboidRegion(
                 String.format("%d,%disland", islandLocation.getBlockX(), islandLocation.getBlockZ()),
-                getProtectionVectorLeft(islandLocation),
-                getProtectionVectorRight(islandLocation));
+                getProtectionVectorLeft(islandLocation).withY(maxY),
+                getProtectionVectorRight(islandLocation).withY(minY));
+    }
+
+    public static ProtectedCuboidRegion getNetherIslandRegion(Location islandLocation) {
+        BlockVector3 min = getProtectionVectorRight(islandLocation).withY(6);
+        BlockVector3 max = getProtectionVectorLeft(islandLocation).withY(120);
+        return new ProtectedCuboidRegion(
+                String.format("%d,%dnether", islandLocation.getBlockX(), islandLocation.getBlockZ()), min, max);
+    }
+
+    public static boolean addMoveLock(String lockId, Location source, Location destination) {
+        try {
+            uSkyBlock plugin = uSkyBlock.getInstance();
+            RegionManager overworldRegions = getRegionManager(plugin.getWorldManager().getWorld());
+            if (overworldRegions == null) {
+                return false;
+            }
+            addMoveLockRegion(overworldRegions, lockId + "-source-overworld-lock", getIslandRegion(source));
+            addMoveLockRegion(overworldRegions, lockId + "-destination-overworld-lock", getIslandRegion(destination));
+
+            World netherWorld = plugin.getWorldManager().getNetherWorld();
+            if (netherWorld != null) {
+                RegionManager netherRegions = getRegionManager(netherWorld);
+                if (netherRegions == null) {
+                    removeMoveLock(lockId);
+                    return false;
+                }
+                addMoveLockRegion(netherRegions, lockId + "-source-nether-lock", getNetherIslandRegion(source));
+                addMoveLockRegion(netherRegions, lockId + "-destination-nether-lock", getNetherIslandRegion(destination));
+            }
+            return true;
+        } catch (RuntimeException exception) {
+            try {
+                removeMoveLock(lockId);
+            } catch (RuntimeException cleanupException) {
+                exception.addSuppressed(cleanupException);
+            }
+            LogUtil.log(Level.SEVERE, "ERROR: Failed to add island relocation lock " + lockId, exception);
+            return false;
+        }
+    }
+
+    private static void addMoveLockRegion(RegionManager manager, String id, ProtectedRegion bounds) {
+        ProtectedCuboidRegion lock = new ProtectedCuboidRegion(id,
+                bounds.getMinimumPoint(), bounds.getMaximumPoint());
+        lock.setPriority(1000);
+        lock.setFlag(Flags.BUILD, StateFlag.State.DENY);
+        lock.setFlag(Flags.ENTRY, StateFlag.State.DENY);
+        manager.addRegion(lock);
+    }
+
+    public static void removeMoveLock(String lockId) {
+        uSkyBlock plugin = uSkyBlock.getInstance();
+        RegionManager overworldRegions = getRegionManager(plugin.getWorldManager().getWorld());
+        if (overworldRegions != null) {
+            overworldRegions.removeRegion(lockId + "-source-overworld-lock");
+            overworldRegions.removeRegion(lockId + "-destination-overworld-lock");
+        }
+        World netherWorld = plugin.getWorldManager().getNetherWorld();
+        if (netherWorld != null) {
+            RegionManager netherRegions = getRegionManager(netherWorld);
+            if (netherRegions != null) {
+                netherRegions.removeRegion(lockId + "-source-nether-lock");
+                netherRegions.removeRegion(lockId + "-destination-nether-lock");
+            }
+        }
+    }
+
+    public static List<Entity> getEntitiesInRegion(World world, ProtectedRegion region) {
+        List<Entity> entities = new ArrayList<>();
+        if (world == null || region == null) {
+            return entities;
+        }
+        for (Entity entity : world.getEntities()) {
+            Location location = entity.getLocation();
+            if (region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
+                entities.add(entity);
+            }
+        }
+        return entities;
     }
 
     public static List<Player> getPlayersInRegion(World world, ProtectedRegion region) {

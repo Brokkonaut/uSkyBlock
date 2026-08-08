@@ -16,6 +16,7 @@ import us.talabrek.ultimateskyblock.uSkyBlock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * Class responsible for regenerating chunks.
@@ -40,22 +41,38 @@ public class ChunkRegenerator {
      * @param onCompletion Runnable to schedule on completion, or null to call no runnable.
      */
     public void regenerateChunks(@NotNull List<Chunk> chunkList, @Nullable Runnable onCompletion) {
+        regenerateChunks(chunkList, failure -> {
+            if (failure == null && onCompletion != null) {
+                onCompletion.run();
+            }
+        });
+    }
+
+    /**
+     * Regenerates chunks and reports an exception instead of silently abandoning the scheduled operation.
+     */
+    public void regenerateChunks(@NotNull List<Chunk> chunkList,
+                                 @NotNull Consumer<Throwable> onCompletion) {
         Validate.notNull(chunkList, "ChunkList cannot be empty");
+        Validate.notNull(onCompletion, "OnCompletion cannot be null");
 
         final int CHUNKS_PER_TICK = plugin.getConfig().getInt("options.advanced.chunkRegenSpeed", 4);
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
         task = scheduler.runTaskTimer(plugin, () -> {
-            for (int i = 0; i <= CHUNKS_PER_TICK; i++) {
-                if (!chunkList.isEmpty()) {
-                    Chunk chunk = chunkList.remove(0);
-                    regenerateChunk(chunk);
-                } else {
-                    if (onCompletion != null) {
-                        scheduler.runTaskLater(plugin, onCompletion, 1L);
+            try {
+                for (int i = 0; i <= CHUNKS_PER_TICK; i++) {
+                    if (!chunkList.isEmpty()) {
+                        Chunk chunk = chunkList.remove(0);
+                        regenerateChunk(chunk);
+                    } else {
+                        scheduler.runTaskLater(plugin, () -> onCompletion.accept(null), 1L);
+                        task.cancel();
+                        break;
                     }
-                    task.cancel();
-                    break;
                 }
+            } catch (Throwable failure) {
+                task.cancel();
+                scheduler.runTaskLater(plugin, () -> onCompletion.accept(failure), 1L);
             }
         }, 0L, 1L);
     }

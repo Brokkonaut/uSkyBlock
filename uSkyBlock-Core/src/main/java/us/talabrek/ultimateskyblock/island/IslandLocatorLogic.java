@@ -76,6 +76,26 @@ public class IslandLocatorLogic {
         }, reservationTimeout);
     }
 
+    public synchronized boolean reserveForMove(String... islandNames) {
+        for (String islandName : islandNames) {
+            if (reservations.containsKey(islandName)) {
+                return false;
+            }
+        }
+        for (String islandName : islandNames) {
+            reservations.put(islandName, Long.MAX_VALUE);
+        }
+        return true;
+    }
+
+    public synchronized void releaseMoveReservation(String... islandNames) {
+        for (String islandName : islandNames) {
+            if (Long.valueOf(Long.MAX_VALUE).equals(reservations.get(islandName))) {
+                reservations.remove(islandName);
+            }
+        }
+    }
+
     private synchronized Location getNext(Player player) {
         Location last = getLastIsland();
         if (plugin.getWorldManager().isSkyWorld(player.getWorld()) && !plugin.islandInSpawn(player.getLocation())) {

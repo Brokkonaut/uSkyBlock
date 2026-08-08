@@ -67,6 +67,7 @@ import us.talabrek.ultimateskyblock.island.IslandGenerator;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.island.IslandLocatorLogic;
 import us.talabrek.ultimateskyblock.island.IslandLogic;
+import us.talabrek.ultimateskyblock.island.IslandRelocationLogic;
 import us.talabrek.ultimateskyblock.island.LimitLogic;
 import us.talabrek.ultimateskyblock.island.OrphanLogic;
 import us.talabrek.ultimateskyblock.island.level.ChunkSnapshotLevelLogic;
@@ -103,6 +104,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,6 +133,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
     private EventLogic eventLogic;
     private LevelLogic levelLogic;
     private IslandLogic islandLogic;
+    private IslandRelocationLogic islandRelocationLogic;
     private OrphanLogic orphanLogic;
     private PerkLogic perkLogic;
     private TeleportLogic teleportLogic;
@@ -458,54 +461,12 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
     }
 
     public synchronized boolean devSetPlayerIsland(final Player sender, final Location l, final String player) {
-        final PlayerInfo pi = playerLogic.getPlayerInfo(player);
+        return devSetPlayerIsland(sender, l, player, null);
+    }
 
-        String islandName = WorldGuardHandler.getIslandNameAt(l);
-        if (islandName == null && getWorldManager().isSkyWorld(sender.getWorld())) {
-            Location possibleIslandLoc = LocationUtil.alignToDistance(sender.getLocation(), Settings.island_distance);
-            if (!islandLocatorLogic.isReserved(possibleIslandLoc)) {
-                islandName = LocationUtil.getIslandName(possibleIslandLoc);
-            }
-        }
-        Location islandLocation = IslandUtil.getIslandLocation(islandName);
-        final Location newLoc = LocationUtil.alignToDistance(islandLocation, Settings.island_distance);
-        if (newLoc == null) {
-            return false;
-        }
-
-        boolean deleteOldIsland = false;
-        if (newLoc.equals(pi.getIslandLocation())) {
-            sender.sendMessage(tr("\u00a74Player is already assigned to this island!"));
-        } else if (pi.getHasIsland()) {
-            IslandInfo island = getIslandInfo(pi);
-            if (island.isLeader(sender)) {
-                Location oldLoc = pi.getIslandLocation();
-                if (oldLoc != null
-                        && !(newLoc.getBlockX() == oldLoc.getBlockX() && newLoc.getBlockZ() == oldLoc.getBlockZ())) {
-                    deleteOldIsland = true;
-                }
-            } else if (island.isMember(Bukkit.getOfflinePlayer(pi.getUniqueId()))){
-                island.removeMember(pi);
-            }
-        }
-
-        // Purge current islandinfo and partymembers if there's an active party at this location (issue #948)
-        getIslandLogic().purge(islandName);
-
-        Runnable resetIsland = () -> {
-            pi.setHomeLocation(null);
-            pi.setIslandLocation(newLoc);
-            pi.setHomeLocation(getSafeHomeLocation(pi));
-            IslandInfo island = islandLogic.createIslandInfo(pi.locationForParty(), player);
-            WorldGuardHandler.updateRegion(island);
-            pi.save();
-        };
-        if (deleteOldIsland) {
-            deletePlayerIsland(pi.getPlayerName(), resetIsland);
-        } else {
-            resetIsland.run();
-        }
-        return true;
+    public synchronized boolean devSetPlayerIsland(final Player sender, final Location location, final String player,
+                                                   Consumer<IslandRelocationLogic.Result> completion) {
+        return islandRelocationLogic.relocate(sender, location, player, completion);
     }
 
     public boolean playerIsOnIsland(final Player player) {
@@ -786,6 +747,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         blockLimitLogic = new BlockLimitLogic(this);
         notifier = new PlayerNotifier(getConfig());
         playerLogic = new PlayerLogic(this);
+        islandRelocationLogic = new IslandRelocationLogic(this);
         if (autoRecalculateTask != null) {
             autoRecalculateTask.cancel();
         }

@@ -16,6 +16,7 @@ import us.talabrek.ultimateskyblock.api.event.ChallengeCompletedEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -29,6 +30,7 @@ public class ChallengeCompletionLogic {
     private final File storageFolder;
     private final boolean storeOnIsland;
     private final LoadingCache<String, Map<String, ChallengeCompletion>> completionCache;
+    private final Set<String> discardOnRemoval = ConcurrentHashMap.newKeySet();
     private final Object fileLock = new Object();
 
     public ChallengeCompletionLogic(uSkyBlock plugin, FileConfiguration config) {
@@ -39,7 +41,9 @@ public class ChallengeCompletionLogic {
                 .removalListener(new RemovalListener<String, Map<String, ChallengeCompletion>>() {
                     @Override
                     public void onRemoval(RemovalNotification<String, Map<String, ChallengeCompletion>> removal) {
-                        saveToFile(removal.getKey(), removal.getValue());
+                        if (!discardOnRemoval.remove(removal.getKey())) {
+                            saveToFile(removal.getKey(), removal.getValue());
+                        }
                     }
                 })
                 .build(new CacheLoader<String, Map<String, ChallengeCompletion>>() {
@@ -55,16 +59,77 @@ public class ChallengeCompletionLogic {
         }
     }
 
-    private void saveToFile(String id, Map<String, ChallengeCompletion> map) {
+    private boolean saveToFile(String id, Map<String, ChallengeCompletion> map) {
         File configFile = new File(storageFolder, id + ".yml");
         FileConfiguration fileConfiguration = new YamlConfiguration();
         saveToConfiguration(fileConfiguration, map);
         synchronized (fileLock) {
             try {
                 fileConfiguration.save(configFile);
+                return true;
             } catch (IOException e) {
                 plugin.getLogger().log(Level.WARNING, "Unable to store challenge-completion to " + configFile, e);
+                return false;
             }
+        }
+    }
+
+    /**
+     * Moves island-shared challenge progress to another island id. Existing progress at the destination is replaced.
+     * The destination is persisted before the source file is removed so a failed write never loses the source data.
+     */
+    public synchronized boolean moveIslandChallenges(String sourceId, String destinationId) {
+        if (!copyIslandChallenges(sourceId, destinationId)) {
+            return false;
+        }
+        return deleteIslandChallenges(sourceId);
+    }
+
+    /**
+     * Copies island-shared progress to another id while retaining the source as a recovery copy.
+     */
+    public synchronized boolean copyIslandChallenges(String sourceId, String destinationId) {
+        if (!storeOnIsland || sourceId == null || destinationId == null || sourceId.equals(destinationId)) {
+            return true;
+        }
+
+        final Map<String, ChallengeCompletion> moved;
+        try {
+            moved = new ConcurrentHashMap<>(completionCache.get(sourceId));
+        } catch (ExecutionException e) {
+            plugin.getLogger().log(Level.WARNING,
+                    "Unable to load challenge-completion while moving " + sourceId + " to " + destinationId, e);
+            return false;
+        }
+
+        invalidateWithoutSaving(destinationId);
+        completionCache.put(destinationId, moved);
+        if (!saveToFile(destinationId, moved)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Removes any island-shared challenge progress without allowing cache eviction to recreate the file.
+     */
+    public synchronized boolean deleteIslandChallenges(String islandId) {
+        if (!storeOnIsland || islandId == null) {
+            return true;
+        }
+        invalidateWithoutSaving(islandId);
+        File completionFile = new File(storageFolder, islandId + ".yml");
+        if (completionFile.exists() && !completionFile.delete()) {
+            plugin.getLogger().warning("Unable to remove challenge-completion " + completionFile);
+            return false;
+        }
+        return true;
+    }
+
+    private void invalidateWithoutSaving(String id) {
+        if (completionCache.getIfPresent(id) != null) {
+            discardOnRemoval.add(id);
+            completionCache.invalidate(id);
         }
     }
 
