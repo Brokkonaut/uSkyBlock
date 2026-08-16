@@ -28,11 +28,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 import us.talabrek.ultimateskyblock.Settings;
-import us.talabrek.ultimateskyblock.api.async.Callback;
-import us.talabrek.ultimateskyblock.api.event.IslandInfoEvent;
-import us.talabrek.ultimateskyblock.api.model.IslandScore;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
 import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
+import us.talabrek.ultimateskyblock.island.CombinedLimitLogic;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.player.PatienceTester;
 import us.talabrek.ultimateskyblock.player.Perk;
@@ -71,7 +69,7 @@ public class PlayerEvents implements Listener {
         visitorFireProtected = config.getBoolean("options.protection.visitors.fire-damage", true);
         visitorMonsterProtected = config.getBoolean("options.protection.visitors.monster-damage", false);
         protectLava = config.getBoolean("options.protection.protect-lava", true);
-        blockLimitsEnabled = config.getBoolean("options.island.block-limits.enabled", false);
+        blockLimitsEnabled = plugin.getBlockLimitLogic().hasTrackedMaterials();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -313,7 +311,7 @@ public class PlayerEvents implements Listener {
         }
     }
     
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
         final Player player = event.getPlayer();
         if (!blockLimitsEnabled || !plugin.getWorldManager().isSkyAssociatedWorld(player.getWorld())) {
@@ -322,7 +320,9 @@ public class PlayerEvents implements Listener {
 
         IslandInfo islandInfo = plugin.getIslandInfo(event.getBlock().getLocation());
         if (islandInfo == null) {
-            if (plugin.getBlockLimitLogic().getLimit(event.getBlock().getType()) < Integer.MAX_VALUE || plugin.getBlockLimitLogic().hasLimitedBlockStatesForMaterial(event.getBlock().getType()) && player.getGameMode() != GameMode.CREATIVE) {
+            if ((plugin.getBlockLimitLogic().isTrackedMaterial(event.getBlock().getType())
+                    || plugin.getBlockLimitLogic().hasLimitedBlockStatesForMaterial(event.getBlock().getType()))
+                    && player.getGameMode() != GameMode.CREATIVE) {
                 event.setCancelled(true);
                 player.sendMessage(tr("\u00a74You cannot place this block outside of your island."));
             }
@@ -336,13 +336,10 @@ public class PlayerEvents implements Listener {
             if (!PatienceTester.isRunning(player, key)) {
                 PatienceTester.startRunning(player, key);
                 player.sendMessage(tr("\u00a74{0} is limited. \u00a7eScanning your island to see if you are allowed to place more, please be patient", ItemStackUtil.getMaterialName(type.getMaterial())));
-                plugin.fireAsyncEvent(new IslandInfoEvent(player, islandInfo.getIslandLocation(), new Callback<IslandScore>() {
-                    @Override
-                    public void run() {
-                        player.sendMessage(tr("\u00a7e... Scanning complete, you can try again"));
-                        PatienceTester.stopRunning(player, key);
-                    }
-                }));
+                plugin.getCombinedLimitLogic().requestScan(islandInfo, player, () -> {
+                    player.sendMessage(tr("\u00a7e... Scanning complete, you can try again"));
+                    PatienceTester.stopRunning(player, key);
+                });
             }
             return;
         }
@@ -351,11 +348,29 @@ public class PlayerEvents implements Listener {
             player.sendMessage(tr("\u00a74You''ve hit the {0} limit!\u00a7e You can''t have more of that type on your island!\u00a79 Max: {1,number}", canPlace.error().material(), canPlace.error().limit()));
             return;
         }
-        plugin.getBlockLimitLogic().incBlockCount(islandInfo.getIslandLocation(), type);
+        CombinedLimitLogic.CheckResult combined = plugin.getCombinedLimitLogic().checkBlock(type.getMaterial(), islandInfo);
+        if (combined.state() == CombinedLimitLogic.State.UNKNOWN) {
+            plugin.getCombinedLimitLogic().requestScan(islandInfo);
+        } else if (combined.state() == CombinedLimitLogic.State.DENY) {
+            event.setCancelled(true);
+            player.sendMessage(tr("\u00a74You''ve hit the {0} combined limit!\u00a7e You can''t add more weighted blocks or entities to this group!\u00a79 Max: {1,number}",
+                    combined.limit().name(), combined.limit().limit()));
+        }
     }
-    
-    @EventHandler(ignoreCancelled = true)
-    public void onHopperDestroy(BlockBreakEvent event){
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onLimitedBlockPlaced(BlockPlaceEvent event) {
+        if (!blockLimitsEnabled || !plugin.getWorldManager().isSkyAssociatedWorld(event.getBlock().getWorld())) {
+            return;
+        }
+        IslandInfo islandInfo = plugin.getIslandInfo(event.getBlock().getLocation());
+        if (islandInfo != null) {
+            plugin.getBlockLimitLogic().incBlockCount(islandInfo.getIslandLocation(), event.getBlock().getBlockData());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onLimitedBlockDestroy(BlockBreakEvent event) {
         if (!blockLimitsEnabled || !plugin.getWorldManager().isSkyAssociatedWorld(event.getPlayer().getWorld())) {
             return; // Skip
         }

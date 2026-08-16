@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -139,6 +140,7 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
         config.set("general.scoreMultiply", null);
         config.set("general.scoreOffset", null);
         config.set("blocks.hopperCount", 0);
+        config.set("limits.counts", null);
         setupPartyLeader(leader);
         sendMessageToIslandGroup(false, marktr("The island has been created."));
     }
@@ -281,10 +283,39 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
             try {
                 log.fine("Saving island-config: " + file);
                 synchronized (fileLock) {
+                    pruneUnconfiguredLimitCounts();
                     config.save(file);
                 }
             } catch (IOException e) {
                 LogUtil.log(Level.SEVERE, "Unable to save island " + file, e);
+            }
+        }
+    }
+
+    private void pruneUnconfiguredLimitCounts() {
+        BlockLimitLogic blockLogic = plugin.getBlockLimitLogic();
+        if (blockLogic != null) {
+            retainLimitCountKeys("limits.counts.blocks", blockLogic.getTrackedMaterials().stream()
+                    .map(Material::name).collect(java.util.stream.Collectors.toSet()));
+        }
+        CombinedLimitLogic combinedLogic = plugin.getCombinedLimitLogic();
+        if (combinedLogic != null) {
+            retainLimitCountKeys("limits.counts.entities", combinedLogic.getTrackedEntityTypes().stream()
+                    .map(EntityType::name).collect(java.util.stream.Collectors.toSet()));
+        }
+    }
+
+    private void retainLimitCountKeys(String path, Set<String> retainedKeys) {
+        if (retainedKeys.isEmpty()) {
+            config.set(path, null);
+            return;
+        }
+        ConfigurationSection section = config.getConfigurationSection(path);
+        if (section != null) {
+            for (String key : section.getKeys(false)) {
+                if (!retainedKeys.contains(key)) {
+                    config.set(path + "." + key, null);
+                }
             }
         }
     }
@@ -1204,6 +1235,82 @@ public class IslandInfo implements us.talabrek.ultimateskyblock.api.IslandInfo {
 
     public void setHopperCount(int i) {
         config.set("blocks.hopperCount", i);
+        save();
+    }
+
+    /**
+     * Returns a persisted exact material count, or {@code null} if this material has not been scanned yet.
+     */
+    @Nullable
+    public synchronized Integer getLimitBlockCount(@NotNull Material material) {
+        String path = "limits.counts.blocks." + material.name();
+        return config.contains(path) ? Math.max(0, config.getInt(path)) : null;
+    }
+
+    /**
+     * Returns a persisted exact entity count, or {@code null} if this entity type has not been scanned yet.
+     */
+    @Nullable
+    public synchronized Integer getLimitEntityCount(@NotNull EntityType entityType) {
+        String path = "limits.counts.entities." + entityType.name();
+        return config.contains(path) ? Math.max(0, config.getInt(path)) : null;
+    }
+
+    public synchronized void adjustLimitBlockCount(@NotNull Material material, int delta) {
+        String path = "limits.counts.blocks." + material.name();
+        if (!config.contains(path)) {
+            return;
+        }
+        long adjusted = (long) config.getInt(path) + delta;
+        config.set(path, (int) Math.min(Integer.MAX_VALUE, Math.max(0, adjusted)));
+        save();
+    }
+
+    public synchronized void adjustLimitEntityCount(@NotNull EntityType entityType, int delta) {
+        String path = "limits.counts.entities." + entityType.name();
+        if (!config.contains(path)) {
+            return;
+        }
+        long adjusted = (long) config.getInt(path) + delta;
+        config.set(path, (int) Math.min(Integer.MAX_VALUE, Math.max(0, adjusted)));
+        save();
+    }
+
+    /** Replaces all material counters and explicitly stores zeroes for tracked but absent types. */
+    public synchronized void replaceLimitBlockCounts(@NotNull Map<Material, Integer> counts,
+                                                     @NotNull Set<Material> trackedTypes) {
+        config.set("limits.counts.blocks", null);
+        for (Material material : trackedTypes) {
+            config.set("limits.counts.blocks." + material.name(), Math.max(0, counts.getOrDefault(material, 0)));
+        }
+        save();
+    }
+
+    /** Replaces all entity counters and explicitly stores zeroes for tracked but absent types. */
+    public synchronized void replaceLimitEntityCounts(@NotNull Map<EntityType, Integer> counts,
+                                                      @NotNull Set<EntityType> trackedTypes) {
+        config.set("limits.counts.entities", null);
+        for (EntityType entityType : trackedTypes) {
+            config.set("limits.counts.entities." + entityType.name(), Math.max(0, counts.getOrDefault(entityType, 0)));
+        }
+        save();
+    }
+
+    /** Atomically replaces material and entity counters from a completed island scan. */
+    public synchronized void replaceLimitCounts(@NotNull Map<Material, Integer> blockCounts,
+                                                @NotNull Set<Material> trackedBlockTypes,
+                                                @NotNull Map<EntityType, Integer> entityCounts,
+                                                @NotNull Set<EntityType> trackedEntityTypes) {
+        config.set("limits.counts.blocks", null);
+        for (Material material : trackedBlockTypes) {
+            config.set("limits.counts.blocks." + material.name(),
+                    Math.max(0, blockCounts.getOrDefault(material, 0)));
+        }
+        config.set("limits.counts.entities", null);
+        for (EntityType entityType : trackedEntityTypes) {
+            config.set("limits.counts.entities." + entityType.name(),
+                    Math.max(0, entityCounts.getOrDefault(entityType, 0)));
+        }
         save();
     }
 

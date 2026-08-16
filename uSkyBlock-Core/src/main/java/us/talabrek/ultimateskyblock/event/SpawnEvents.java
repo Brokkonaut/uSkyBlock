@@ -1,29 +1,41 @@
 package us.talabrek.ultimateskyblock.event;
 
 import dk.lockfuglsang.minecraft.po.I18nUtil;
+import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ghast;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntityRemoveEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import us.talabrek.ultimateskyblock.api.IslandInfo;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
+import us.talabrek.ultimateskyblock.island.CombinedLimitLogic;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 import us.talabrek.ultimateskyblock.util.LocationUtil;
 
@@ -31,6 +43,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static dk.lockfuglsang.minecraft.po.I18nUtil.tr;
 
@@ -53,11 +67,27 @@ public class SpawnEvents implements Listener {
 
     private boolean phantomsInOverworld;
     private boolean phantomsInNether;
+    private final boolean spawnLimitsEnabled;
+    private final Set<UUID> approvedPlacements = ConcurrentHashMap.newKeySet();
 
     public SpawnEvents(uSkyBlock plugin) {
         this.plugin = plugin;
+        spawnLimitsEnabled = plugin.getConfig().getBoolean("options.island.spawn-limits.enabled", true);
         phantomsInOverworld = plugin.getConfig().getBoolean("options.spawning.phantoms.overworld", true);
         phantomsInNether = plugin.getConfig().getBoolean("options.spawning.phantoms.nether", false);
+        if (plugin.getCombinedLimitLogic().hasEntityLimits()) {
+            initializeLoadedEntities(plugin.getWorldManager().getWorld());
+            initializeLoadedEntities(plugin.getWorldManager().getNetherWorld());
+        }
+    }
+
+    private void initializeLoadedEntities(World world) {
+        if (world == null) {
+            return;
+        }
+        for (Entity entity : world.getEntities()) {
+            plugin.getCombinedLimitLogic().trackLoadedEntity(entity);
+        }
     }
 
     @EventHandler
@@ -76,9 +106,11 @@ public class SpawnEvents implements Listener {
                 plugin.notifyPlayer(player, tr("\u00a7eYou can only use spawn-eggs on your own island."));
                 return;
             }
-            checkLimits(event, getSpawnedEntity(item), player.getLocation());
+            boolean combinedDenied = checkLimits(event, getSpawnedEntity(item), player.getLocation(), player);
             if (event.useItemInHand() == Result.DENY) {
-                plugin.notifyPlayer(player, tr("\u00a7cYou have reached your spawn-limit for your island."));
+                if (!combinedDenied) {
+                    plugin.notifyPlayer(player, tr("\u00a7cYou have reached your spawn-limit for your island."));
+                }
                 event.setUseItemInHand(Event.Result.DENY);
                 event.setUseInteractedBlock(Event.Result.DENY);
             }
@@ -120,7 +152,7 @@ public class SpawnEvents implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            checkLimits(event, event.getEntity().getType(), event.getLocation());
+            checkLimits(event, event.getEntity().getType(), event.getLocation(), null);
         }
         if (event.getEntity() instanceof WaterMob) {
             Location loc = event.getLocation();
@@ -153,24 +185,139 @@ public class SpawnEvents implements Listener {
         return deepOceans.contains(loc.getWorld().getBiome(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
     }
 
-    private void checkLimits(Cancellable event, EntityType entityType, Location location) {
+    private boolean checkLimits(Cancellable event, EntityType entityType, Location location, Player player) {
         if (entityType == null) {
-            return; // Only happens on "other-plugins", i.e. EchoPet
+            return false; // Only happens on "other-plugins", i.e. EchoPet
         }
         String islandName = WorldGuardHandler.getIslandNameAt(location);
         if (islandName == null) {
             event.setCancelled(true); // Only allow spawning on active islands...
-            return;
+            return false;
         }
         us.talabrek.ultimateskyblock.api.IslandInfo islandInfo = plugin.getIslandInfo(islandName);
         if (islandInfo == null) {
             // Disallow spawns on inactive islands
             event.setCancelled(true);
+            return false;
+        }
+        if (spawnLimitsEnabled && !plugin.getLimitLogic().canSpawn(entityType, islandInfo)) {
+            event.setCancelled(true);
+            return false;
+        }
+        CombinedLimitLogic.CheckResult combined = plugin.getCombinedLimitLogic().checkEntity(entityType,
+                (us.talabrek.ultimateskyblock.island.IslandInfo) islandInfo);
+        if (combined.state() == CombinedLimitLogic.State.UNKNOWN) {
+            plugin.getCombinedLimitLogic().requestScan((us.talabrek.ultimateskyblock.island.IslandInfo) islandInfo);
+        } else if (combined.state() == CombinedLimitLogic.State.DENY) {
+            event.setCancelled(true);
+            if (player != null) {
+                plugin.notifyPlayer(player, tr("\u00a7cYou have reached the {0} combined limit (max. {1,number}).",
+                        combined.limit().name(), combined.limit().limit()));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityPlace(EntityPlaceEvent event) {
+        Entity entity = event.getEntity();
+        if (!plugin.getCombinedLimitLogic().tracks(entity.getType())
+                || !plugin.getWorldManager().isSkyAssociatedWorld(entity.getWorld())) {
             return;
         }
-        if (!plugin.getLimitLogic().canSpawn(entityType, islandInfo)) {
-            event.setCancelled(true);
+        Player player = event.getPlayer();
+        if (player != null && (player.isOp() || player.hasPermission("usb.mod.bypassprotection"))) {
+            approvedPlacements.add(entity.getUniqueId());
+            return;
         }
+        us.talabrek.ultimateskyblock.island.IslandInfo islandInfo = plugin.getIslandInfo(entity.getLocation());
+        if (islandInfo == null) {
+            event.setCancelled(true);
+            return;
+        }
+        CombinedLimitLogic.CheckResult result = plugin.getCombinedLimitLogic().checkEntity(entity.getType(), islandInfo);
+        if (result.state() == CombinedLimitLogic.State.UNKNOWN) {
+            plugin.getCombinedLimitLogic().requestScan(islandInfo);
+            approvedPlacements.add(entity.getUniqueId());
+        } else if (result.state() == CombinedLimitLogic.State.DENY) {
+            event.setCancelled(true);
+            if (player != null) {
+                plugin.notifyPlayer(player, tr("\u00a7cYou have reached the {0} combined limit (max. {1,number}).",
+                        result.limit().name(), result.limit().limit()));
+            }
+        } else {
+            approvedPlacements.add(entity.getUniqueId());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        if (event instanceof CreatureSpawnEvent || event.getEntity() instanceof LivingEntity
+                || ADMIN_INITIATED.contains(event.getEntity().getEntitySpawnReason())
+                || approvedPlacements.contains(event.getEntity().getUniqueId())
+                || !plugin.getCombinedLimitLogic().tracks(event.getEntityType())
+                || !plugin.getWorldManager().isSkyAssociatedWorld(event.getLocation().getWorld())) {
+            return;
+        }
+        checkLimits(event, event.getEntityType(), event.getLocation(), null);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntitySpawnCount(EntitySpawnEvent event) {
+        if (!event.isCancelled()) {
+            plugin.getCombinedLimitLogic().trackEntitySpawn(event.getEntity());
+        }
+        approvedPlacements.remove(event.getEntity().getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityPlaceCount(EntityPlaceEvent event) {
+        if (event.isCancelled()) {
+            approvedPlacements.remove(event.getEntity().getUniqueId());
+        } else {
+            boolean newlyTracked = plugin.getCombinedLimitLogic().trackEntitySpawn(event.getEntity());
+            if (!newlyTracked) {
+                approvedPlacements.remove(event.getEntity().getUniqueId());
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityRemove(EntityRemoveEvent event) {
+        if (event.getCause() != EntityRemoveEvent.Cause.UNLOAD
+                && event.getCause() != EntityRemoveEvent.Cause.PLAYER_QUIT) {
+            plugin.getCombinedLimitLogic().trackEntityRemoval(event.getEntity());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntitiesLoad(EntitiesLoadEvent event) {
+        for (Entity entity : event.getEntities()) {
+            plugin.getCombinedLimitLogic().trackLoadedEntity(entity);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityMove(EntityMoveEvent event) {
+        if (event.hasChangedBlock()) {
+            plugin.getCombinedLimitLogic().transferEntity(event.getEntity(), event.getFrom(), event.getTo());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onVehicleMove(VehicleMoveEvent event) {
+        Vehicle vehicle = event.getVehicle();
+        if (event.getFrom().getBlockX() != event.getTo().getBlockX()
+                || event.getFrom().getBlockY() != event.getTo().getBlockY()
+                || event.getFrom().getBlockZ() != event.getTo().getBlockZ()) {
+            plugin.getCombinedLimitLogic().transferEntity(vehicle, event.getFrom(), event.getTo());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityTeleport(EntityTeleportEvent event) {
+        plugin.getCombinedLimitLogic().transferEntity(event.getEntity(), event.getFrom(), event.getTo());
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -3,10 +3,12 @@ package us.talabrek.ultimateskyblock.island.level;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import us.talabrek.ultimateskyblock.Settings;
 import us.talabrek.ultimateskyblock.api.model.BlockScore;
 import us.talabrek.ultimateskyblock.island.level.yml.LevelConfigYmlReader;
 import us.talabrek.ultimateskyblock.uSkyBlock;
+
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -41,8 +43,13 @@ public abstract class CommonLevelLogic implements LevelLogic {
     }
 
     IslandScore createIslandScore(BlockCountCollection blockCollection) {
+        return createIslandScore(blockCollection, java.util.Collections.emptyMap());
+    }
+
+    IslandScore createIslandScore(BlockCountCollection blockCollection, Map<EntityType, Integer> limitedEntityCounts) {
         List<BlockScore> blockScores = blockCollection.calculateScore(pointsPerLevel);
         Map<BlockData, Integer> limitedStateCounts = blockCollection.getLimitedStateCounts();
-        return new IslandScore(blockScores.stream().mapToDouble(BlockScore::getScore).sum(), blockScores, limitedStateCounts);
+        return new IslandScore(blockScores.stream().mapToDouble(BlockScore::getScore).sum(), blockScores,
+                limitedStateCounts, blockCollection.getLimitedMaterialCounts(), limitedEntityCounts);
     }
 }

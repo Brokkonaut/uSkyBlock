@@ -13,6 +13,7 @@ import us.talabrek.ultimateskyblock.api.event.MemberLeftEvent;
 import us.talabrek.ultimateskyblock.api.event.RestartIslandEvent;
 import us.talabrek.ultimateskyblock.api.event.uSkyBlockScoreChangedEvent;
 import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
+import us.talabrek.ultimateskyblock.island.CombinedLimitLogic;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.island.level.IslandScore;
 import us.talabrek.ultimateskyblock.player.PlayerInfo;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 public class InternalEventsTest {
     private BlockLimitLogic fakeBlockLimitLogic;
+    private CombinedLimitLogic fakeCombinedLimitLogic;
     private uSkyBlock fakePlugin;
     private InternalEvents internalEvents;
 
@@ -43,6 +45,8 @@ public class InternalEventsTest {
         fakeBlockLimitLogic = mock(BlockLimitLogic.class);
         doNothing().when(fakeBlockLimitLogic).updateBlockCount(any(), any());
         doReturn(fakeBlockLimitLogic).when(fakePlugin).getBlockLimitLogic();
+        fakeCombinedLimitLogic = mock(CombinedLimitLogic.class);
+        doReturn(fakeCombinedLimitLogic).when(fakePlugin).getCombinedLimitLogic();
 
         doReturn(true).when(fakePlugin).restartPlayerIsland(any(), any(), any());
         doNothing().when(fakePlugin).createIsland(any(), any());
@@ -106,6 +110,7 @@ public class InternalEventsTest {
                 fakeIslandScore, islandLocation);
         internalEvents.onScoreChanged(event);
         verify(fakeBlockLimitLogic).updateBlockCount(islandLocation, fakeIslandScore);
+        verify(fakeCombinedLimitLogic).updateCounts(islandLocation, fakeIslandScore);
     }
 
     @Test

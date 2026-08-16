@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import us.talabrek.ultimateskyblock.api.async.Callback;
 import us.talabrek.ultimateskyblock.handler.WorldGuardHandler;
@@ -13,7 +14,9 @@ import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
 import us.talabrek.ultimateskyblock.island.task.ChunkSnapShotTask;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -36,20 +39,23 @@ public class ChunkSnapshotLevelLogic extends CommonLevelLogic {
             return;
         }
         BlockLimitLogic blockLimitLogic = plugin.getBlockLimitLogic();
-        new ChunkSnapShotTask(plugin, l, region, new Callback<List<ChunkSnapshot>>() {
+        Set<EntityType> trackedEntityTypes = plugin.getCombinedLimitLogic().getTrackedEntityTypes();
+        Map<EntityType, Integer> entityCounts = new HashMap<>();
+        new ChunkSnapShotTask(plugin, l, region, trackedEntityTypes, entityCounts, new Callback<List<ChunkSnapshot>>() {
             @Override
             public void run() {
                 final List<ChunkSnapshot> snapshotsOverworld = getState();
                 Location netherLoc = getNetherLocation(l);
                 final ProtectedRegion netherRegion = WorldGuardHandler.getNetherRegionAt(netherLoc);
-                new ChunkSnapShotTask(plugin, netherLoc, netherRegion, new Callback<List<ChunkSnapshot>>() {
+                new ChunkSnapShotTask(plugin, netherLoc, netherRegion, trackedEntityTypes, entityCounts, new Callback<List<ChunkSnapshot>>() {
                     @Override
                     public void run() {
                         final List<ChunkSnapshot> snapshotsNether = getState();
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                calculateScoreAndCallback(region, snapshotsOverworld, netherRegion, snapshotsNether, blockLimitLogic, callback);
+                                calculateScoreAndCallback(region, snapshotsOverworld, netherRegion, snapshotsNether,
+                                        blockLimitLogic, entityCounts, callback);
                             }
                         }.runTaskAsynchronously(plugin);
                     }
@@ -58,15 +64,21 @@ public class ChunkSnapshotLevelLogic extends CommonLevelLogic {
         }).runTask(plugin);
     }
 
-    private void calculateScoreAndCallback(ProtectedRegion region, List<ChunkSnapshot> snapshotsOverworld, ProtectedRegion netherRegion, List<ChunkSnapshot> snapshotsNether, BlockLimitLogic blockLimitLogic, Callback<IslandScore> callback) {
-        IslandScore islandScore = calculateScore(region, snapshotsOverworld, netherRegion, snapshotsNether, blockLimitLogic);
+    private void calculateScoreAndCallback(ProtectedRegion region, List<ChunkSnapshot> snapshotsOverworld,
+                                           ProtectedRegion netherRegion, List<ChunkSnapshot> snapshotsNether,
+                                           BlockLimitLogic blockLimitLogic, Map<EntityType, Integer> entityCounts,
+                                           Callback<IslandScore> callback) {
+        IslandScore islandScore = calculateScore(region, snapshotsOverworld, netherRegion, snapshotsNether,
+                blockLimitLogic, entityCounts);
         callback.setState(islandScore);
         plugin.sync(callback);
         log.exiting(CN, "calculateScoreAsync");
     }
 
-    private IslandScore calculateScore(ProtectedRegion region, List<ChunkSnapshot> snapshotsOverworld, ProtectedRegion netherRegion, List<ChunkSnapshot> snapshotsNether, BlockLimitLogic blockLimitLogic) {
-        final BlockCountCollection counts = new BlockCountCollection(scoreMap);
+    private IslandScore calculateScore(ProtectedRegion region, List<ChunkSnapshot> snapshotsOverworld,
+                                       ProtectedRegion netherRegion, List<ChunkSnapshot> snapshotsNether,
+                                       BlockLimitLogic blockLimitLogic, Map<EntityType, Integer> entityCounts) {
+        final BlockCountCollection counts = new BlockCountCollection(scoreMap, blockLimitLogic.getTrackedMaterials());
         int minX = region.getMinimumPoint().x();
         int maxX = region.getMaximumPoint().x();
         int minZ = region.getMinimumPoint().z();
@@ -99,9 +111,9 @@ public class ChunkSnapshotLevelLogic extends CommonLevelLogic {
                 }
             }
         }
-        IslandScore islandScore = createIslandScore(counts);
-        if (islandScore.getScore() >= activateNetherAtLevel && netherRegion != null && snapshotsNether != null) {
-            // Add nether levels
+        IslandScore islandScore = createIslandScore(counts, entityCounts);
+        if (netherRegion != null && snapshotsNether != null) {
+            boolean addNetherScore = islandScore.getScore() >= activateNetherAtLevel;
             minX = netherRegion.getMinimumPoint().x();
             maxX = netherRegion.getMaximumPoint().x();
             minZ = netherRegion.getMinimumPoint().z();
@@ -116,25 +128,33 @@ public class ChunkSnapshotLevelLogic extends CommonLevelLogic {
                     }
                     int cx = (x & 0xf);
                     int cz = (z & 0xf);
-                    for (int y = 6; y < 120; y++) {
+                    int minY = Math.max(netherRegion.getMinimumPoint().y(),
+                            plugin.getWorldManager().getNetherWorld().getMinHeight());
+                    int maxY = Math.min(netherRegion.getMaximumPoint().y(),
+                            plugin.getWorldManager().getNetherWorld().getMaxHeight() - 1);
+                    for (int y = minY; y <= maxY; y++) {
                         Material blockType = chunk.getBlockType(cx, y, cz);
                         if (blockType == Material.AIR) {
                             continue;
                         }
-                        counts.add(blockType);
-                        Set<BlockData> limitedBlockStates = blockLimitLogic.getLimitedBlockStatesForMaterial(blockType);
-                        if (limitedBlockStates != null && !limitedBlockStates.isEmpty()) {
-                            BlockData dataHere = chunk.getBlockData(cx, y, cz);
-                            for (BlockData limitedBlockState : limitedBlockStates) {
-                                if (dataHere.matches(limitedBlockState)) {
-                                    counts.addState(limitedBlockState);
+                        if (addNetherScore && y >= 6 && y < 120) {
+                            counts.add(blockType);
+                            Set<BlockData> limitedBlockStates = blockLimitLogic.getLimitedBlockStatesForMaterial(blockType);
+                            if (limitedBlockStates != null && !limitedBlockStates.isEmpty()) {
+                                BlockData dataHere = chunk.getBlockData(cx, y, cz);
+                                for (BlockData limitedBlockState : limitedBlockStates) {
+                                    if (dataHere.matches(limitedBlockState)) {
+                                        counts.addState(limitedBlockState);
+                                    }
                                 }
                             }
+                        } else {
+                            counts.addLimited(blockType);
                         }
                     }
                 }
             }
-            islandScore = createIslandScore(counts);
+            islandScore = createIslandScore(counts, entityCounts);
         }
         return islandScore;
     }

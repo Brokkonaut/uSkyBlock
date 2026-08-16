@@ -5,13 +5,13 @@ import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import us.talabrek.ultimateskyblock.api.model.BlockScore;
 import us.talabrek.ultimateskyblock.island.level.IslandScore;
 import us.talabrek.ultimateskyblock.uSkyBlock;
 import dk.lockfuglsang.minecraft.util.ItemStackUtil;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,15 +27,18 @@ public class BlockLimitLogic {
     private Map<Material, Integer> blockLimits = new HashMap<>();
     private Map<BlockData, Integer> blockStateLimits = new HashMap<>();
     private Map<Material, Set<BlockData>> blockStateLimitMaterials = new HashMap<>();
-    // TODO: R4zorax - 13-07-2018: Persist this somehow - and use a guavacache
-    private Map<Location, Map<Material, Integer>> blockCounts = new HashMap<>();
     private Map<Location, Map<BlockData, Integer>> blockStateCounts = new HashMap<>();
     private Map<Material, String> blockLimitCustomNames = new HashMap<>();
     private Map<BlockData, String> blockStateLimitCustomNames = new HashMap<>();
 
     private final boolean limitsEnabled;
+    private final Set<Material> trackedMaterials = new LinkedHashSet<>();
 
     public BlockLimitLogic(uSkyBlock plugin) {
+        this(plugin, Collections.emptySet());
+    }
+
+    public BlockLimitLogic(uSkyBlock plugin, Set<Material> additionalTrackedMaterials) {
         this.plugin = plugin;
         FileConfiguration config = plugin.getConfig();
         limitsEnabled = config.getBoolean("options.island.block-limits.enabled", false);
@@ -92,6 +95,8 @@ public class BlockLimitLogic {
                 }
             }
         }
+        trackedMaterials.addAll(blockLimits.keySet());
+        trackedMaterials.addAll(additionalTrackedMaterials);
     }
 
     public int getLimit(Material type) {
@@ -105,6 +110,18 @@ public class BlockLimitLogic {
     public Map<BlockData, Integer> getBlockStateLimits() {
         return Collections.unmodifiableMap(blockStateLimits);
     }
+
+    public Set<Material> getTrackedMaterials() {
+        return Collections.unmodifiableSet(trackedMaterials);
+    }
+
+    public boolean isTrackedMaterial(Material material) {
+        return trackedMaterials.contains(material);
+    }
+
+    public boolean hasTrackedMaterials() {
+        return !trackedMaterials.isEmpty() || !blockStateLimits.isEmpty();
+    }
     
     public String getBlockLimitCustomName(Material type) {
         String name = blockLimitCustomNames.get(type);
@@ -117,36 +134,26 @@ public class BlockLimitLogic {
     }
 
     public void updateBlockCount(Location islandLocation, IslandScore score) {
-        if (!limitsEnabled) {
+        if (!hasTrackedMaterials()) {
             return;
         }
-        Map<Material, Integer> countMap = asBlockCount(score);
-        blockCounts.put(islandLocation, countMap);
         blockStateCounts.put(islandLocation, score.getLimitedStateCounts());
-    }
-
-    private Map<Material,Integer> asBlockCount(IslandScore score) {
-        Map<Material, Integer> countMap = new ConcurrentHashMap<>();
-        for (BlockScore blockScore : score.getTop()) {
-            Material type = blockScore.getBlock();
-            if (blockLimits.containsKey(type)) {
-                int initalValue = countMap.getOrDefault(type, 0);
-                initalValue += blockScore.getCount();
-                countMap.put(type, initalValue);
-            }
-        }
-        return countMap;
     }
 
     public int getCount(Material type, Location islandLocation) {
         if (!limitsEnabled || !blockLimits.containsKey(type)) {
             return -1;
         }
-        Map<Material, Integer> islandCount = blockCounts.getOrDefault(islandLocation, null);
-        if (islandCount == null) {
+        IslandInfo islandInfo = plugin.getIslandInfo(islandLocation);
+        if (islandInfo == null) {
             return -2;
         }
-        return islandCount.getOrDefault(type, 0);
+        Integer count = islandInfo.getLimitBlockCount(type);
+        return count != null ? count : -2;
+    }
+
+    public Integer getTrackedCount(Material type, IslandInfo islandInfo) {
+        return trackedMaterials.contains(type) ? islandInfo.getLimitBlockCount(type) : null;
     }
 
     public int getBlockStateCount(BlockData type, Location islandLocation) {
@@ -193,13 +200,15 @@ public class BlockLimitLogic {
     }
 
     public void incBlockCount(Location islandLocation, BlockData state) {
-        if (!limitsEnabled) {
+        if (!hasTrackedMaterials()) {
             return;
         }
         Material type = state.getMaterial();
-        if (blockLimits.containsKey(type)) {
-            Map<Material, Integer> islandCount = blockCounts.computeIfAbsent(islandLocation, l -> new ConcurrentHashMap<>());
-            islandCount.merge(type, 1, Integer::sum);
+        if (trackedMaterials.contains(type)) {
+            IslandInfo islandInfo = plugin.getIslandInfo(islandLocation);
+            if (islandInfo != null) {
+                islandInfo.adjustLimitBlockCount(type, 1);
+            }
         }
         Set<BlockData> limitedBlockStates = getLimitedBlockStatesForMaterial(type);
         if (limitedBlockStates != null && !limitedBlockStates.isEmpty()) {
@@ -213,13 +222,15 @@ public class BlockLimitLogic {
     }
 
     public void decBlockCount(Location islandLocation, BlockData state) {
-        if (!limitsEnabled) {
+        if (!hasTrackedMaterials()) {
             return;
         }
         Material type = state.getMaterial();
-        if (blockLimits.containsKey(type)) {
-            Map<Material, Integer> islandCount = blockCounts.computeIfAbsent(islandLocation, l -> new ConcurrentHashMap<>());
-            islandCount.merge(type, -1, Integer::sum);
+        if (trackedMaterials.contains(type)) {
+            IslandInfo islandInfo = plugin.getIslandInfo(islandLocation);
+            if (islandInfo != null) {
+                islandInfo.adjustLimitBlockCount(type, -1);
+            }
         }
         Set<BlockData> limitedBlockStates = getLimitedBlockStatesForMaterial(type);
         if (limitedBlockStates != null && !limitedBlockStates.isEmpty()) {

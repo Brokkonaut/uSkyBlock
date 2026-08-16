@@ -676,7 +676,8 @@ public class SkyBlockMenu {
         meta4 = menuItem.getItemMeta();
         meta4.setDisplayName(tr("\u00a7a\u00a7lIsland Level"));
         addLore(lores, tr("\u00a7eCurrent Level: \u00a7a{0,number,##.#}", islandInfo.getLevel()));
-        addLore(lores, LegacyComponentSerializer.legacySection().serialize(plugin.getLimitLogic().getSummary(islandInfo)));
+        addLore(lores, LegacyComponentSerializer.legacySection().serialize(
+                plugin.getLimitLogic().getMenuSummary(islandInfo)));
         addLore(lores, "\u00a7f", tr("Gain island levels by expanding\nyour skyblock and completing\ncertain challenges. Rarer blocks\nwill add more to your level.\n\u00a7e\u00a7lClick here to refresh.\n\u00a7e\u00a7l(must be on island)"));
         meta4.setLore(lores);
         menuItem.setItemMeta(meta4);

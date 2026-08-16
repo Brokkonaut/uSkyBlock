@@ -254,6 +254,22 @@ public class LimitLogic {
             }
             result = result.append(line);
         }
+        Component combinedSummary = plugin.getCombinedLimitLogic().getSummary((IslandInfo) islandInfo);
+        if (!combinedSummary.equals(Component.empty())) {
+            if (!result.equals(Component.empty())) {
+                result = result.append(Component.newline());
+            }
+            result = result.append(combinedSummary);
+        }
+        return result;
+    }
+
+    public Component getMenuSummary(us.talabrek.ultimateskyblock.api.IslandInfo islandInfo) {
+        Component result = getSummary(islandInfo);
+        Component details = plugin.getCombinedLimitLogic().getMenuDetails((IslandInfo) islandInfo);
+        if (!details.equals(Component.empty())) {
+            result = result.append(Component.newline()).append(details);
+        }
         return result;
     }
 }

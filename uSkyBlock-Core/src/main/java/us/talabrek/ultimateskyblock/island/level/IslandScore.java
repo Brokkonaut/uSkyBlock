@@ -1,5 +1,8 @@
 package us.talabrek.ultimateskyblock.island.level;
 
+import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.EntityType;
 import us.talabrek.ultimateskyblock.api.model.BlockScore;
 
 import java.util.ArrayList;
@@ -7,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.block.data.BlockData;
 
 /**
  * The summary of island calculation.
@@ -17,11 +19,21 @@ public class IslandScore implements us.talabrek.ultimateskyblock.api.model.Islan
     private final List<BlockScore> top;
     private boolean isSorted = false;
     private final Map<BlockData, Integer> limitedStateCounts;
+    private final Map<Material, Integer> limitedMaterialCounts;
+    private final Map<EntityType, Integer> limitedEntityCounts;
 
     public IslandScore(double score, List<BlockScore> top, Map<BlockData, Integer> limitedStateCounts) {
+        this(score, top, limitedStateCounts, Collections.emptyMap(), Collections.emptyMap());
+    }
+
+    public IslandScore(double score, List<BlockScore> top, Map<BlockData, Integer> limitedStateCounts,
+                       Map<Material, Integer> limitedMaterialCounts,
+                       Map<EntityType, Integer> limitedEntityCounts) {
         this.score = score;
         this.top = joinTop(top);
-        this.limitedStateCounts = limitedStateCounts;
+        this.limitedStateCounts = new HashMap<>(limitedStateCounts);
+        this.limitedMaterialCounts = new HashMap<>(limitedMaterialCounts);
+        this.limitedEntityCounts = new HashMap<>(limitedEntityCounts);
     }
 
     /**
@@ -87,5 +99,13 @@ public class IslandScore implements us.talabrek.ultimateskyblock.api.model.Islan
 
     public Map<BlockData, Integer> getLimitedStateCounts() {
         return limitedStateCounts;
+    }
+
+    public Map<Material, Integer> getLimitedMaterialCounts() {
+        return Collections.unmodifiableMap(limitedMaterialCounts);
+    }
+
+    public Map<EntityType, Integer> getLimitedEntityCounts() {
+        return Collections.unmodifiableMap(limitedEntityCounts);
     }
 }

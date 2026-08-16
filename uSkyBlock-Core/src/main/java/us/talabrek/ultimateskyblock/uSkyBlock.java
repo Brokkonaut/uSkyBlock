@@ -65,6 +65,7 @@ import us.talabrek.ultimateskyblock.hook.HookManager;
 import us.talabrek.ultimateskyblock.imports.USBImporterExecutor;
 import us.talabrek.ultimateskyblock.integrity.IslandDataIntegrityLogic;
 import us.talabrek.ultimateskyblock.island.BlockLimitLogic;
+import us.talabrek.ultimateskyblock.island.CombinedLimitLogic;
 import us.talabrek.ultimateskyblock.island.IslandGenerator;
 import us.talabrek.ultimateskyblock.island.IslandInfo;
 import us.talabrek.ultimateskyblock.island.IslandLocatorLogic;
@@ -170,6 +171,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
 
     private volatile boolean maintenanceMode = false;
     private BlockLimitLogic blockLimitLogic;
+    private CombinedLimitLogic combinedLimitLogic;
 
     public uSkyBlock() {
     }
@@ -321,7 +323,7 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
                 manager.registerEvents(new ItemDropEvents(this), this);
             }
         }
-        if (getConfig().getBoolean("options.island.spawn-limits.enabled", true)) {
+        if (getConfig().getBoolean("options.island.spawn-limits.enabled", true) || combinedLimitLogic.hasEntityLimits()) {
             manager.registerEvents(new SpawnEvents(this), this);
         }
         if (getConfig().getBoolean("options.protection.visitors.block-banned-entry", true)) {
@@ -747,8 +749,9 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         orphanLogic = new OrphanLogic(this);
         islandLocatorLogic = new IslandLocatorLogic(this);
         islandLogic = new IslandLogic(this, directoryIslands, orphanLogic);
+        combinedLimitLogic = new CombinedLimitLogic(this);
+        blockLimitLogic = new BlockLimitLogic(this, combinedLimitLogic.getTrackedBlockTypes());
         limitLogic = new LimitLogic(this);
-        blockLimitLogic = new BlockLimitLogic(this);
         notifier = new PlayerNotifier(getConfig());
         playerLogic = new PlayerLogic(this);
         islandRelocationLogic = new IslandRelocationLogic(this);
@@ -795,6 +798,10 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
 
     public BlockLimitLogic getBlockLimitLogic() {
         return blockLimitLogic;
+    }
+
+    public CombinedLimitLogic getCombinedLimitLogic() {
+        return combinedLimitLogic;
     }
 
     /**
@@ -1004,7 +1011,8 @@ public class uSkyBlock extends JavaPlugin implements uSkyBlockAPI, CommandManage
         IslandPerk islandPerk = perkLogic.getIslandPerk(islandInfo.getSchematicName());
         double blockScore = score.getScore();
         blockScore = blockScore * islandPerk.getScoreMultiply() * islandInfo.getScoreMultiplier() + islandPerk.getScoreOffset() + islandInfo.getScoreOffset();
-        return new IslandScore(blockScore, score.getTop(), score.getLimitedStateCounts());
+        return new IslandScore(blockScore, score.getTop(), score.getLimitedStateCounts(),
+                score.getLimitedMaterialCounts(), score.getLimitedEntityCounts());
     }
 
     public void calculateScoreAsync(final Player player, String islandName, final Callback<us.talabrek.ultimateskyblock.api.model.IslandScore> callback) {

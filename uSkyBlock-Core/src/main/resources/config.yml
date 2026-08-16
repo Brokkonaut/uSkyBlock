@@ -82,6 +82,17 @@ options:
       enabled: true
       hopper: 50
       spawner: 10
+    # Weighted limits shared by exact block and entity types. An empty section disables this feature.
+    # Example:
+    # combined-limits:
+    #   hopper-system:
+    #     name: Hopper-System
+    #     limit: 50
+    #     blocks:
+    #       HOPPER: 1
+    #     entities:
+    #       HOPPER_MINECART: 2
+    combined-limits: {}
     extraPermissions:
       smallbonus:
       - COBBLESTONE:16
@@ -459,7 +470,7 @@ placeholder:
   servercommandplaceholder: false
 
 # DO NOT TOUCH THE FIELDS BELOW
-version: 107
+version: 108
 force-replace:
   options.party.invite-timeout: 100
   options.island.islandTeleportDelay: 5

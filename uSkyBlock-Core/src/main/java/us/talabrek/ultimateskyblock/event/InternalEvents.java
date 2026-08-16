@@ -50,6 +50,7 @@ public class InternalEvents implements Listener {
     @EventHandler
     public void onScoreChanged(uSkyBlockScoreChangedEvent e) {
         plugin.getBlockLimitLogic().updateBlockCount(e.getIslandLocation(), (IslandScore) e.getScore());
+        plugin.getCombinedLimitLogic().updateCounts(e.getIslandLocation(), (IslandScore) e.getScore());
     }
 
     @EventHandler
